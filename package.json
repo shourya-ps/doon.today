@@ -11,7 +11,7 @@
     "ingest": "node ingest/run.mjs",
     "validate:data": "node scripts/validate-data.mjs",
     "test": "node --test",
-    "ingest:primary": "INGEST_ONLY=district,bookmyshow node ingest/run.mjs",
+    "ingest:primary": "INGEST_ONLY=district node ingest/run.mjs",
     "check:health": "node scripts/check-health.mjs"
   },
   "dependencies": {

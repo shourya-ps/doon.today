@@ -9,12 +9,23 @@ async function fetchReddit(){}
 const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchReddit];
 const names=(list)=>list.map(adapterName);
 
+const optIn=['bookmyshow'];
+
 test('selectAdapters supports only, skip and unknown names',()=>{
   assert.deepEqual(names(selectAdapters(adapters)),['district','bookmyshow','allevents','reddit']);
   assert.deepEqual(names(selectAdapters(adapters,{only:'district, BookMyShow'})),['district','bookmyshow']);
   assert.deepEqual(names(selectAdapters(adapters,{skip:'district,bookmyshow'})),['allevents','reddit']);
   assert.deepEqual(names(selectAdapters(adapters,{only:'',skip:''})),['district','bookmyshow','allevents','reddit']);
   assert.throws(()=>selectAdapters(adapters,{only:'distrct'}),/Unknown ingest source "distrct"/);
+});
+
+test('opt-in sources only run when named in only',()=>{
+  assert.deepEqual(names(selectAdapters(adapters,{optIn})),['district','allevents','reddit']);
+  assert.deepEqual(names(selectAdapters(adapters,{skip:'district',optIn})),['allevents','reddit']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'district',optIn})),['district']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'bookmyshow',optIn})),['bookmyshow']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'district,bookmyshow',optIn})),['district','bookmyshow']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'bookmyshow',skip:'bookmyshow',optIn})),[]);
 });
 
 test('recordAttempt tracks last success and consecutive failures',()=>{
@@ -33,41 +44,45 @@ test('recordAttempt tracks last success and consecutive failures',()=>{
 const now=Date.parse('2026-10-19T00:00:00.000Z');
 const hoursAgo=(h)=>new Date(now-h*3_600_000).toISOString();
 
-test('health is healthy only while both primary sources have a recent success',()=>{
+test('health is healthy while the primary source has a recent success, whatever other sources do',()=>{
   const sources={
     district:{status:'ok',lastSuccessAt:hoursAgo(2)},
-    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(10)},
+    bookmyshow:{status:'failed',consecutiveFailures:9},
     allevents:{status:'ok'}
   };
-  assert.equal(computeHealth(sources,{now,published:30}).health,'healthy');
+  const result=computeHealth(sources,{now,published:30});
+  assert.equal(result.health,'healthy');
+  assert.deepEqual(result.primarySourcesExpected,['district']);
 });
 
 test('a primary source carried forward past the max age makes the site degraded',()=>{
   const sources={
     district:{status:'ok',lastSuccessAt:hoursAgo(40)},
-    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(1)},
     allevents:{status:'ok'}
   };
   const result=computeHealth(sources,{now,published:30,maxAgeHours:36});
   assert.equal(result.health,'degraded');
-  assert.deepEqual(result.primarySourcesAvailable,['bookmyshow']);
+  assert.deepEqual(result.primarySourcesAvailable,[]);
   assert.equal(result.primarySources.district.fresh,false);
 });
 
 test('one failed attempt does not degrade a source that succeeded recently',()=>{
-  const sources={
-    district:{status:'failed',lastSuccessAt:hoursAgo(8),consecutiveFailures:1},
-    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(1)}
-  };
+  const sources={district:{status:'failed',lastSuccessAt:hoursAgo(8),consecutiveFailures:1}};
   assert.equal(computeHealth(sources,{now,published:5}).health,'healthy');
 });
 
 test('a primary source that never succeeded is not fresh, and zero published is failed',()=>{
-  const sources={district:{status:'failed'},bookmyshow:{status:'failed'},allevents:{status:'ok'}};
+  const sources={district:{status:'failed'},allevents:{status:'ok'}};
   const freshness=primaryFreshness(sources,{now});
   assert.equal(freshness.district.lastSuccessAt,null);
   assert.equal(freshness.district.fresh,false);
   assert.equal(computeHealth(sources,{now,published:4}).health,'degraded');
   assert.equal(computeHealth(sources,{now,published:0}).health,'failed');
-  assert.equal(computeHealth({district:{status:'failed'},bookmyshow:{status:'failed'}},{now,published:4}).health,'failed');
+  assert.equal(computeHealth({district:{status:'failed'}},{now,published:4}).health,'failed');
+});
+
+test('a source listed as primary by the caller is honoured',()=>{
+  const sources={district:{status:'ok',lastSuccessAt:hoursAgo(1)},townscript:{status:'ok',lastSuccessAt:hoursAgo(50)}};
+  const result=computeHealth(sources,{now,published:5,primary:['district','townscript']});
+  assert.equal(result.health,'degraded');
 });

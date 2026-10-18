@@ -4,7 +4,7 @@ import { slugify, eventPassesGeo } from './lib/utils.mjs';
 const SOURCE_RANK = {
   manual: 100,
   district: 95,
-  bookmyshow: 95,
+  bookmyshow: 75,
   townscript: 85,
   virasat: 90,
   thrillzone: 90,
@@ -54,7 +54,7 @@ function eventTimestamp(e) {
 }
 function verificationStatus(sources=[]) {
   const providers=new Set(sources.map(source => source.provider));
-  if (['manual','district','bookmyshow','townscript','virasat','thrillzone','literaturefestival','meetup'].some(provider => providers.has(provider))) return 'verified';
+  if (['manual','district','townscript','virasat','thrillzone','literaturefestival','meetup'].some(provider => providers.has(provider))) return 'verified';
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }
@@ -129,7 +129,7 @@ export async function mergeAndWrite(results) {
   await fs.mkdir('data',{recursive:true});
   await fs.writeFile('data/events.json',JSON.stringify(out,null,2)+'\n');
 
-  // A partial run (e.g. District/BookMyShow only) must not wipe the Reddit review queue.
+  // A partial run (e.g. a District-only run) must not wipe the Reddit review queue.
   const redditRan=results.some(r=>r.source==='reddit');
   await fs.mkdir('data/review',{recursive:true});
   let reviewCount;

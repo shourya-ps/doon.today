@@ -66,3 +66,21 @@ test('event pages with no usable Dehradun data are not treated as healthy',async
     return true;
   });
 });
+
+test('it stops requesting event pages after two consecutive 403s',async t=>{
+  const original=globalThis.fetch;
+  t.after(()=>{globalThis.fetch=original;});
+  const hrefs=[1,2,3,4,5].map(n=>`<a href="https://in.bookmyshow.com/events/show-${n}/ET0000000${n}">x</a>`).join('');
+  const requested=[];
+  globalThis.fetch=async url=>{
+    requested.push(url);
+    return url===listingUrl ? response(`<html>${hrefs}</html>`,200,url) : response('blocked',403,url,{server:'cloudflare'});
+  };
+  await assert.rejects(fetchBookMyShow(),error=>{
+    assert.equal(error.diagnostics.discoveredUrls,5);
+    assert.equal(error.diagnostics.stoppedEarly,true);
+    assert.equal(error.diagnostics.errors.length,2);
+    return true;
+  });
+  assert.equal(requested.length,3,'one listing request and two blocked event pages');
+});

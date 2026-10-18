@@ -1,25 +1,26 @@
-# Primary sources (District, BookMyShow)
+# Primary source (District) and BookMyShow
 
-District and BookMyShow return `403 Forbidden` to GitHub-hosted runners. See
+District returns `403 Forbidden` to GitHub-hosted runners. See
 [bug-report-primary-sources-403.md](bug-report-primary-sources-403.md) for the evidence. This project does
 not spoof a browser, solve CAPTCHAs or use stealth tooling, so request headers are not the lever. Where the
 block is on datacenter IPs, the fix is to fetch from a machine on a normal connection.
 
-| Source | GitHub-hosted runner | Home/ISP connection | Plan |
+| Source | GitHub-hosted runner | Home/ISP connection | Status |
 | --- | --- | --- | --- |
-| District | `403` | `200`, 12 candidate events parsed (18 Oct 2026) | self-hosted runner or local script, below |
-| BookMyShow | `403` (Cloudflare) | **still `403`** to a plain `curl` and to `fetch` from a Mac, though a browser renders the page | **not fixed by moving the job.** Needs permission or a feed from BookMyShow (below) |
+| District | `403` | `200`, 12 candidate events parsed (18 Oct 2026) | primary; fetched by the self-hosted runner or local script, below |
+| BookMyShow | `403` (Cloudflare) | `403` to a plain `curl` and to `fetch` from a Mac, though a browser renders the page | **demoted**: not primary and off by default |
 
-**BookMyShow.** Cloudflare rejects plain HTTP clients even from a residential IP, so running the adapter
-elsewhere does not help. The compliant routes are an approved partner, organizer or calendar feed from
-BookMyShow, or demoting it from primary to a secondary source until one exists. The adapter keeps running
-in the primary job so it recovers on its own if access changes, and its failure is recorded without
-breaking the run. Until then the home page banner will keep naming BookMyShow as stale.
+**BookMyShow is demoted.** Cloudflare rejects plain HTTP clients even from a residential IP, so moving the
+job does not help. It is no longer a primary source, so it does not affect the site's health or the banner,
+and it does not run unless it is named: `INGEST_ONLY=bookmyshow npm run ingest`. If it does run, it stops
+after two consecutive blocked event pages. Its events, if it ever returns any, rank as secondary. The
+compliant routes back are an approved partner, organizer or calendar feed from BookMyShow; that decision is
+still open.
 
 | Job | Where it runs | Sources |
 | --- | --- | --- |
-| `Refresh events` (`refresh-events.yml`) | GitHub-hosted `ubuntu-24.04` | everything except District and BookMyShow (`INGEST_SKIP`) |
-| `Refresh primary sources` (`refresh-primary.yml`) | self-hosted runner labelled `doon-primary` | District and BookMyShow only (`INGEST_ONLY`) |
+| `Refresh events` (`refresh-events.yml`) | GitHub-hosted `ubuntu-24.04` | everything except District (`INGEST_SKIP`); BookMyShow is opt-in and does not run |
+| `Refresh primary sources` (`refresh-primary.yml`) | self-hosted runner labelled `doon-primary` | District only (`INGEST_ONLY`) |
 
 Both jobs share one concurrency group, so they never commit at the same time. Each job only updates the
 sources it ran and keeps the other sources' entries in `data/ingest-status.json`.
@@ -41,7 +42,7 @@ Actions → General**, set "Fork pull request workflows" to require approval for
 ## Option B: cron or launchd on your own machine
 
 `scripts/refresh-primary-local.sh` does the same job with your own git credentials: pull, test, fetch
-District and BookMyShow, validate, commit `data/`, push. Try it first with `DRY_RUN=1`. Example crontab
+District, validate, commit `data/`, push. Try it first with `DRY_RUN=1`. Example crontab
 (times are local; this one assumes the machine is on IST):
 
 ```
@@ -53,10 +54,10 @@ District and BookMyShow, validate, commit `data/`, push. Try it first with `DRY_
 - `data/ingest-status.json` records `lastAttemptAt`, `lastSuccessAt` and `consecutiveFailures` per source,
   plus `primarySources` with each primary source's age and whether it counts as fresh (36h by default,
   `PRIMARY_MAX_AGE_HOURS`).
-- The home page banner names the stale source and when it last refreshed.
+- The home page banner names the stale source and when it last refreshed. Readers can dismiss it; it returns if a different set of sources is affected.
 - The last step of `Refresh events` runs `npm run check:health`. It fails the run when a primary source that
   has refreshed before has gone 48h without a success (`HEALTH_MAX_AGE_HOURS`), and GitHub emails you about a
-  failed scheduled workflow. A source that has never succeeded (BookMyShow today) only raises a warning
+  failed scheduled workflow. A primary source that has never succeeded only raises a warning
   annotation, so it does not keep every run red.
 - A `200` response that yields no events (a challenge page, changed markup) is recorded as a failure, not
   as `ok`.
@@ -64,6 +65,7 @@ District and BookMyShow, validate, commit `data/`, push. Try it first with `DRY_
 ## Running a single source locally
 
 ```
-INGEST_ONLY=district,bookmyshow npm run ingest   # only these sources
-INGEST_SKIP=district,bookmyshow npm run ingest   # everything else
+INGEST_ONLY=district npm run ingest      # only this source
+INGEST_ONLY=bookmyshow npm run ingest    # the opt-in source (currently blocked)
+INGEST_SKIP=district npm run ingest      # everything else except the opt-in source
 ```

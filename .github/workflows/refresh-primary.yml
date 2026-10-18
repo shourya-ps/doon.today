@@ -1,6 +1,6 @@
 name: Refresh primary sources
-# Fetches District and BookMyShow from a self-hosted runner on a normal ISP connection. Both sites
-# return 403 to GitHub-hosted runners. Setup: docs/primary-sources.md
+# Fetches District from a self-hosted runner on a normal ISP connection; it returns 403 to
+# GitHub-hosted runners. Setup: docs/primary-sources.md
 #
 # SECURITY: this repository is public, and a self-hosted runner executes workflow code on your own
 # machine. Keep this workflow's triggers to schedule and workflow_dispatch. Never add pull_request,
@@ -20,7 +20,7 @@ jobs:
     runs-on: [self-hosted, doon-primary]
     timeout-minutes: 15
     env:
-      INGEST_ONLY: district,bookmyshow
+      INGEST_ONLY: district
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -29,7 +29,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - name: Test ingest adapters
         run: npm test
-      - name: Fetch District and BookMyShow
+      - name: Fetch District
         run: npm run ingest
       - name: Validate event data
         run: npm run validate:data

@@ -1,10 +1,14 @@
 // Source selection, per-source freshness tracking and health calculation for the ingest run.
 //
-// District and BookMyShow sit behind bot protection that rejects GitHub-hosted runner IPs, so they
-// are fetched from a separate (self-hosted) run. Each run therefore only touches the sources it
-// actually ran and carries every other source's status forward from the previous run.
+// District sits behind bot protection that rejects GitHub-hosted runner IPs, so it is fetched from a
+// separate run on a normal connection. Each run therefore only touches the sources it actually ran
+// and carries every other source's status forward from the previous run.
+//
+// BookMyShow is demoted: Cloudflare rejects it from every connection we tried, so it is not a primary
+// source and does not run unless it is named explicitly (INGEST_ONLY=bookmyshow).
 
-export const PRIMARY_SOURCES = ['district', 'bookmyshow'];
+export const PRIMARY_SOURCES = ['district'];
+export const OPT_IN_SOURCES = ['bookmyshow'];
 // Three refreshes a day; allow one missed run plus slack before a primary source counts as stale.
 export const DEFAULT_MAX_AGE_HOURS = 36;
 
@@ -12,7 +16,7 @@ export const adapterName = (fn) => fn.name.replace(/^fetch/, '').toLowerCase();
 
 const list = (value = '') => value.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
 
-export function selectAdapters(adapters, { only = '', skip = '' } = {}) {
+export function selectAdapters(adapters, { only = '', skip = '', optIn = [] } = {}) {
   const onlyList = list(only);
   const skipList = list(skip);
   const known = new Set(adapters.map(adapterName));
@@ -23,7 +27,10 @@ export function selectAdapters(adapters, { only = '', skip = '' } = {}) {
   }
   return adapters.filter((fn) => {
     const name = adapterName(fn);
-    return (onlyList.length === 0 || onlyList.includes(name)) && !skipList.includes(name);
+    if (skipList.includes(name)) return false;
+    // Opt-in sources only run when named in `only`.
+    if (optIn.includes(name)) return onlyList.includes(name);
+    return onlyList.length === 0 || onlyList.includes(name);
   });
 }
 
