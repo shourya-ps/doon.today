@@ -8,7 +8,6 @@ const fixture=(name)=>readFile(new URL(`./fixtures/${name}`,import.meta.url),'ut
 test('Virasat imports only dated, ticketed headline performances',async()=>{
   const result=parseVirasatProgramme(
     await fixture('virasat-programme.html'),
-    await fixture('virasat-tickets.html'),
     '2026-10-18T00:00:00.000Z'
   );
   assert.equal(result.events.length,2);
@@ -26,7 +25,6 @@ test('Virasat imports only dated, ticketed headline performances',async()=>{
 
 test('Virasat rejects an unverified venue or empty programme',async()=>{
   const programme=await fixture('virasat-programme.html');
-  const tickets=await fixture('virasat-tickets.html');
-  assert.throws(()=>parseVirasatProgramme(programme,'<html></html>'),/venue could not be verified/);
-  assert.throws(()=>parseVirasatProgramme('<h1>Virasat 2026</h1>',tickets),/no dated headline performances/);
+  assert.throws(()=>parseVirasatProgramme(programme.replace('Himalayan Cultural Centre','Unconfirmed venue')),/venue could not be verified/);
+  assert.throws(()=>parseVirasatProgramme('<h1>Virasat 2026</h1><p>Himalayan Cultural Centre</p>'),/no dated headline performances/);
 });

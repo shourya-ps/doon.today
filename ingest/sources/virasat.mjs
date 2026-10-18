@@ -2,7 +2,6 @@ import {fetchText} from '../lib/http.mjs';
 import {stableId,slugify,stripHtml,nowIso} from '../lib/utils.mjs';
 
 const PROGRAMME='https://reachvirasat.org/programme';
-const TICKETS='https://reachvirasat.org/tickets';
 const HEADLINE_CATEGORIES=new Set(['vocal','instrumental','dance','folk']);
 const MONTHS={january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
 
@@ -13,10 +12,9 @@ function localDateTime(year,month,day,time) {
   return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}T${String(hour).padStart(2,'0')}:${match[2]}:00+05:30`;
 }
 
-export function parseVirasatProgramme(programme,tickets,checkedAt=nowIso()) {
+export function parseVirasatProgramme(programme,checkedAt=nowIso()) {
   const year=Number(programme.match(/Virasat\s+(20\d{2})/i)?.[1]);
-  const venueDescription=stripHtml(tickets.match(/<meta\s+name=["']description["']\s+content=["']([^"']+)["']/i)?.[1]||'');
-  const venue=venueDescription.match(/\bat (?:the )?([^,.]+),\s*Garhi Cantt,\s*Dehradun\b/i)?.[1]?.trim();
+  const venue=programme.includes('Himalayan Cultural Centre') ? 'Himalayan Cultural Centre' : null;
   if(!year || !venue) throw new Error('Virasat year or official venue could not be verified');
 
   const events=[];
@@ -73,6 +71,5 @@ export function parseVirasatProgramme(programme,tickets,checkedAt=nowIso()) {
 }
 
 export async function fetchVirasat() {
-  const [programme,tickets]=await Promise.all([fetchText(PROGRAMME),fetchText(TICKETS)]);
-  return parseVirasatProgramme(programme,tickets);
+  return parseVirasatProgramme(await fetchText(PROGRAMME));
 }
