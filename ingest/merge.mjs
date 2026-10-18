@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { slugify, eventPassesGeo } from './lib/utils.mjs';
+import { slugify, eventPassesGeo, areaFromText } from './lib/utils.mjs';
 
 const SOURCE_RANK = {
   manual: 100,
@@ -70,6 +70,13 @@ function sourceKey(s){ return `${s.provider}|${s.url}`; }
 // The fields a calendar subscriber would notice changing.
 function fingerprint(e) {
   return JSON.stringify([e.title, e.startAt, e.endAt||null, e.venue?.name, e.venue?.address||'']);
+}
+
+// Fill in venue.area from the address or venue name when a source did not provide one.
+function withArea(e) {
+  if (e.venue?.area) return e;
+  const area=areaFromText(`${e.venue?.address||''} ${e.venue?.name||''}`);
+  return area ? {...e, venue:{...e.venue, area}} : e;
 }
 
 // An event is dropped after this many successful runs of all of its sources without it appearing.
@@ -183,6 +190,7 @@ export async function mergeAndWrite(results) {
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => new Date(e.startAt).getTime() > now - 6*3600_000)
+    .map(withArea)
     .sort((a,b)=>a.startAt.localeCompare(b.startAt));
 
   await fs.mkdir('data',{recursive:true});

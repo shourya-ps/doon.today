@@ -7,12 +7,19 @@ const time = dateOnly
   ? 'Time TBA'
   : new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(start);
 const price = event.pricing.type === 'free' ? 'FREE' : event.pricing.minPrice ? `₹${event.pricing.minPrice}+` : '';
+const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const showArea = event.venue.area && !event.venue.name.toLowerCase().includes(event.venue.area.toLowerCase());
 ---
-<article class="event-row">
+<article
+  class="event-row"
+  data-categories={event.categories.map(slug).join(' ')}
+  data-price={event.pricing.type}
+  data-area={event.venue.area ? slug(event.venue.area) : ''}
+>
   <div class="event-time">{time}</div>
   <div class="event-main">
     <a class="event-title" href={`/events/${event.slug}/`}>{event.title}</a>
-    <div class="event-meta">{event.venue.name}{event.venue.area ? ` · ${event.venue.area}` : ''}</div>
+    <div class="event-meta">{event.venue.name}{showArea ? ` · ${event.venue.area}` : ''}</div>
     <div class="event-tags">
       {event.categories.map((category) => <span>{category}</span>)}
       {event.verificationStatus === 'review' && <span class="community">Source reported</span>}

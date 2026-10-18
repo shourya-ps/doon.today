@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 const { title = 'doon.today', description = 'A semi-curated calendar of things happening in Dehradun.' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const current = (href: string) => (path === href || (href !== '/' && path.startsWith(`${href}/`)) ? 'page' : undefined);
 ---
 <!doctype html>
 <html lang="en">
@@ -18,9 +20,9 @@ const { title = 'doon.today', description = 'A semi-curated calendar of things h
       <div class="shell nav-wrap">
         <a class="brand" href="/">doon.today</a>
         <nav aria-label="Primary navigation">
-          <a aria-current="page" href="/">Events</a>
-          <a href="/calendars">Calendars</a>
-          <a href="/about">About</a>
+          <a aria-current={path === '/' || path.startsWith('/events') ? 'page' : undefined} href="/">Events</a>
+          <a aria-current={current('/calendars')} href="/calendars">Calendars</a>
+          <a aria-current={current('/about')} href="/about">About</a>
         </nav>
       </div>
     </header>

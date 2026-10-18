@@ -120,7 +120,8 @@
     "venue": {
       "name": "Underdoggs | Hathibarkala Salwala, Dehradun",
       "address": "Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Hathibarkala"
     },
     "categories": [
       "Food"
@@ -157,7 +158,8 @@
     "venue": {
       "name": "The Annfield Lawn: Dehradun",
       "address": "Kotwali Bypass Rd, Fatehpur, Vikasnagar, Dehradun, Uttarakhand 248198, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Vikasnagar"
     },
     "categories": [
       "Culture"
@@ -193,7 +195,8 @@
     "venue": {
       "name": "Studio XO | Rajpur, Dehradun",
       "address": "Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Rajpur"
     },
     "categories": [
       "Live shows"
@@ -273,7 +276,8 @@
     "venue": {
       "name": "Himalayan Cultural Centre — Auditorium",
       "address": "Garhi Cantt",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
     },
     "categories": [
       "Music"
@@ -309,7 +313,8 @@
     "venue": {
       "name": "Institute Of Hotel Management: Dehradun",
       "address": "Near, ONGC Helipad Rd, Garhi Cantt, Dehradun, Uttarakhand 248003, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
     },
     "categories": [
       "Culture"
@@ -382,7 +387,8 @@
     "venue": {
       "name": "Bannu School Ground: Dehradun",
       "address": "64/2, Race Course Road, Guru Nanak Vihar, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Race Course"
     },
     "categories": [
       "Culture"
@@ -460,7 +466,8 @@
     "venue": {
       "name": "Basque | Malsi, Dehradun",
       "address": "Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Malsi"
     },
     "categories": [
       "Other"
@@ -496,7 +503,8 @@
     "venue": {
       "name": "Diablo Dehradun: Dehradun",
       "address": "5th Floor, Municipal No. 205, The Stallion, Rajpur Road, IAS Officers Colony, Rajpur, Dehradun, Uttarakhand 248009, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Rajpur"
     },
     "categories": [
       "Comedy"
@@ -532,7 +540,8 @@
     "venue": {
       "name": "Graphic Era Deemed to be University",
       "address": "566/6, Bell Road, Society Area, Clement Town, Dehradun, Uttarakhand 248002, India, Dehradun, UK",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Clement Town"
     },
     "categories": [
       "Community"
@@ -643,7 +652,8 @@
     "venue": {
       "name": "Chica | Rajpur, Dehradun",
       "address": "Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Rajpur"
     },
     "categories": [
       "Live shows"
@@ -826,7 +836,8 @@
     "venue": {
       "name": "IRDT Auditorium: Dehradun",
       "address": "Near, Survey Chowk, Race Course, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Race Course"
     },
     "categories": [
       "Comedy"
@@ -898,7 +909,8 @@
     "venue": {
       "name": "Hyatt Regency Dehradun Resort and Spa",
       "address": "Forest Edge, Mussoorie Rd, Salan Gaon, Malsi, Dehradun, Danion Ka Danda, Uttarakhand 248009, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Malsi"
     },
     "categories": [
       "Other"
@@ -977,7 +989,8 @@
     "venue": {
       "name": "IRDT Auditorium: Dehradun",
       "address": "Near, Survey Chowk, Race Course, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
+      "city": "Dehradun",
+      "area": "Race Course"
     },
     "categories": [
       "Other"

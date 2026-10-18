@@ -88,10 +88,38 @@ const CATEGORY_RULES = [
   ['Community', ['meetup','community','social club']]
 ].map(([category, terms]) => [category, wordMatcher(terms)]);
 
+export const CATEGORY_NAMES = [...CATEGORY_RULES.map(([category]) => category), 'Live shows', 'Other'];
+
 const LIVE_RE = new RegExp(`(?<![a-z0-9])live(?![a-z0-9])|(?<!walking |heritage |city |food |bus |temple |village )(?<![a-z0-9])tours?(?![a-z0-9])`, 'i');
 
 export function categoryFromText(text='') {
   const out = CATEGORY_RULES.filter(([, re]) => re.test(text)).map(([category]) => category);
   if (out.length === 0 && LIVE_RE.test(text)) out.push('Live shows');
   return out.length ? out : ['Other'];
+}
+
+// Neighbourhoods and roads of Dehradun, for the "area" shown on events and used by the area filter.
+// Sources rarely give an area, so it is read from the address (or venue name) when they don't.
+const AREAS = [
+  ['Rajpur', ['rajpur road', 'rajpur']],
+  ['Dalanwala', ['dalanwala']],
+  ['Hathibarkala', ['hathibarkala']],
+  ['Jakhan', ['jakhan']],
+  ['Malsi', ['malsi']],
+  ['Clement Town', ['clement town']],
+  ['Race Course', ['race course']],
+  ['Kaulagarh', ['kaulagarh']],
+  ['Prem Nagar', ['prem nagar']],
+  ['Sahastradhara', ['sahastradhara']],
+  ['Ballupur', ['ballupur']],
+  ['GMS Road', ['gms road']],
+  ['Clock Tower', ['clock tower']],
+  ['Paltan Bazaar', ['paltan bazaar']],
+  ['Garhi Cantt', ['garhi cantt']],
+  ['Niranjanpur', ['niranjanpur']],
+  ['Vikasnagar', ['vikasnagar']]
+].map(([name, terms]) => [name, wordMatcher(terms)]);
+
+export function areaFromText(text = '') {
+  return AREAS.find(([, re]) => re.test(text))?.[0];
 }

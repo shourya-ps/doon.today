@@ -151,3 +151,14 @@ test('SEQUENCE and modifiedAt move only when an event really changes',async t=>{
   await mergeAndWrite([incoming({startAt:'2030-01-10T19:00:00+05:30'})]);
   assert.equal((await read())[0].sequence,1,'unchanged again');
 });
+
+test('venue.area is filled from the address when a source gives none',async t=>{
+  await inTempDir(t);
+  await fs.writeFile('data/events.json','[]');
+  const withAddress=ev({id:'a1',title:'Race Course Gig',venue:{name:'Parade Hall',address:'64/2, Race Course Road, Dehradun',city:'Dehradun'},sources:[src('district','https://example.test/a1')]});
+  const given=ev({id:'a2',title:'Kept Area Show',startAt:'2030-01-12T18:00:00+05:30',venue:{name:'Hall',address:'Malsi, Dehradun',area:'Custom Area',city:'Dehradun'},sources:[src('district','https://example.test/a2')]});
+  await mergeAndWrite([{source:'district',events:[withAddress,given]}]);
+  const out=await read();
+  assert.equal(out.find(e=>e.id==='a1').venue.area,'Race Course');
+  assert.equal(out.find(e=>e.id==='a2').venue.area,'Custom Area');
+});
