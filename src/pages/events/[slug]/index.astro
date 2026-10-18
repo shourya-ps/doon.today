@@ -7,9 +7,41 @@ export function getStaticPaths() {
 }
 
 const { event } = Astro.props;
+const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(event.startAt);
 const start = new Date(event.startAt);
-const date = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(start);
-const time = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(start);
+const date = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(
+  dateOnly ? new Date(`${event.startAt}T12:00:00+05:30`) : start
+);
+const time = dateOnly
+  ? 'Time TBA'
+  : new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(start);
+
+const location = [event.venue.name,event.venue.address,event.venue.area,'Dehradun'].filter(Boolean).join(', ');
+
+function googleDateRange() {
+  if (dateOnly) {
+    const startDay = event.startAt.replace(/-/g,'');
+    const d = new Date(`${event.startAt}T00:00:00Z`);
+    d.setUTCDate(d.getUTCDate()+1);
+    const endDay = d.toISOString().slice(0,10).replace(/-/g,'');
+    return `${startDay}/${endDay}`;
+  }
+  const fmt=(iso)=>new Date(iso).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+  const startAt = fmt(event.startAt);
+  const endAt = event.endAt && !/^\d{4}-\d{2}-\d{2}$/.test(event.endAt)
+    ? fmt(event.endAt)
+    : fmt(new Date(new Date(event.startAt).getTime()+2*60*60*1000).toISOString());
+  return `${startAt}/${endAt}`;
+}
+
+const googleParams = new URLSearchParams({
+  action:'TEMPLATE',
+  text:event.title,
+  dates:googleDateRange(),
+  details:event.description || `More details: https://doon.today/events/${event.slug}/`,
+  location
+});
+const googleCalendarUrl=`https://calendar.google.com/calendar/render?${googleParams.toString()}`;
 ---
 <BaseLayout title={`${event.title} — doon.today`}>
   <article class="detail">
@@ -21,9 +53,17 @@ const time = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digi
       <div><dt>Where</dt><dd>{event.venue.name}{event.venue.area ? <><br />{event.venue.area}</> : null}</dd></div>
       <div><dt>Price</dt><dd>{event.pricing.type === 'free' ? 'Free' : event.pricing.minPrice ? `From ₹${event.pricing.minPrice}` : 'Check source'}</dd></div>
     </dl>
+
+    <div class="event-actions" style="display:flex;flex-wrap:wrap;gap:.75rem;margin:1.5rem 0 2rem">
+      <a class="primary-link" href={`/events/${event.slug}.ics`}>Add to calendar</a>
+      <a class="primary-link" href={googleCalendarUrl} target="_blank" rel="noreferrer">Google Calendar ↗</a>
+      {event.sources?.[0]?.url && <a class="primary-link" href={event.sources[0].url} target="_blank" rel="noreferrer">View source ↗</a>}
+    </div>
+
     <div class="source-block">
       <h2>Source</h2>
       {event.sources.map((source) => <p><a href={source.url}>{source.provider}</a> · checked {new Date(source.checkedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>)}
+      {event.verificationStatus === 'review' && <p class="notice">Source reported — details come from an aggregator; confirm with the source before travelling.</p>}
       {event.verificationStatus === 'community-reported' && <p class="notice">Community reported — verify details with the organizer before travelling.</p>}
     </div>
   </article>

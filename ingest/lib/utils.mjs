@@ -18,17 +18,59 @@ export function parseMoney(text='') {
   if (/\bfree\b/i.test(text)) return {type:'free', currency:'INR'};
   return m ? {type:'paid', minPrice:Number(m[1]), currency:'INR'} : {type:'unknown', currency:'INR'};
 }
+
+const DEHRADUN_TERMS = [
+  'dehradun','dehra dun','rajpur','dalanwala','hathibarkala','jakhan','malsi','clement town',
+  'race course','kaulagarh','prem nagar','sahastradhara','raipur','ballupur','gms road',
+  'clock tower','paltan bazaar','doon library','garhi cantt','niranjanpur','vikasnagar'
+];
+
+const OUTSIDE_TERMS = [
+  'rishikesh','haridwar','roorkee','chandigarh','delhi','gurugram','noida','mumbai','bengaluru',
+  'bangalore','pune','kolkata','jaipur','lucknow','hyderabad','chennai','goa','paris','france',
+  'dubai','london','singapore','thailand','nepal'
+];
+
 export function isDehradunText(text='') {
   const s = text.toLowerCase();
-  const positive = ['dehradun','rajpur','dalanwala','hathibarkala','hathibarkala','jakhan','malsi','clement town','race course','kaulagarh','prem nagar','sahastradhara','raipur','ballupur','gms road','clock tower','paltan bazaar','doon library'];
-  const negative = ['rishikesh','haridwar','mussoorie','roorkee','chandigarh','delhi','gurugram','noida','mumbai','bengaluru','bangalore','pune','kolkata'];
-  if (negative.some(x => s.includes(x)) && !s.includes('dehradun')) return false;
-  return positive.some(x => s.includes(x));
+  return DEHRADUN_TERMS.some(x => s.includes(x));
 }
+
+export function hasOutsideGeo(text='') {
+  const s = text.toLowerCase();
+  return OUTSIDE_TERMS.some(x => s.includes(x));
+}
+
+export function isLikelyDehradunEvent({title='', description='', venueName='', address='', city=''}) {
+  const semantic = `${title} ${description}`.toLowerCase();
+  const venue = `${venueName} ${address} ${city}`.toLowerCase();
+
+  if (hasOutsideGeo(semantic) && !isDehradunText(semantic)) return false;
+  return isDehradunText(venue) || isDehradunText(semantic);
+}
+
+export function eventPassesGeo(e) {
+  return isLikelyDehradunEvent({
+    title: e?.title,
+    description: e?.description,
+    venueName: e?.venue?.name,
+    address: e?.venue?.address,
+    city: e?.venue?.city
+  });
+}
+
 export function categoryFromText(text='') {
   const s=text.toLowerCase();
   const rules=[
-    ['Comedy',['comedy','stand up','stand-up','open mic']],['Music',['music','concert','gig','live band','dj']],['Books',['book','literature','poetry','reading']],['Outdoors',['run','marathon','walk','hike','trek','bird','cycling']],['Art',['art','paint','exhibition','gallery']],['Workshop',['workshop','masterclass']],['Film',['film','cinema','screening']],['Culture',['dandiya','garba','heritage','culture','folk','festival']],['Community',['meetup','community','social club']]
+    ['Comedy',['comedy','stand up','stand-up','open mic']],
+    ['Music',['music','concert','gig','live band','dj']],
+    ['Books',['book','literature','poetry','reading']],
+    ['Outdoors',['run','marathon','walk','hike','trek','bird','cycling']],
+    ['Art',['art','paint','exhibition','gallery']],
+    ['Workshop',['workshop','masterclass']],
+    ['Film',['film','cinema','screening']],
+    ['Culture',['dandiya','garba','heritage','culture','folk','festival']],
+    ['Community',['meetup','community','social club']]
   ];
   const out=rules.filter(([,ks])=>ks.some(k=>s.includes(k))).map(([c])=>c);
   return out.length ? [...new Set(out)] : ['Other'];

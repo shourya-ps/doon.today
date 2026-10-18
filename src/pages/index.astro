@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EventRow from '../components/EventRow.astro';
 import { events } from '../data/events';
+import { ingestStatus } from '../data/status';
 
 const published = events
   .filter((event) => event.curation.status === 'published')
@@ -28,6 +29,9 @@ const lastChecked = published.map(e => new Date(e.lastCheckedAt).getTime()).filt
       <h2>Curated</h2><span>{published.length}</span>
       {lastChecked && <small>Checked {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(lastChecked)}</small>}
     </div>
+    {ingestStatus.health === 'degraded' && (
+      <p class="source-health">Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.</p>
+    )}
     <div id="empty-state" class="empty-state" hidden>No events found for this view yet.</div>
     {[...grouped.entries()].map(([day, dayEvents]) => (
       <section class="day-group" data-date={day}>

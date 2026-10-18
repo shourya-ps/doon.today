@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { slugify } from './lib/utils.mjs';
+import { slugify, eventPassesGeo } from './lib/utils.mjs';
 
 const SOURCE_RANK = {
   manual: 100,
@@ -51,24 +51,24 @@ export async function mergeAndWrite(results) {
   let previous=[];
   try { previous=JSON.parse(await fs.readFile('data/events.json','utf8')); } catch {}
 
+  previous = previous.filter(eventPassesGeo);
+
   const current=[];
   for (const r of results) {
     for (const incoming of r.events || []) {
+      if (!eventPassesGeo(incoming)) continue;
       const idx=current.findIndex(existing => sameEvent(existing,incoming));
       if (idx >= 0) current[idx]=mergePair(current[idx],incoming);
       else current.push(incoming);
     }
   }
 
-  // Preserve stable IDs/firstSeenAt by merging current observations against previous records.
   const merged=[];
   for (const incoming of current) {
     const old=previous.find(e => sameEvent(e,incoming));
     merged.push(old ? mergePair(old,incoming) : incoming);
   }
 
-  // A transient scraper failure must not erase a future event. Keep the last good record
-  // until the event passes; future versions can add multi-run stale/cancelled semantics.
   const now=Date.now();
   for (const e of previous) {
     if (new Date(e.startAt).getTime() <= now) continue;
@@ -76,6 +76,7 @@ export async function mergeAndWrite(results) {
   }
 
   const out=merged
+    .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => new Date(e.startAt).getTime() > now - 6*3600_000)
     .sort((a,b)=>a.startAt.localeCompare(b.startAt));
