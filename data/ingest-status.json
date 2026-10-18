@@ -1,22 +1,26 @@
 {
-  "ranAt": "2026-10-18T07:31:28.095Z",
+  "ranAt": "2026-10-18T08:05:55.410Z",
+  "ran": [
+    "district",
+    "bookmyshow"
+  ],
   "sources": {
     "district": {
-      "status": "failed",
-      "error": "Error: 403 Forbidden from https://www.district.in/events/upcoming-events-in-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:20:13",
+      "status": "ok",
+      "events": 12,
+      "review": 0,
       "diagnostics": {
-        "status": 403,
-        "requestedUrl": "https://www.district.in/events/upcoming-events-in-dehradun",
-        "finalUrl": "https://www.district.in/events/upcoming-events-in-dehradun",
-        "contentType": "text/html",
-        "server": null,
-        "cacheStatus": null,
-        "retryAfter": null
-      }
+        "listingBytes": 217737,
+        "candidates": 12,
+        "eventsParsed": 12
+      },
+      "lastAttemptAt": "2026-10-18T08:05:55.410Z",
+      "lastSuccessAt": "2026-10-18T08:05:55.410Z",
+      "consecutiveFailures": 0
     },
     "bookmyshow": {
       "status": "failed",
-      "error": "Error: 403 Forbidden from https://in.bookmyshow.com/explore/events-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:20:13",
+      "error": "Error: 403 Forbidden from https://in.bookmyshow.com/explore/events-dehradun\n    at fetchText (file:///Users/srijan/Workspace/playground/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async fetchBookMyShow (file:///Users/srijan/Workspace/playground/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///Users/srijan/Workspace/playground/doon.today/ingest/run.mjs:35:13",
       "diagnostics": {
         "status": 403,
         "requestedUrl": "https://in.bookmyshow.com/explore/events-dehradun",
@@ -25,7 +29,9 @@
         "server": "cloudflare",
         "cacheStatus": null,
         "retryAfter": null
-      }
+      },
+      "lastAttemptAt": "2026-10-18T08:05:55.410Z",
+      "consecutiveFailures": 1
     },
     "allevents": {
       "status": "ok",
@@ -93,13 +99,27 @@
     }
   },
   "output": {
-    "published": 30,
+    "published": 29,
     "review": 0
   },
   "health": "degraded",
-  "primarySourcesAvailable": [],
+  "primarySourcesAvailable": [
+    "district"
+  ],
   "primarySourcesExpected": [
     "district",
     "bookmyshow"
-  ]
+  ],
+  "primarySources": {
+    "district": {
+      "lastSuccessAt": "2026-10-18T08:05:55.410Z",
+      "ageHours": 0,
+      "fresh": true
+    },
+    "bookmyshow": {
+      "lastSuccessAt": null,
+      "ageHours": null,
+      "fresh": false
+    }
+  }
 }

@@ -23,7 +23,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/sanjherass-oct18-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -33,8 +33,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "a0fc62f61aeadfcf",
@@ -60,7 +60,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/rangtari-dandiya-night-oct17-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -70,8 +70,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "a7a70335784444a4",
@@ -97,7 +97,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/-ministry-of-sound-presents-grand-dandiya-celebration--oct18-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -107,43 +107,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
-  },
-  {
-    "id": "sanjh-e-rass-2026-10-18",
-    "slug": "sanjh-e-rass",
-    "title": "Sanjh-E-Rass",
-    "startAt": "2026-10-18T15:00:00+05:30",
-    "venue": {
-      "name": "J P Plaza & Garden",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Culture",
-      "Festive"
-    ],
-    "pricing": {
-      "type": "paid",
-      "minPrice": 799,
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "district",
-        "url": "https://www.district.in/events/upcoming-events-in-dehradun",
-        "checkedAt": "2026-10-18T08:00:00+05:30",
-        "confidence": 0.95
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 7
-    },
-    "firstSeenAt": "2026-10-18T08:00:00+05:30",
-    "lastSeenAt": "2026-10-18T08:00:00+05:30",
-    "lastCheckedAt": "2026-10-18T08:00:00+05:30"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "a4f31eb6153cdeff",
@@ -169,7 +134,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun-may4-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -179,8 +144,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "7be0e7530a818fb5",
@@ -242,7 +207,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/kiran-bajwa-live-oct23-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -252,8 +217,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "yellow-diary-2026-10-23",
@@ -283,7 +248,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/the-yellow-diary-icwf-tour-dehradune-oct24-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -293,8 +258,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T08:00:00+05:30",
-    "lastCheckedAt": "2026-10-18T08:00:00+05:30",
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z",
     "description": "",
     "endAt": "2026-10-23T18:29:00.000Z"
   },
@@ -395,7 +360,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/jalsa-the-dandiya-festival-2026-oct24-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -405,8 +370,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "32e35b4793d08a95",
@@ -510,7 +475,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/dark-side-of-basque-og-shez-katch-jerry-oct30-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -520,8 +485,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "96297d668f206584",
@@ -619,7 +584,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/ghar-an-open-mic-for-words-by-tape-a-tale-dehradun-apr19-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -629,8 +594,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "8033fa76e24f930a",
@@ -656,7 +621,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/tla-unscripted-oct31-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -666,8 +631,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "5c236c81f43b60ca",
@@ -693,7 +658,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/litchi-india-tour-oct31-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.462Z",
+        "checkedAt": "2026-10-18T08:05:56.915Z",
         "confidence": 0.95
       }
     ],
@@ -703,8 +668,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastCheckedAt": "2026-10-18T07:29:45.462Z"
+    "lastSeenAt": "2026-10-18T08:05:56.915Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.915Z"
   },
   {
     "id": "c44fbdc5a7afacd7",
@@ -982,7 +947,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/dehradun-literature-festival-2026-buy-tickets",
-        "checkedAt": "2026-10-18T07:29:45.461Z",
+        "checkedAt": "2026-10-18T08:05:56.914Z",
         "confidence": 0.95
       },
       {
@@ -998,8 +963,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.461Z",
-    "lastSeenAt": "2026-10-18T07:31:35.968Z",
-    "lastCheckedAt": "2026-10-18T07:31:35.968Z"
+    "lastSeenAt": "2026-10-18T08:05:56.914Z",
+    "lastCheckedAt": "2026-10-18T08:05:56.914Z"
   },
   {
     "id": "5a0be2a175cd6a49",
