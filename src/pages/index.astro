@@ -9,7 +9,7 @@ const published = events
   .sort((a, b) => a.startAt.localeCompare(b.startAt));
 const grouped = Map.groupBy(published, (event) => event.startAt.slice(0, 10));
 const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
-const lastChecked = published.map(e => new Date(e.lastCheckedAt).getTime()).filter(Number.isFinite).sort((a,b)=>b-a)[0];
+const refreshedAt = Date.parse(ingestStatus.ranAt);
 ---
 <BaseLayout title="doon.today — What's happening in Dehradun">
   <section class="hero">
@@ -27,7 +27,7 @@ const lastChecked = published.map(e => new Date(e.lastCheckedAt).getTime()).filt
   <section class="curated">
     <div class="section-heading">
       <h2>Curated</h2><span>{published.length}</span>
-      {lastChecked && <small>Checked {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(lastChecked)}</small>}
+      {Number.isFinite(refreshedAt) && <small>Data refreshed {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(refreshedAt)}</small>}
     </div>
     {ingestStatus.health === 'degraded' && (
       <p class="source-health">Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.</p>
