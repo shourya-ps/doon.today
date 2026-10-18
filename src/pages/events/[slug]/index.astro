@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { events } from '../../../data/events';
+import { ingestStatus } from '../../../data/status';
 
 export function getStaticPaths() {
   return events.filter(e => e.curation.status === 'published').map((event) => ({ params: { slug: event.slug }, props: { event } }));
@@ -45,6 +46,10 @@ const googleParams = new URLSearchParams({
   location
 });
 const googleCalendarUrl=`https://calendar.google.com/calendar/render?${googleParams.toString()}`;
+const sourceUnavailable = ingestStatus.health === 'degraded' && event.sources?.some((source) =>
+  ingestStatus.primarySourcesExpected?.includes(source.provider) &&
+  !ingestStatus.primarySourcesAvailable?.includes(source.provider)
+);
 ---
 <BaseLayout title={`${event.title} — doon.today`}>
   <article class="detail">
@@ -66,6 +71,7 @@ const googleCalendarUrl=`https://calendar.google.com/calendar/render?${googlePar
     <div class="source-block">
       <h2>Source</h2>
       {event.sources.map((source) => <p><a href={source.url}>{source.provider}</a> · checked {new Date(source.checkedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>)}
+      {sourceUnavailable && <p class="notice">This source was unavailable during the latest data refresh. These details were last checked {new Date(event.lastCheckedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}; confirm them with the source before travelling.</p>}
       {event.verificationStatus === 'review' && <p class="notice">Source reported — details come from an aggregator; confirm with the source before travelling.</p>}
       {event.verificationStatus === 'community-reported' && <p class="notice">Community reported — verify details with the organizer before travelling.</p>}
     </div>
