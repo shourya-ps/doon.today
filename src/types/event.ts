@@ -46,4 +46,6 @@ export interface EventRecord {
   firstSeenAt: string;
   lastSeenAt: string;
   lastCheckedAt: string;
+  // Successful runs of all of this event's sources in a row that did not list it; it is dropped at 3.
+  missedRuns?: number;
 }

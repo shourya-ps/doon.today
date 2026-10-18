@@ -66,3 +66,71 @@ test('a run without Reddit leaves the Reddit review queue alone',async t=>{
   assert.equal(withReddit.review,0);
   assert.equal(JSON.parse(await fs.readFile('data/review/reddit.json','utf8')).length,0);
 });
+
+const read=async()=>JSON.parse(await fs.readFile('data/events.json','utf8'));
+const src=(provider,url,extra={})=>({provider,url,checkedAt:'2030-01-01T00:00:00Z',confidence:.9,...extra});
+
+test('an event moved to another day by its source is updated in place and keeps its id',async t=>{
+  await inTempDir(t);
+  const stored=ev({id:'keep-me',slug:'keep-me',startAt:'2030-01-10T18:00:00+05:30',sources:[src('district','https://example.test/events/doon-music-night')]});
+  await fs.writeFile('data/events.json',JSON.stringify([stored]));
+  const moved=ev({id:'new-hash',slug:'new-hash',startAt:'2030-01-17T18:00:00+05:30',lastCheckedAt:'2030-01-05T00:00:00Z',sources:[src('district','https://example.test/events/doon-music-night/?utm=x')]});
+  await mergeAndWrite([{source:'district',events:[moved]}]);
+  const out=await read();
+  assert.equal(out.length,1,'no ghost copy on the old day');
+  assert.equal(out[0].id,'keep-me','the calendar UID does not change');
+  assert.equal(out[0].startAt,'2030-01-17T18:00:00+05:30');
+});
+
+test('a URL shared by several events does not match them to each other',async t=>{
+  await inTempDir(t);
+  const listing='https://example.test/events';
+  const a=ev({id:'a',title:'Alpha Show',sources:[src('district',listing)]});
+  const b=ev({id:'b',title:'Bravo Gig',startAt:'2030-01-11T18:00:00+05:30',sources:[src('district',listing)]});
+  await fs.writeFile('data/events.json',JSON.stringify([a,b]));
+  const incoming=ev({id:'c',title:'Charlie Night',startAt:'2030-01-12T18:00:00+05:30',sources:[src('district',listing)]});
+  await mergeAndWrite([{source:'district',events:[incoming,{...incoming,id:'d',title:'Delta Fest',startAt:'2030-01-13T18:00:00+05:30'}]}]);
+  const ids=(await read()).map(e=>e.id).sort();
+  assert.deepEqual(ids,['a','b','c','d']);
+});
+
+test('an event its source stops listing is dropped after three successful runs',async t=>{
+  await inTempDir(t);
+  const gone=ev({id:'gone',title:'Cancelled Show',sources:[src('district','https://example.test/events/cancelled')]});
+  const other=ev({id:'other',title:'Still On',startAt:'2030-01-12T18:00:00+05:30',sources:[src('district','https://example.test/events/still-on')]});
+  await fs.writeFile('data/events.json',JSON.stringify([gone,other]));
+  const run=()=>mergeAndWrite([{source:'district',events:[{...other}]}]);
+
+  await run();
+  let out=await read();
+  assert.equal(out.find(e=>e.id==='gone').missedRuns,1);
+  await run();
+  assert.equal((await read()).find(e=>e.id==='gone').missedRuns,2);
+  const counts=await run();
+  out=await read();
+  assert.equal(out.some(e=>e.id==='gone'),false,'dropped on the third miss');
+  assert.equal(counts.dropped,1);
+  assert.equal(out.some(e=>e.id==='other'),true);
+  assert.equal(out.find(e=>e.id==='other').missedRuns,undefined);
+});
+
+test('misses are not counted when a source did not run, or returned nothing',async t=>{
+  await inTempDir(t);
+  const stored=ev({id:'dist',sources:[src('district','https://example.test/events/a')]});
+  await fs.writeFile('data/events.json',JSON.stringify([stored]));
+  for (let i=0;i<5;i++) await mergeAndWrite([{source:'allevents',events:[ev({id:'x',title:'Unrelated Show',startAt:'2030-02-01T18:00:00+05:30',sources:[src('allevents','https://example.test/x')]})]}]);
+  assert.equal((await read()).find(e=>e.id==='dist').missedRuns,undefined,'District did not run');
+  for (let i=0;i<5;i++) await mergeAndWrite([{source:'district',events:[]}]);
+  assert.equal((await read()).find(e=>e.id==='dist').missedRuns,undefined,'an empty answer proves nothing');
+});
+
+test('an event seen again resets its miss count, and every source must run before it is counted',async t=>{
+  await inTempDir(t);
+  const shared=ev({id:'both',missedRuns:2,sources:[src('district','https://example.test/events/b'),src('allevents','https://example.test/b')]});
+  const filler=(provider)=>({source:provider,events:[ev({id:`f-${provider}`,title:`Filler ${provider}`,startAt:'2030-03-01T18:00:00+05:30',sources:[src(provider,`https://example.test/${provider}`)]})]});
+  await fs.writeFile('data/events.json',JSON.stringify([shared]));
+  await mergeAndWrite([filler('allevents')]);
+  assert.equal((await read()).find(e=>e.id==='both').missedRuns,2,'District did not run, so the count is unchanged');
+  await mergeAndWrite([{source:'district',events:[{...shared,sources:[src('district','https://example.test/events/b')]}]}]);
+  assert.equal((await read()).find(e=>e.id==='both').missedRuns,undefined,'listed again, so the count resets');
+});
