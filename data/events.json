@@ -106,6 +106,44 @@
     "lastCheckedAt": "2026-10-18T08:00:00+05:30"
   },
   {
+    "id": "d324233f60708895",
+    "slug": "virasat-2026-inaugural-concert-by-sajan-misra-and-swaransh-misra",
+    "title": "Virasat 2026: Inaugural Concert by Sajan Misra and Swaransh Misra",
+    "description": "Ticketed opening-night concert at Virasat 2026. Confirm current details and auditorium ticket availability on the official programme.",
+    "startAt": "2026-10-23T21:00:00+05:30",
+    "endAt": "2026-10-23T23:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-1",
+        "externalId": "2026-1-inaugural-concert-by-sajan-misra-and-swaransh-misra",
+        "checkedAt": "2026-10-18T07:10:00.000Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-18T07:10:00.000Z",
+    "lastSeenAt": "2026-10-18T07:10:00.000Z",
+    "lastCheckedAt": "2026-10-18T07:10:00.000Z"
+  },
+  {
     "id": "1aa83c22aaf0a117",
     "slug": "dandiya-night-with-celebrities-at-dehradun",
     "title": "Dandiya Night with Celebrities at Dehradun",

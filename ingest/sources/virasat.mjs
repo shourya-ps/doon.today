@@ -38,11 +38,13 @@ export function parseVirasatProgramme(programme,tickets,checkedAt=nowIso()) {
       headlineCandidates++;
       const title=stripHtml(article[2].match(/<div\s+class=["']sx-title["']>([\s\S]*?)<\/div>/i)?.[1]||'');
       const timeText=stripHtml(article[2].match(/<div\s+class=["']sx-time["']>([\s\S]*?)<\/div>/i)?.[1]||'');
-      const times=timeText.match(/(\d{1,2}:\d{2}\s*[AP]M)\s+to\s+(\d{1,2}:\d{2}\s*[AP]M)/i);
-      if(!title || !times) continue;
-      const startAt=localDateTime(year,month,day,times[1]);
-      const endAt=localDateTime(year,month,day,times[2]);
-      if(!startAt || !endAt || new Date(endAt)<=new Date(startAt)) continue;
+      const startTime=timeText.match(/\b\d{1,2}:\d{2}\s*[AP]M\b/i)?.[0];
+      const endTime=timeText.match(/\bto\s+(\d{1,2}:\d{2}\s*[AP]M)\b/i)?.[1];
+      if(!title || !startTime) continue;
+      const startAt=localDateTime(year,month,day,startTime);
+      const parsedEnd=endTime ? localDateTime(year,month,day,endTime) : null;
+      const endAt=parsedEnd && new Date(parsedEnd)>new Date(startAt) ? parsedEnd : undefined;
+      if(!startAt) continue;
       const fullTitle=`Virasat ${year}: ${title}`;
       const sourceUrl=`${PROGRAMME}#day-${dayNumber}`;
       const categories=category==='dance'||category==='folk' ? ['Culture'] : ['Music','Culture'];
@@ -51,7 +53,7 @@ export function parseVirasatProgramme(programme,tickets,checkedAt=nowIso()) {
         slug:slugify(fullTitle),
         title:fullTitle,
         description:`Ticketed ${category} performance at Virasat ${year}. Check the official programme and ticket page for details.`,
-        startAt,endAt,
+        startAt,...(endAt ? {endAt} : {}),
         venue:{name:`${venue} — Auditorium`,address:'Garhi Cantt',city:'Dehradun'},
         categories,
         pricing:{type:'paid',currency:'INR'},

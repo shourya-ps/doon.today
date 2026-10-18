@@ -7,4 +7,5 @@ export const ingestStatus = rawStatus as {
   health?: IngestHealth;
   primarySourcesAvailable?: string[];
   primarySourcesExpected?: string[];
+  sources?: Record<string, {status: 'ok' | 'failed'}>;
 };

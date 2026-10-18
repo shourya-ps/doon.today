@@ -46,10 +46,7 @@ const googleParams = new URLSearchParams({
   location
 });
 const googleCalendarUrl=`https://calendar.google.com/calendar/render?${googleParams.toString()}`;
-const sourceUnavailable = ingestStatus.health === 'degraded' && event.sources?.some((source) =>
-  ingestStatus.primarySourcesExpected?.includes(source.provider) &&
-  !ingestStatus.primarySourcesAvailable?.includes(source.provider)
-);
+const sourceUnavailable = event.sources?.some((source) => ingestStatus.sources?.[source.provider]?.status === 'failed');
 ---
 <BaseLayout title={`${event.title} — doon.today`}>
   <article class="detail">

@@ -17,6 +17,8 @@ test('Virasat imports only dated, ticketed headline performances',async()=>{
   assert.deepEqual(result.events.map(event=>event.title),['Virasat 2026: Inaugural Concert','Virasat 2026: Doon Dance']);
   assert.equal(result.events[0].startAt,'2026-10-23T21:00:00+05:30');
   assert.equal(result.events[0].endAt,'2026-10-23T23:00:00+05:30');
+  assert.equal(result.events[1].startAt,'2026-10-24T19:30:00+05:30');
+  assert.equal(result.events[1].endAt,undefined);
   assert.equal(result.events[0].venue.city,'Dehradun');
   assert.equal(result.events[0].sources[0].url,'https://reachvirasat.org/programme#day-1');
   assert.equal(result.events[0].verificationStatus,'verified');

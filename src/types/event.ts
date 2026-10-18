@@ -3,6 +3,7 @@ export type EventSourceProvider =
   | 'bookmyshow'
   | 'allevents'
   | 'townscript'
+  | 'virasat'
   | 'reddit'
   | 'manual';
 
