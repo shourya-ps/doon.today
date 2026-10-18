@@ -21,6 +21,20 @@ function similarity(a='', b='') {
 function sourceRank(e) {
   return Math.max(0, ...(e.sources || []).map(s => SOURCE_RANK[s.provider] || 0));
 }
+function eventTimestamp(e) {
+  return Math.max(
+    ...[e.lastCheckedAt, e.lastSeenAt, e.firstSeenAt]
+      .map(value => Date.parse(value || ''))
+      .filter(Number.isFinite),
+    0
+  );
+}
+function verificationStatus(sources=[]) {
+  const providers=new Set(sources.map(source => source.provider));
+  if (['manual','district','bookmyshow','townscript'].some(provider => providers.has(provider))) return 'verified';
+  if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
+  return 'review';
+}
 function sameEvent(a,b) {
   if (!a?.startAt || !b?.startAt) return false;
   if (a.startAt.slice(0,10) !== b.startAt.slice(0,10)) return false;
@@ -30,7 +44,7 @@ function sameEvent(a,b) {
 }
 function sourceKey(s){ return `${s.provider}|${s.url}`; }
 function mergePair(a,b) {
-  const preferred = sourceRank(b) > sourceRank(a) ? b : a;
+  const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
   const sources=[...(a.sources||[]),...(b.sources||[])];
   const unique=[...new Map(sources.map(s=>[sourceKey(s),s])).values()];
@@ -40,6 +54,7 @@ function mergePair(a,b) {
     id: a.id || b.id,
     slug: a.slug || b.slug || slugify(preferred.title),
     sources: unique,
+    verificationStatus: verificationStatus(unique),
     firstSeenAt: [a.firstSeenAt,b.firstSeenAt].filter(Boolean).sort()[0],
     lastSeenAt: [a.lastSeenAt,b.lastSeenAt].filter(Boolean).sort().at(-1),
     lastCheckedAt: [a.lastCheckedAt,b.lastCheckedAt].filter(Boolean).sort().at(-1),
@@ -59,7 +74,7 @@ export async function mergeAndWrite(results) {
       if (!eventPassesGeo(incoming)) continue;
       const idx=current.findIndex(existing => sameEvent(existing,incoming));
       if (idx >= 0) current[idx]=mergePair(current[idx],incoming);
-      else current.push(incoming);
+      else current.push({...incoming, verificationStatus: verificationStatus(incoming.sources)});
     }
   }
 
@@ -72,7 +87,7 @@ export async function mergeAndWrite(results) {
   const now=Date.now();
   for (const e of previous) {
     if (new Date(e.startAt).getTime() <= now) continue;
-    if (!merged.some(x => sameEvent(x,e))) merged.push(e);
+    if (!merged.some(x => sameEvent(x,e))) merged.push({...e, verificationStatus: verificationStatus(e.sources)});
   }
 
   const out=merged
