@@ -5,9 +5,12 @@ import {fetchReddit} from './sources/reddit.mjs';
 import {fetchAllEvents} from './sources/allevents.mjs';
 import {fetchTownscript} from './sources/townscript.mjs';
 import {fetchVirasat} from './sources/virasat.mjs';
+import {fetchThrillZone} from './sources/thrillzone.mjs';
+import {fetchLiteratureFestival} from './sources/literaturefestival.mjs';
+import {fetchMeetup} from './sources/meetup.mjs';
 import {mergeAndWrite} from './merge.mjs';
 
-const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchVirasat,fetchReddit];
+const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchVirasat,fetchThrillZone,fetchLiteratureFestival,fetchMeetup,fetchReddit];
 const results=[];
 const status={ranAt:new Date().toISOString(),sources:{}};
 

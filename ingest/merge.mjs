@@ -7,6 +7,9 @@ const SOURCE_RANK = {
   bookmyshow: 95,
   townscript: 85,
   virasat: 90,
+  thrillzone: 90,
+  literaturefestival: 90,
+  meetup: 85,
   allevents: 75,
   reddit: 50
 };
@@ -32,7 +35,7 @@ function eventTimestamp(e) {
 }
 function verificationStatus(sources=[]) {
   const providers=new Set(sources.map(source => source.provider));
-  if (['manual','district','bookmyshow','townscript','virasat'].some(provider => providers.has(provider))) return 'verified';
+  if (['manual','district','bookmyshow','townscript','virasat','thrillzone','literaturefestival','meetup'].some(provider => providers.has(provider))) return 'verified';
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }
@@ -48,7 +51,8 @@ function mergePair(a,b) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
   const sources=[...(a.sources||[]),...(b.sources||[])];
-  const unique=[...new Map(sources.map(s=>[sourceKey(s),s])).values()];
+  const unique=[...new Map(sources.map(s=>[sourceKey(s),s])).values()]
+    .sort((x,y)=>(SOURCE_RANK[y.provider]||0)-(SOURCE_RANK[x.provider]||0));
   return {
     ...secondary,
     ...preferred,

@@ -4,6 +4,9 @@ export type EventSourceProvider =
   | 'allevents'
   | 'townscript'
   | 'virasat'
+  | 'thrillzone'
+  | 'literaturefestival'
+  | 'meetup'
   | 'reddit'
   | 'manual';
 
