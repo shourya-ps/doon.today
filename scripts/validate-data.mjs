@@ -4,7 +4,7 @@ const events=JSON.parse(await fs.readFile('data/events.json','utf8'));
 const errors=[];
 const ids=new Set();
 const outside=/\b(paris|france|dubai|london|singapore|delhi|gurugram|noida|mumbai|bengaluru|bangalore|pune|kolkata|chandigarh|haridwar|rishikesh|roorkee)\b/i;
-const doon=/\b(dehradun|dehra dun|rajpur|dalanwala|jakhan|malsi|prem nagar|sahastradhara|raipur|ballupur|doon)\b/i;
+const doon=/\b(dehradun|dehra dun|rajpur|dalanwala|jakhan|malsi|prem nagar|sahastradhara|raipur road|ballupur|doon)\b/i;
 
 for(const [i,e] of events.entries()){
   for(const k of ['id','slug','title','startAt','venue','sources']) if(e[k]==null) errors.push(`[${i}] missing ${k}`);

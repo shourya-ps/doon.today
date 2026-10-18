@@ -19,32 +19,45 @@ export function parseMoney(text='') {
   return m ? {type:'paid', minPrice:Number(m[1]), currency:'INR'} : {type:'unknown', currency:'INR'};
 }
 
+// Terms are matched as whole words (see wordMatcher). Substring matching made "art" match "party",
+// "goa" match "goat" and "paris" match "parish".
 const DEHRADUN_TERMS = [
-  'dehradun','dehra dun','rajpur','dalanwala','hathibarkala','jakhan','malsi','clement town',
-  'race course','kaulagarh','prem nagar','sahastradhara','raipur','ballupur','gms road',
+  'dehradun','dehra dun','rajpur','raipur road','dalanwala','hathibarkala','jakhan','malsi','clement town',
+  'race course','kaulagarh','prem nagar','sahastradhara','ballupur','gms road',
   'clock tower','paltan bazaar','doon library','garhi cantt','niranjanpur','vikasnagar'
 ];
 
+// Raipur is a Dehradun locality and a city in Chhattisgarh, so only "Raipur Road" counts as Dehradun.
 const OUTSIDE_TERMS = [
   'rishikesh','haridwar','roorkee','chandigarh','delhi','gurugram','noida','mumbai','bengaluru',
   'bangalore','pune','kolkata','jaipur','lucknow','hyderabad','chennai','goa','paris','france',
-  'dubai','london','singapore','thailand','nepal'
+  'dubai','london','singapore','thailand','nepal','raipur','chhattisgarh'
 ];
 
+const escapeRe = (term) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+
+// Whole-word (or whole-phrase) matcher; a trailing plural "s" is allowed.
+export function wordMatcher(terms) {
+  return new RegExp(`(?<![a-z0-9])(?:${terms.map(escapeRe).join('|')})s?(?![a-z0-9])`, 'i');
+}
+
+const DEHRADUN_RE = wordMatcher(DEHRADUN_TERMS);
+const OUTSIDE_RE = wordMatcher(OUTSIDE_TERMS);
+
 export function isDehradunText(text='') {
-  const s = text.toLowerCase();
-  return DEHRADUN_TERMS.some(x => s.includes(x));
+  return DEHRADUN_RE.test(text);
 }
 
 export function hasOutsideGeo(text='') {
-  const s = text.toLowerCase();
-  return OUTSIDE_TERMS.some(x => s.includes(x));
+  return OUTSIDE_RE.test(text);
 }
 
 export function isLikelyDehradunEvent({title='', description='', venueName='', address='', city=''}) {
-  const semantic = `${title} ${description}`.toLowerCase();
-  const venue = `${venueName} ${address} ${city}`.toLowerCase();
+  const semantic = `${title} ${description}`;
+  const venue = `${venueName} ${address} ${city}`;
 
+  // A structured city that names somewhere else wins over loose text matches.
+  if (city && !isDehradunText(city) && hasOutsideGeo(city)) return false;
   if (hasOutsideGeo(semantic) && !isDehradunText(semantic)) return false;
   return isDehradunText(venue) || isDehradunText(semantic);
 }
@@ -59,19 +72,26 @@ export function eventPassesGeo(e) {
   });
 }
 
+// Category rules, in display order. Terms are whole words; "tour" only counts when it is not a
+// sightseeing tour. "Live shows" is a fallback for acts that give no other signal.
+const CATEGORY_RULES = [
+  ['Comedy', ['comedy','stand up','standup','stand-up','open mic']],
+  ['Music', ['music','musical','concert','gig','live band','band','dj','unplugged','sufi','qawwali','karaoke']],
+  ['Books', ['book','literature','poetry','reading','author']],
+  ['Outdoors', ['run','running','walking','marathon','walk','hike','hiking','trek','trekking','bird','birding','cycling','cyclothon']],
+  ['Art', ['art','paint','painting','exhibition','gallery']],
+  ['Workshop', ['workshop','masterclass','training','ttc','bootcamp']],
+  ['Wellness', ['yoga','zumba','meditation','retreat']],
+  ['Film', ['film','cinema','screening']],
+  ['Culture', ['dandiya','garba','rass','navratri','heritage','culture','folk','festival']],
+  ['Food', ['food','feast','brunch','tasting','cuisine','all you can eat']],
+  ['Community', ['meetup','community','social club']]
+].map(([category, terms]) => [category, wordMatcher(terms)]);
+
+const LIVE_RE = new RegExp(`(?<![a-z0-9])live(?![a-z0-9])|(?<!walking |heritage |city |food |bus |temple |village )(?<![a-z0-9])tours?(?![a-z0-9])`, 'i');
+
 export function categoryFromText(text='') {
-  const s=text.toLowerCase();
-  const rules=[
-    ['Comedy',['comedy','stand up','stand-up','open mic']],
-    ['Music',['music','concert','gig','live band','dj']],
-    ['Books',['book','literature','poetry','reading']],
-    ['Outdoors',['run','marathon','walk','hike','trek','bird','cycling']],
-    ['Art',['art','paint','exhibition','gallery']],
-    ['Workshop',['workshop','masterclass']],
-    ['Film',['film','cinema','screening']],
-    ['Culture',['dandiya','garba','heritage','culture','folk','festival']],
-    ['Community',['meetup','community','social club']]
-  ];
-  const out=rules.filter(([,ks])=>ks.some(k=>s.includes(k))).map(([c])=>c);
-  return out.length ? [...new Set(out)] : ['Other'];
+  const out = CATEGORY_RULES.filter(([, re]) => re.test(text)).map(([category]) => category);
+  if (out.length === 0 && LIVE_RE.test(text)) out.push('Live shows');
+  return out.length ? out : ['Other'];
 }
