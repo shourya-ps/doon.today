@@ -22,6 +22,25 @@ function similarity(a='', b='') {
   let common=0; for (const t of A) if (B.has(t)) common++;
   return common / Math.max(A.size, B.size);
 }
+// Venue names differ in verbosity between sources ("J P Plaza & Garden" vs "J P Plaza & Garden wedding
+// point and party lawn"), so a shorter name fully contained in a longer one counts as a match.
+function venueSimilarity(a='', b='') {
+  const A=tokens(a), B=tokens(b);
+  const base=similarity(a,b);
+  const smaller=Math.min(A.size,B.size);
+  if (smaller < 2) return base;
+  let common=0; for (const t of A) if (B.has(t)) common++;
+  return Math.max(base, common / smaller);
+}
+// Calendar day in IST. Timestamps without an offset are treated as IST, and the day is taken in IST
+// rather than from the raw string, so the same instant written as ...Z or ...+05:30 lands on one day.
+export function istDay(value='') {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const withZone=/(Z|[+-]\d{2}:?\d{2})$/i.test(value) ? value : `${value}+05:30`;
+  const t=Date.parse(withZone);
+  if (!Number.isFinite(t)) return value.slice(0,10);
+  return new Date(t + 5.5*3600_000).toISOString().slice(0,10);
+}
 function sourceRank(e) {
   return Math.max(0, ...(e.sources || []).map(s => SOURCE_RANK[s.provider] || 0));
 }
@@ -39,11 +58,11 @@ function verificationStatus(sources=[]) {
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }
-function sameEvent(a,b) {
+export function sameEvent(a,b) {
   if (!a?.startAt || !b?.startAt) return false;
-  if (a.startAt.slice(0,10) !== b.startAt.slice(0,10)) return false;
+  if (istDay(a.startAt) !== istDay(b.startAt)) return false;
   const titleScore=similarity(a.title,b.title);
-  const venueScore=similarity(a.venue?.name,b.venue?.name);
+  const venueScore=venueSimilarity(a.venue?.name,b.venue?.name);
   return titleScore >= 0.72 && (venueScore >= 0.5 || /venue tba/i.test(a.venue?.name||'') || /venue tba/i.test(b.venue?.name||''));
 }
 function sourceKey(s){ return `${s.provider}|${s.url}`; }
@@ -90,10 +109,16 @@ export async function mergeAndWrite(results) {
   }
 
   const now=Date.now();
+  const retained=[];
   for (const e of previous) {
     if (new Date(e.startAt).getTime() <= now) continue;
-    if (!merged.some(x => sameEvent(x,e))) merged.push({...e, verificationStatus: verificationStatus(e.sources)});
+    if (merged.some(x => sameEvent(x,e))) continue;
+    // Previously stored duplicates collapse here instead of both being kept.
+    const dup=retained.findIndex(x => sameEvent(x,e));
+    if (dup >= 0) { retained[dup]=mergePair(retained[dup],e); continue; }
+    retained.push({...e, verificationStatus: verificationStatus(e.sources)});
   }
+  merged.push(...retained);
 
   const out=merged
     .filter(eventPassesGeo)
@@ -104,8 +129,16 @@ export async function mergeAndWrite(results) {
   await fs.mkdir('data',{recursive:true});
   await fs.writeFile('data/events.json',JSON.stringify(out,null,2)+'\n');
 
-  const review=results.flatMap(r=>r.reviewCandidates||[]);
+  // A partial run (e.g. District/BookMyShow only) must not wipe the Reddit review queue.
+  const redditRan=results.some(r=>r.source==='reddit');
   await fs.mkdir('data/review',{recursive:true});
-  await fs.writeFile('data/review/reddit.json',JSON.stringify(review,null,2)+'\n');
-  return {published:out.length,review:review.length};
+  let reviewCount;
+  if (redditRan) {
+    const review=results.flatMap(r=>r.reviewCandidates||[]);
+    await fs.writeFile('data/review/reddit.json',JSON.stringify(review,null,2)+'\n');
+    reviewCount=review.length;
+  } else {
+    try { reviewCount=JSON.parse(await fs.readFile('data/review/reddit.json','utf8')).length; } catch { reviewCount=0; }
+  }
+  return {published:out.length,review:reviewCount};
 }

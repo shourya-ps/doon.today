@@ -1,0 +1,47 @@
+name: Refresh primary sources
+# Fetches District and BookMyShow from a self-hosted runner on a normal ISP connection. Both sites
+# return 403 to GitHub-hosted runners. Setup: docs/primary-sources.md
+#
+# SECURITY: this repository is public, and a self-hosted runner executes workflow code on your own
+# machine. Keep this workflow's triggers to schedule and workflow_dispatch. Never add pull_request,
+# pull_request_target, issue_comment or any other trigger that fork contributors can fire.
+on:
+  workflow_dispatch:
+  schedule:
+    # Ten minutes before the hosted refresh (06:00, 14:00, 22:00 IST) so its build sees fresh data.
+    - cron: '20 0,8,16 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: refresh-events
+  cancel-in-progress: false
+jobs:
+  refresh-primary:
+    runs-on: [self-hosted, doon-primary]
+    timeout-minutes: 15
+    env:
+      INGEST_ONLY: district,bookmyshow
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --no-audit --no-fund
+      - name: Test ingest adapters
+        run: npm test
+      - name: Fetch District and BookMyShow
+        run: npm run ingest
+      - name: Validate event data
+        run: npm run validate:data
+      - name: Commit changed event data
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No event changes"
+            exit 0
+          fi
+          git config user.name "doon.today bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          git commit -m "data: refresh primary sources"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push
