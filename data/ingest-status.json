@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-10-18T07:19:20.098Z",
+  "ranAt": "2026-10-18T07:20:56.600Z",
   "sources": {
     "district": {
       "status": "failed",
@@ -45,11 +45,11 @@
     },
     "virasat": {
       "status": "failed",
-      "error": "Error: 500 Internal Server Error from https://reachvirasat.org/tickets\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Promise.all (index 1)\n    at async fetchVirasat (file:///home/runner/work/doon.today/doon.today/ingest/sources/virasat.mjs:76:29)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:17:13",
+      "error": "Error: 500 Internal Server Error from https://reachvirasat.org/programme\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchVirasat (file:///home/runner/work/doon.today/doon.today/ingest/sources/virasat.mjs:74:32)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:17:13",
       "diagnostics": {
         "status": 500,
-        "requestedUrl": "https://reachvirasat.org/tickets",
-        "finalUrl": "https://reachvirasat.org/tickets",
+        "requestedUrl": "https://reachvirasat.org/programme",
+        "finalUrl": "https://reachvirasat.org/programme",
         "contentType": "text/html; charset=UTF-8",
         "server": "LiteSpeed",
         "cacheStatus": null,
