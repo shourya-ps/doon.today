@@ -1,6 +1,24 @@
 ---
 import '../styles/global.css';
-const { title = 'doon.today', description = 'A semi-curated calendar of things happening in Dehradun.' } = Astro.props;
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or site-relative path of the share image. */
+  image?: string;
+  type?: 'website' | 'article';
+  /** schema.org JSON-LD objects to embed. */
+  jsonLd?: object | object[];
+}
+const {
+  title = 'doon.today',
+  description = 'A semi-curated calendar of things happening in Dehradun.',
+  image = '/og-default.png',
+  type = 'website',
+  jsonLd
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+const structured = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const current = (href: string) => (path === href || (href !== '/' && path.startsWith(`${href}/`)) ? 'page' : undefined);
 ---
@@ -8,12 +26,28 @@ const current = (href: string) => (path === href || (href !== '/' && path.starts
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#f6f1e8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="text/calendar" title="doon.today events" href="/calendar.ics" />
+    <meta property="og:site_name" content="doon.today" />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="doon.today: what's happening in Doon?" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <title>{title}</title>
+    {structured.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item).replace(/</g, "\\u003c")} />)}
   </head>
   <body>
     <header class="site-header">

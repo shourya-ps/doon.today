@@ -1,0 +1,53 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {eventJsonLd,eventSummary} from '../src/lib/seo.mjs';
+import {sourceLabel} from '../src/lib/sources.mjs';
+
+const ev=(over={})=>({
+  title:'Doon Music Night',startAt:'2026-10-18T09:30:00.000Z',venue:{name:'Rajpur Road Hall',address:'12 Rajpur Road',area:'Rajpur',city:'Dehradun'},
+  pricing:{type:'paid',minPrice:800,currency:'INR'},sources:[{provider:'district',url:'https://example.test/e'}],...over
+});
+const opts={pageUrl:'https://doon.today/events/doon-music-night/',imageUrl:'https://doon.today/og-default.png'};
+
+test('Event JSON-LD has what Google needs for a rich result',()=>{
+  const ld=eventJsonLd(ev(),opts);
+  assert.equal(ld['@type'],'Event');
+  assert.equal(ld.name,'Doon Music Night');
+  assert.equal(ld.startDate,'2026-10-18T09:30:00.000Z');
+  assert.equal(ld.location.name,'Rajpur Road Hall');
+  assert.equal(ld.location.address.addressLocality,'Dehradun');
+  assert.equal(ld.location.address.addressCountry,'IN');
+  assert.deepEqual(ld.image,[opts.imageUrl]);
+  assert.deepEqual(ld.offers,{'@type':'Offer',price:800,priceCurrency:'INR',url:'https://example.test/e'});
+});
+
+test('dates: offset-less times become IST, date-only stays a date',()=>{
+  assert.equal(eventJsonLd(ev({startAt:'2026-10-18T15:00:00'}),opts).startDate,'2026-10-18T15:00:00+05:30');
+  assert.equal(eventJsonLd(ev({startAt:'2026-10-21'}),opts).startDate,'2026-10-21');
+  assert.equal(eventJsonLd(ev({endAt:'2026-10-18T12:00:00+05:30'}),opts).endDate,'2026-10-18T12:00:00+05:30');
+});
+
+test('free and unknown prices',()=>{
+  const free=eventJsonLd(ev({pricing:{type:'free',currency:'INR'}}),opts);
+  assert.equal(free.isAccessibleForFree,true);
+  assert.equal(free.offers.price,0);
+  assert.equal(eventJsonLd(ev({pricing:{type:'unknown',currency:'INR'}}),opts).offers,undefined);
+});
+
+test('the summary reads as one line with place, price and a trimmed description',()=>{
+  assert.equal(eventSummary(ev()),'Sun, 18 Oct, 3:00 pm at Rajpur Road Hall, Rajpur, Dehradun. From ₹800.');
+  const long=eventSummary(ev({description:'word '.repeat(100)}));
+  assert.ok(long.length<=200);
+  assert.ok(long.endsWith('…'));
+  assert.match(eventSummary(ev({startAt:'2026-10-21'})),/^Wed, 21 Oct at /,'date-only events show no time');
+});
+
+test('source names are readable',()=>{
+  assert.equal(sourceLabel('district'),'District');
+  assert.equal(sourceLabel('literaturefestival'),'Dehradun Literature Festival');
+  assert.equal(sourceLabel('unknown-source'),'unknown-source');
+});
+
+test('an address that is only the city is not a street address',()=>{
+  assert.equal(eventJsonLd(ev({venue:{name:'Hall',address:'Dehradun',city:'Dehradun'}}),opts).location.address.streetAddress,undefined);
+});

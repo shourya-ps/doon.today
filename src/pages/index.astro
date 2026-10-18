@@ -26,7 +26,11 @@ const healthMessage = stale.length > 0
   ? `${staleNames} ${stale.length === 1 ? "isn't" : "aren't"} updating right now. Showing the latest saved events from other sources. ${lastUpdated}`.trim()
   : 'Some sources are not updating right now. Showing the latest saved events.';
 ---
-<BaseLayout title="doon.today — What's happening in Dehradun">
+<BaseLayout
+  title="doon.today — What's happening in Dehradun"
+  description="A semi-curated calendar of events in Dehradun: concerts, comedy, festivals, runs and more, with the source and freshness of every listing."
+  jsonLd={{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'doon.today', url: 'https://doon.today/' }}
+>
   <section class="hero">
     <p class="eyebrow">DEHRADUN · UTTARAKHAND</p>
     <h1>What’s happening<br />in Doon?</h1>

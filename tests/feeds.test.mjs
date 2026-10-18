@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {feedDefinitions,eventsForFeed,feedPath,slug,SOURCE_LABELS} from '../src/lib/feeds.mjs';
+import {feedDefinitions,eventsForFeed,feedPath,slug} from '../src/lib/feeds.mjs';
+import {SOURCE_LABELS} from '../src/lib/sources.mjs';
 import {CATEGORY_NAMES,categoryFromText,areaFromText} from '../ingest/lib/utils.mjs';
 
 const events=JSON.parse(await readFile(new URL('../data/events.json',import.meta.url),'utf8'));
@@ -17,7 +18,7 @@ test('feed ids are unique, URL-safe and have a path',()=>{
 test('every category an event can get has a feed, and so does every source we ingest',()=>{
   for(const name of CATEGORY_NAMES) assert.ok(byId[`category-${slug(name)}`],`no feed for ${name}`);
   assert.ok(CATEGORY_NAMES.includes(categoryFromText('nothing recognisable')[0]));
-  for(const provider of Object.keys(SOURCE_LABELS)) assert.ok(byId[`source-${provider}`]);
+  for(const provider of Object.keys(SOURCE_LABELS).filter(p=>!['bookmyshow','manual'].includes(p))) assert.ok(byId[`source-${provider}`],`no feed for ${provider}`);
   assert.equal(byId['source-bookmyshow'],undefined,'the demoted source has no feed');
 });
 
