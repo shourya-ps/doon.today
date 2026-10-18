@@ -28,7 +28,7 @@ const healthMessage = stale.length > 0
 ---
 <BaseLayout
   title="doon.today — What's happening in Dehradun"
-  description="A semi-curated calendar of events in Dehradun: concerts, comedy, festivals, runs and more, with the source and freshness of every listing."
+  description="A calendar of events in Dehradun: concerts, comedy, festivals, runs and more, with the source and freshness of every listing."
   jsonLd={{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'doon.today', url: 'https://doon.today/' }}
 >
   <section class="hero">
@@ -60,7 +60,7 @@ const healthMessage = stale.length > 0
 
   <section class="curated">
     <div class="section-heading">
-      <h2>Curated</h2><span id="event-count">{published.length}</span>
+      <h2>Events</h2><span id="event-count">{published.length}</span>
       {Number.isFinite(refreshedAt) && <small>Data refreshed {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(refreshedAt)}</small>}
     </div>
     {showHealthBanner && (

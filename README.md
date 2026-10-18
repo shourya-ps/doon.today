@@ -1,6 +1,6 @@
 # doon.today
 
-A semi-curated, text-first calendar of things happening in Dehradun, live at [doon.today](https://doon.today). It answers one question: **what can I do in Dehradun today or this weekend?**
+A text-first calendar of things happening in Dehradun, live at [doon.today](https://doon.today). It answers one question: **what can I do in Dehradun today or this weekend?**
 
 The project is inspired by [blr.today](https://blr.today)'s calendar-first approach: a quiet page, honest labels about where each event came from, and calendar feeds you can subscribe to. It is not a ticket marketplace and has no accounts.
 
