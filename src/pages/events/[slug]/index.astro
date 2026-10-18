@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { events } from '../../../data/events';
 import { ingestStatus } from '../../../data/status';
+import { googleDateRange } from '../../../lib/ics.mjs';
 
 export function getStaticPaths() {
   return events.filter(e => e.curation.status === 'published').map((event) => ({ params: { slug: event.slug }, props: { event } }));
@@ -19,29 +20,10 @@ const time = dateOnly
 
 const location = [event.venue.name,event.venue.address,event.venue.area,'Dehradun'].filter(Boolean).join(', ');
 
-function googleDateRange() {
-  if (dateOnly) {
-    const startDay = event.startAt.replace(/-/g,'');
-    const lastDay = /^\d{4}-\d{2}-\d{2}$/.test(event.endAt || '') && event.endAt >= event.startAt
-      ? event.endAt
-      : event.startAt;
-    const d = new Date(`${lastDay}T00:00:00Z`);
-    d.setUTCDate(d.getUTCDate()+1);
-    const endDay = d.toISOString().slice(0,10).replace(/-/g,'');
-    return `${startDay}/${endDay}`;
-  }
-  const fmt=(iso)=>new Date(iso).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
-  const startAt = fmt(event.startAt);
-  const endAt = event.endAt && !/^\d{4}-\d{2}-\d{2}$/.test(event.endAt)
-    ? fmt(event.endAt)
-    : fmt(new Date(new Date(event.startAt).getTime()+2*60*60*1000).toISOString());
-  return `${startAt}/${endAt}`;
-}
-
 const googleParams = new URLSearchParams({
   action:'TEMPLATE',
   text:event.title,
-  dates:googleDateRange(),
+  dates:googleDateRange(event),
   details:event.description || `More details: https://doon.today/events/${event.slug}/`,
   location
 });

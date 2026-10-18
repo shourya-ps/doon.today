@@ -67,6 +67,11 @@ export function sameEvent(a,b) {
 }
 function sourceKey(s){ return `${s.provider}|${s.url}`; }
 
+// The fields a calendar subscriber would notice changing.
+function fingerprint(e) {
+  return JSON.stringify([e.title, e.startAt, e.endAt||null, e.venue?.name, e.venue?.address||'']);
+}
+
 // An event is dropped after this many successful runs of all of its sources without it appearing.
 export const MISSED_RUNS_LIMIT = 3;
 
@@ -148,6 +153,11 @@ export async function mergeAndWrite(results) {
     const old=previous.find(e => same(e,incoming));
     const event=old ? mergePair(old,incoming) : incoming;
     delete event.missedRuns;
+    // Subscribed calendars only re-read an event when SEQUENCE goes up, so bump it on a real change.
+    if (old && fingerprint(old) !== fingerprint(event)) {
+      event.sequence=(old.sequence||0)+1;
+      event.modifiedAt=new Date().toISOString();
+    }
     merged.push(event);
   }
 

@@ -134,3 +134,20 @@ test('an event seen again resets its miss count, and every source must run befor
   await mergeAndWrite([{source:'district',events:[{...shared,sources:[src('district','https://example.test/events/b')]}]}]);
   assert.equal((await read()).find(e=>e.id==='both').missedRuns,undefined,'listed again, so the count resets');
 });
+
+test('SEQUENCE and modifiedAt move only when an event really changes',async t=>{
+  await inTempDir(t);
+  const stored=ev({id:'seq',sources:[src('district','https://example.test/events/seq')],firstSeenAt:'2030-01-01T00:00:00Z'});
+  await fs.writeFile('data/events.json',JSON.stringify([stored]));
+  const incoming=(over={})=>({source:'district',events:[ev({id:'seq2',lastCheckedAt:'2030-01-02T00:00:00Z',sources:[src('district','https://example.test/events/seq')],...over})]});
+  await mergeAndWrite([incoming()]);
+  let e=(await read())[0];
+  assert.equal(e.sequence,undefined,'a refresh with no change leaves SEQUENCE alone');
+  assert.equal(e.modifiedAt,undefined);
+  await mergeAndWrite([incoming({startAt:'2030-01-10T19:00:00+05:30'})]);
+  e=(await read())[0];
+  assert.equal(e.sequence,1);
+  assert.ok(e.modifiedAt);
+  await mergeAndWrite([incoming({startAt:'2030-01-10T19:00:00+05:30'})]);
+  assert.equal((await read())[0].sequence,1,'unchanged again');
+});
