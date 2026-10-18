@@ -1,1 +1,41 @@
-{"ranAt":null,"sources":{},"output":{"published":0,"review":0}}
+{
+  "ranAt": "2026-10-18T03:32:22.324Z",
+  "sources": {
+    "district": {
+      "status": "failed",
+      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:11:15"
+    },
+    "bookmyshow": {
+      "status": "failed",
+      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:11:15"
+    },
+    "allevents": {
+      "status": "ok",
+      "events": 22,
+      "review": 0,
+      "diagnostics": {
+        "candidates": 29
+      }
+    },
+    "townscript": {
+      "status": "ok",
+      "events": 0,
+      "review": 0,
+      "diagnostics": {
+        "candidates": 0
+      }
+    },
+    "reddit": {
+      "status": "ok",
+      "events": 0,
+      "review": 0,
+      "diagnostics": {
+        "candidates": 0
+      }
+    }
+  },
+  "output": {
+    "published": 24,
+    "review": 0
+  }
+}
