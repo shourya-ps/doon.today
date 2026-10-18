@@ -11,11 +11,12 @@
     "ingest": "node ingest/run.mjs",
     "validate:data": "node scripts/validate-data.mjs",
     "test": "node --test",
-    "ingest:primary": "INGEST_ONLY=district,bookmyshow node ingest/run.mjs",
+    "ingest:primary": "INGEST_ONLY=district node ingest/run.mjs",
     "check:health": "node scripts/check-health.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
+    "@astrojs/sitemap": "^3.7.4",
     "astro": "^5.14.1",
     "typescript": "^5.9.3"
   }

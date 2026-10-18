@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fetch District and BookMyShow from this machine and push the result, as an alternative to the
+# Fetch District from this machine and push the result, as an alternative to the
 # self-hosted GitHub runner (.github/workflows/refresh-primary.yml). Uses your own git credentials.
 #
 #   scripts/refresh-primary-local.sh            # fetch, validate, commit, push
@@ -20,7 +20,7 @@ git pull --rebase origin "$BRANCH"
 
 npm install --no-audit --no-fund
 npm test
-INGEST_ONLY=district,bookmyshow npm run ingest
+INGEST_ONLY=district npm run ingest
 npm run validate:data
 
 if [ "${DRY_RUN:-0}" = "1" ]; then

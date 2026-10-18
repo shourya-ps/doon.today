@@ -11,30 +11,78 @@ const grouped = Map.groupBy(published, (event) => event.startAt.slice(0, 10));
 const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 const refreshedAt = Date.parse(ingestStatus.ranAt);
 const stale = staleSources();
+const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const tally = (values: string[]) => [...values.reduce((m, v) => m.set(v, (m.get(v) ?? 0) + 1), new Map<string, number>())]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const categoryOptions = tally(published.flatMap((e) => e.categories));
+const areaOptions = tally(published.flatMap((e) => (e.venue.area ? [e.venue.area] : [])));
+const hasFree = published.some((e) => e.pricing.type === 'free');
+const showHealthBanner = ingestStatus.health === 'degraded';
+// Identifies which sources the banner is about, so a dismissal only lasts until that set changes.
+const healthKey = stale.length > 0 ? stale.map((s) => s.name).sort().join(',') : 'degraded';
+const staleNames = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(stale.map((s) => s.label));
+const lastUpdated = stale.filter((s) => s.lastSuccess !== 'not recorded yet').map((s) => `${s.label} last updated ${s.lastSuccess}.`).join(' ');
+const healthMessage = stale.length > 0
+  ? `${staleNames} ${stale.length === 1 ? "isn't" : "aren't"} updating right now. Showing the latest saved events from other sources. ${lastUpdated}`.trim()
+  : 'Some sources are not updating right now. Showing the latest saved events.';
 ---
-<BaseLayout title="doon.today — What's happening in Dehradun">
+<BaseLayout
+  title="doon.today — What's happening in Dehradun"
+  description="A calendar of events in Dehradun: concerts, comedy, festivals, runs and more, with the source and freshness of every listing."
+  jsonLd={{ '@context': 'https://schema.org', '@type': 'WebSite', name: 'doon.today', url: 'https://doon.today/' }}
+>
   <section class="hero">
     <p class="eyebrow">DEHRADUN · UTTARAKHAND</p>
     <h1>What’s happening<br />in Doon?</h1>
     <p class="lede">A quiet, useful calendar of events worth knowing about.</p>
-    <div class="filters" aria-label="Event date filters">
-      <button class="active" data-filter="all">Upcoming</button>
-      <button data-filter="today">Today</button>
-      <button data-filter="tomorrow">Tomorrow</button>
-      <button data-filter="weekend">Weekend</button>
+    <div class="filters" role="group" aria-label="Event date filters">
+      <button class="active" aria-pressed="true" data-filter="all">Upcoming</button>
+      <button aria-pressed="false" data-filter="today">Today</button>
+      <button aria-pressed="false" data-filter="tomorrow">Tomorrow</button>
+      <button aria-pressed="false" data-filter="weekend">Weekend</button>
+    </div>
+    <div class="filters" role="group" aria-label="Category filters">
+      <button class="active" aria-pressed="true" data-category="">All categories</button>
+      {categoryOptions.map(([name, count]) => <button aria-pressed="false" data-category={slug(name)}>{name} <span class="filter-count">{count}</span></button>)}
+    </div>
+    <div class="filters" role="group" aria-label="Price and area filters">
+      {hasFree && <button aria-pressed="false" data-price="free">Free only</button>}
+      {areaOptions.length > 0 && (
+        <label class="filter-select">Area
+          <select id="area-filter">
+            <option value="">Anywhere in Dehradun</option>
+            {areaOptions.map(([name, count]) => <option value={slug(name)}>{name} ({count})</option>)}
+          </select>
+        </label>
+      )}
     </div>
   </section>
 
   <section class="curated">
     <div class="section-heading">
-      <h2>Curated</h2><span>{published.length}</span>
+      <h2>Events</h2><span id="event-count">{published.length}</span>
       {Number.isFinite(refreshedAt) && <small>Data refreshed {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(refreshedAt)}</small>}
     </div>
-    {ingestStatus.health === 'degraded' && (
-      <p class="source-health">
-        Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.
-        {stale.length > 0 && <> Last successful refresh: {stale.map((s) => `${s.label} ${s.lastSuccess}`).join(' · ')}.</>}
-      </p>
+    {showHealthBanner && (
+      <div class="source-health" id="source-health" role="status" data-sources={healthKey}>
+        <p>{healthMessage}</p>
+        <button type="button" class="source-health-dismiss" id="source-health-dismiss" aria-label="Dismiss">×</button>
+      </div>
+      <script is:inline>
+        // Runs right after the banner is parsed, so a dismissed banner never flashes. The choice is kept
+        // per browser and only holds while the same sources are affected; storage may be unavailable.
+        (function () {
+          var banner = document.getElementById('source-health');
+          if (!banner) return;
+          var key = 'doon.sourceHealthDismissed';
+          var current = banner.getAttribute('data-sources');
+          try { if (localStorage.getItem(key) === current) banner.hidden = true; } catch (e) {}
+          document.getElementById('source-health-dismiss').addEventListener('click', function () {
+            banner.hidden = true;
+            try { localStorage.setItem(key, current); } catch (e) {}
+          });
+        })();
+      </script>
     )}
     <div id="empty-state" class="empty-state" hidden>No events found for this view yet.</div>
     {[...grouped.entries()].map(([day, dayEvents]) => (
@@ -54,7 +102,54 @@ const stale = staleSources();
     const weekday=new Date(`${today}T12:00:00+05:30`).getDay();
     const untilSat=weekday===0?-1:(6-weekday+7)%7; const sat=add(today,untilSat); const sun=add(sat,1);
     const groups=[...document.querySelectorAll('.day-group')]; const empty=document.querySelector('#empty-state');
-    function apply(which){let shown=0;groups.forEach(g=>{const d=g.dataset.date;const show=which==='all'||(which==='today'&&d===today)||(which==='tomorrow'&&d===tomorrow)||(which==='weekend'&&(d===sat||d===sun));g.hidden=!show;if(show)shown++;});empty.hidden=shown!==0;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===which));}
-    document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.filter))); apply('all');
+    const count=document.querySelector('#event-count'); const areaSelect=document.querySelector('#area-filter');
+    const whenValues=['all','today','tomorrow','weekend'];
+    const categoryValues=[...document.querySelectorAll('[data-category]')].map(b=>b.dataset.category);
+
+    // The selection lives in the URL (?when=weekend&category=music&price=free&area=rajpur) so a filtered view can be shared.
+    const params=new URLSearchParams(location.search);
+    const state={
+      when: whenValues.includes(params.get('when')) ? params.get('when') : 'all',
+      category: categoryValues.includes(params.get('category')) ? params.get('category') : '',
+      price: params.get('price')==='free' ? 'free' : '',
+      area: areaSelect && [...areaSelect.options].some(o=>o.value===params.get('area')) ? params.get('area') : ''
+    };
+
+    function apply(){
+      let shown=0;
+      groups.forEach(g=>{
+        const d=g.dataset.date;
+        const dayOk=state.when==='all'||(state.when==='today'&&d===today)||(state.when==='tomorrow'&&d===tomorrow)||(state.when==='weekend'&&(d===sat||d===sun));
+        let visible=0;
+        g.querySelectorAll('.event-row').forEach(row=>{
+          const ok=dayOk
+            && (!state.category || row.dataset.categories.split(' ').includes(state.category))
+            && (!state.price || row.dataset.price===state.price)
+            && (!state.area || row.dataset.area===state.area);
+          row.hidden=!ok; if(ok) visible++;
+        });
+        g.hidden=visible===0; shown+=visible;
+      });
+      empty.hidden=shown!==0;
+      if(count) count.textContent=String(shown);
+      const mark=(btn,on)=>{btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on));};
+      document.querySelectorAll('[data-filter]').forEach(b=>mark(b,b.dataset.filter===state.when));
+      document.querySelectorAll('[data-category]').forEach(b=>mark(b,b.dataset.category===state.category));
+      document.querySelectorAll('[data-price]').forEach(b=>mark(b,b.dataset.price===state.price));
+      if(areaSelect) areaSelect.value=state.area;
+      const next=new URLSearchParams();
+      if(state.when!=='all') next.set('when',state.when);
+      if(state.category) next.set('category',state.category);
+      if(state.price) next.set('price',state.price);
+      if(state.area) next.set('area',state.area);
+      const query=next.toString();
+      try{history.replaceState(null,'',location.pathname+(query?'?'+query:'')+location.hash);}catch(e){}
+    }
+
+    document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.when=b.dataset.filter;apply();}));
+    document.querySelectorAll('[data-category]').forEach(b=>b.addEventListener('click',()=>{state.category=b.dataset.category;apply();}));
+    document.querySelectorAll('[data-price]').forEach(b=>b.addEventListener('click',()=>{state.price=state.price===b.dataset.price?'':b.dataset.price;apply();}));
+    if(areaSelect) areaSelect.addEventListener('change',()=>{state.area=areaSelect.value;apply();});
+    apply();
   </script>
 </BaseLayout>

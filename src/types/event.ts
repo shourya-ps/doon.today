@@ -46,4 +46,9 @@ export interface EventRecord {
   firstSeenAt: string;
   lastSeenAt: string;
   lastCheckedAt: string;
+  // Successful runs of all of this event's sources in a row that did not list it; it is dropped at 3.
+  missedRuns?: number;
+  // Set when title, time or venue change; drive the calendar feeds' SEQUENCE and DTSTAMP.
+  modifiedAt?: string;
+  sequence?: number;
 }

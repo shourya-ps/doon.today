@@ -16,9 +16,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      # District and BookMyShow return 403 to GitHub-hosted runners (bot protection on datacenter IPs).
-      # They are fetched by refresh-primary.yml from a self-hosted runner instead.
-      INGEST_SKIP: district,bookmyshow
+      # District returns 403 to GitHub-hosted runners (bot protection on datacenter IPs). It is fetched
+      # by refresh-primary.yml or scripts/refresh-primary-local.sh instead. BookMyShow is opt-in and
+      # does not run here.
+      INGEST_SKIP: district
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -46,6 +47,6 @@ jobs:
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
       - name: Check primary sources are fresh
-        # Last on purpose: the data above is already committed. This turns the run red when District or
-        # BookMyShow have not refreshed for 48h, so a dead self-hosted runner is not silent.
+        # Last on purpose: the data above is already committed. This turns the run red when District has
+        # not refreshed for 48h, so a dead self-hosted runner is not silent.
         run: npm run check:health

@@ -1,4 +1,4 @@
-// Fails when a primary source (District, BookMyShow) that has worked before has not refreshed
+// Fails when a primary source (District) that has worked before has not refreshed
 // successfully for too long. A source that has never succeeded only produces a warning: otherwise a
 // source we have no permitted access to yet (see docs/primary-sources.md) would keep every run red.
 //

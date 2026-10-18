@@ -1,14 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { events } from '../data/events';
+import { eventsForFeed, feedDefinitions, feedPath } from '../lib/feeds.mjs';
+
+const feeds = feedDefinitions().map((feed) => ({ ...feed, count: eventsForFeed(feed, events).length, path: feedPath(feed.id) }));
+const groups = [
+  { title: 'Collections', feeds: feeds.filter((f) => f.kind === 'collection') },
+  { title: 'Categories', feeds: feeds.filter((f) => f.kind === 'category') },
+  { title: 'Sources', feeds: feeds.filter((f) => f.kind === 'source') }
+];
+const all = { label: 'Everything', description: 'Every upcoming event', count: events.filter((e) => e.curation.status === 'published').length, path: '/calendar.ics' };
+const plural = (n: number) => `${n} event${n === 1 ? '' : 's'}`;
 ---
-<BaseLayout title="Calendars — doon.today">
+<BaseLayout title="Calendars — doon.today" description="Subscribe to Dehradun events in your calendar app, by category or source.">
   <section class="simple-page">
     <p class="eyebrow">DOON.TODAY</p><h1>Calendars</h1>
-    <p class="lede">Subscribe once and let upcoming Doon events appear in your calendar.</p>
-    <p><a class="primary-link" href="/calendar.ics">Subscribe to the curated calendar →</a></p>
-    <div class="calendar-grid">
-      <section><h2>Collections</h2><a href="/">Curated</a><span>Music</span><span>Books</span><span>Outdoors</span><span>Culture</span></section>
-      <section><h2>Sources</h2><span>District</span><span>BookMyShow</span><span>AllEvents</span><span>Townscript</span><span>r/Dehradun</span></section>
-    </div>
+    <p class="lede">Subscribe once and let upcoming Doon events appear in your calendar. Pick everything, or only the kinds of events you care about.</p>
+
+    <section class="feed-help" aria-labelledby="how-to">
+      <h2 id="how-to">How to subscribe</h2>
+      <ul>
+        <li><strong>Apple Calendar:</strong> choose Subscribe, or File, then New Calendar Subscription, and paste the link.</li>
+        <li><strong>Google Calendar:</strong> Other calendars, then From URL, and paste the link (use Copy link, not Subscribe).</li>
+        <li><strong>Outlook:</strong> Add calendar, then Subscribe from web, and paste the link.</li>
+      </ul>
+      <p>Calendar apps refresh subscriptions on their own schedule, so changes can take several hours to show up.</p>
+    </section>
+
+    <section class="feed-group">
+      <h2>All events</h2>
+      <ul class="feed-list">
+        <li>
+          <div><span class="feed-name">{all.label}</span> <small>{plural(all.count)}</small></div>
+          <div class="feed-actions">
+            <a class="primary-link" href={`webcal://doon.today${all.path}`}>Subscribe</a>
+            <button type="button" data-copy={`https://doon.today${all.path}`}>Copy link</button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    {groups.map((group) => (
+      <section class="feed-group">
+        <h2>{group.title}</h2>
+        <ul class="feed-list">
+          {group.feeds.map((feed) => (
+            <li>
+              <div><span class="feed-name">{feed.label}</span> <small>{plural(feed.count)}</small>{feed.kind === 'collection' && <p class="feed-note">{feed.description}</p>}</div>
+              <div class="feed-actions">
+                <a class="primary-link" href={`webcal://doon.today${feed.path}`}>Subscribe</a>
+                <button type="button" data-copy={`https://doon.today${feed.path}`}>Copy link</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
   </section>
+  <script is:inline>
+    document.querySelectorAll('[data-copy]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var url = button.getAttribute('data-copy');
+        var done = function () { var old = button.textContent; button.textContent = 'Copied'; setTimeout(function () { button.textContent = old; }, 1500); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function () { window.prompt('Copy this link', url); });
+        else window.prompt('Copy this link', url);
+      });
+    });
+  </script>
 </BaseLayout>

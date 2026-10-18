@@ -102,24 +102,18 @@
     "published": 29,
     "review": 0
   },
-  "health": "degraded",
+  "health": "healthy",
   "primarySourcesAvailable": [
     "district"
   ],
   "primarySourcesExpected": [
-    "district",
-    "bookmyshow"
+    "district"
   ],
   "primarySources": {
     "district": {
       "lastSuccessAt": "2026-10-18T08:05:55.410Z",
       "ageHours": 0,
       "fresh": true
-    },
-    "bookmyshow": {
-      "lastSuccessAt": null,
-      "ageHours": null,
-      "fresh": false
     }
   }
 }

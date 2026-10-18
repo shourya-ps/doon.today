@@ -3,6 +3,7 @@ import {eventLikeObjects} from '../lib/jsonld.mjs';
 import {stableId,slugify,parseMoney,categoryFromText,isDehradunText,stripHtml,nowIso,sleep} from '../lib/utils.mjs';
 
 const LIST='https://in.bookmyshow.com/explore/events-dehradun';
+const MAX_CONSECUTIVE_BLOCKS=2;
 function absolute(href){ try{return new URL(href,LIST).href}catch{return null} }
 function links(html){
   const out=new Set(); const re=/href=["']([^"']+)["']/gi; let m;
@@ -25,13 +26,21 @@ export async function fetchBookMyShow(){
     error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(listing),discoveredUrls:0};
     throw error;
   }
+  // Cloudflare answers every event page with 403 once it has decided to block us; keep asking and we only
+  // add load, so give up after a couple of consecutive blocks.
+  let blocked=0; let stoppedEarly=false;
   for(const url of urls){
-    try{const html=await fetchText(url); for(const o of eventLikeObjects(html)){const e=fromLd(o,url); if(e) events.push(e);} await sleep(120);}catch(e){errors.push({url,error:String(e.message||e),...(e.diagnostics ? {diagnostics:e.diagnostics} : {})});}
+    if(blocked>=MAX_CONSECUTIVE_BLOCKS){stoppedEarly=true;break;}
+    try{const html=await fetchText(url); blocked=0; for(const o of eventLikeObjects(html)){const e=fromLd(o,url); if(e) events.push(e);} await sleep(120);}
+    catch(e){
+      blocked=e?.diagnostics?.status===403 ? blocked+1 : 0;
+      errors.push({url,error:String(e.message||e),...(e.diagnostics ? {diagnostics:e.diagnostics} : {})});
+    }
   }
   if(events.length===0) {
     const error=new Error('BookMyShow event links yielded no Dehradun events; feed cannot be verified');
-    error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:0,errors};
+    error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:0,stoppedEarly,errors};
     throw error;
   }
-  return {source:'bookmyshow',events,diagnostics:{listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:events.length,errors}};
+  return {source:'bookmyshow',events,diagnostics:{listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:events.length,stoppedEarly,errors}};
 }
