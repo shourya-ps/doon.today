@@ -11,6 +11,14 @@ const grouped = Map.groupBy(published, (event) => event.startAt.slice(0, 10));
 const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 const refreshedAt = Date.parse(ingestStatus.ranAt);
 const stale = staleSources();
+const showHealthBanner = ingestStatus.health === 'degraded';
+// Identifies which sources the banner is about, so a dismissal only lasts until that set changes.
+const healthKey = stale.length > 0 ? stale.map((s) => s.name).sort().join(',') : 'degraded';
+const staleNames = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format(stale.map((s) => s.label));
+const lastUpdated = stale.filter((s) => s.lastSuccess !== 'not recorded yet').map((s) => `${s.label} last updated ${s.lastSuccess}.`).join(' ');
+const healthMessage = stale.length > 0
+  ? `${staleNames} ${stale.length === 1 ? "isn't" : "aren't"} updating right now. Showing the latest saved events from other sources. ${lastUpdated}`.trim()
+  : 'Some sources are not updating right now. Showing the latest saved events.';
 ---
 <BaseLayout title="doon.today — What's happening in Dehradun">
   <section class="hero">
@@ -30,11 +38,26 @@ const stale = staleSources();
       <h2>Curated</h2><span>{published.length}</span>
       {Number.isFinite(refreshedAt) && <small>Data refreshed {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(refreshedAt)}</small>}
     </div>
-    {ingestStatus.health === 'degraded' && (
-      <p class="source-health">
-        Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.
-        {stale.length > 0 && <> Last successful refresh: {stale.map((s) => `${s.label} ${s.lastSuccess}`).join(' · ')}.</>}
-      </p>
+    {showHealthBanner && (
+      <div class="source-health" id="source-health" role="status" data-sources={healthKey}>
+        <p>{healthMessage}</p>
+        <button type="button" class="source-health-dismiss" id="source-health-dismiss" aria-label="Dismiss">×</button>
+      </div>
+      <script is:inline>
+        // Runs right after the banner is parsed, so a dismissed banner never flashes. The choice is kept
+        // per browser and only holds while the same sources are affected; storage may be unavailable.
+        (function () {
+          var banner = document.getElementById('source-health');
+          if (!banner) return;
+          var key = 'doon.sourceHealthDismissed';
+          var current = banner.getAttribute('data-sources');
+          try { if (localStorage.getItem(key) === current) banner.hidden = true; } catch (e) {}
+          document.getElementById('source-health-dismiss').addEventListener('click', function () {
+            banner.hidden = true;
+            try { localStorage.setItem(key, current); } catch (e) {}
+          });
+        })();
+      </script>
     )}
     <div id="empty-state" class="empty-state" hidden>No events found for this view yet.</div>
     {[...grouped.entries()].map(([day, dayEvents]) => (
