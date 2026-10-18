@@ -1,17 +1,17 @@
 {
-  "ranAt": "2026-10-18T03:32:22.324Z",
+  "ranAt": "2026-10-18T06:39:14.428Z",
   "sources": {
     "district": {
       "status": "failed",
-      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:11:15"
+      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:16:13"
     },
     "bookmyshow": {
       "status": "failed",
-      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:11:15"
+      "error": "Error: 403 Forbidden\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:6:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:16:13"
     },
     "allevents": {
       "status": "ok",
-      "events": 22,
+      "events": 20,
       "review": 0,
       "diagnostics": {
         "candidates": 29
@@ -35,7 +35,13 @@
     }
   },
   "output": {
-    "published": 24,
+    "published": 17,
     "review": 0
-  }
+  },
+  "health": "degraded",
+  "primarySourcesAvailable": [],
+  "primarySourcesExpected": [
+    "district",
+    "bookmyshow"
+  ]
 }

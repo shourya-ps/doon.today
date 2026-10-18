@@ -1,221 +1,5 @@
 [
   {
-    "id": "5fb809912083e266",
-    "slug": "dholitaro-dandiya-night-2026",
-    "title": "Dholitaro - Dandiya Night 2026",
-    "description": "",
-    "startAt": "2026-10-18",
-    "endAt": "2026-10-18",
-    "venue": {
-      "name": "Fairfield by Marriott Dehradun",
-      "address": "Mauza, Malsi, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Culture"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/dholitaro-dandiya-night-2026/4100030676026638",
-        "checkedAt": "2026-10-18T03:32:24.112Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.112Z",
-    "lastSeenAt": "2026-10-18T03:32:24.112Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.112Z"
-  },
-  {
-    "id": "fe3c0320f2234dd1",
-    "slug": "dandiya-nights-garba-desi-beats-ft-renuka-panwar",
-    "title": "Dandiya Nights Garba Desi Beats ft. Renuka Panwar",
-    "description": "",
-    "startAt": "2026-10-18",
-    "endAt": "2026-10-18",
-    "venue": {
-      "name": "Foothills Gardens: Dehradun",
-      "address": "Main Mussorie Diversion Road, Malsi, Dehradun, Uttarakhand 248006, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Culture"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/dandiya-nights-garba-desi-beats-ft-renuka-panwar/3900030829549022",
-        "checkedAt": "2026-10-18T03:32:24.113Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.113Z"
-  },
-  {
-    "id": "da6c80736400e302",
-    "slug": "ae-haalo-dandiya-nights",
-    "title": "Ae Haalo - Dandiya Nights",
-    "description": "",
-    "startAt": "2026-10-18",
-    "endAt": "2026-10-18",
-    "venue": {
-      "name": "The Chaupal: Dehradun",
-      "address": "Chaupal, near Synergy Farms, Phulsaini, Aamwala, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Culture"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/ae-haalo-dandiya-nights/3900030829280702",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
-  },
-  {
-    "id": "8954487f3339cec2",
-    "slug": "raasnama",
-    "title": "Raasnama",
-    "description": "",
-    "startAt": "2026-10-18",
-    "endAt": "2026-10-18",
-    "venue": {
-      "name": "Mount Litera Zee School: Dehradun",
-      "address": "No 9A, Near Shimla Bypass Road, Rishi Vihar, Mehuwala Mafi Arcadia Grant, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Other"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/raasnama/3900030829282509",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
-  },
-  {
-    "id": "b16c2333503cbba3",
-    "slug": "global-youth-festival-gyf-2026-in-paris-france",
-    "title": "Global Youth Festival (GYF) 2026 in Paris, France",
-    "description": "🇫🇷✨ PARIS, FRANCE OPPORTUNITY 2026 ✨🇫🇷 Dreaming of visiting Paris and building your international career? 🌍 Attend the Global Youth Festival (GYF) 2026 in Paris, France and explore exciting opportunities abroad! 📅 15–18 October 2026 📍 Paris, France ✅",
-    "startAt": "2026-10-18",
-    "endAt": "2026-10-18",
-    "venue": {
-      "name": "Jhajra, Dehradun, Uttarakhand 248007, Dehra Dun, India 248007, Uttarakhand",
-      "address": "Uttarakhand Football Arena, Wing. No 6, Gurunanak Encalve, Prem Nagar, Dehradun 248007, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Outdoors",
-      "Culture"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/global-youth-festival-gyf-2026-in-paris-france/200030428046944",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
-  },
-  {
-    "id": "book-club-social-2026-10-18",
-    "slug": "book-club-meetup-all-we-read",
-    "title": "Book Club Meetup with All We Read",
-    "startAt": "2026-10-18T12:00:00+05:30",
-    "venue": {
-      "name": "Dehradun SOCIAL",
-      "area": "Hathibarkala",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Books",
-      "Community"
-    ],
-    "pricing": {
-      "type": "free",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "district",
-        "url": "https://www.district.in/events/upcoming-events-in-dehradun",
-        "checkedAt": "2026-10-18T08:00:00+05:30",
-        "confidence": 0.95
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 8
-    },
-    "firstSeenAt": "2026-10-18T08:00:00+05:30",
-    "lastSeenAt": "2026-10-18T08:00:00+05:30",
-    "lastCheckedAt": "2026-10-18T08:00:00+05:30"
-  },
-  {
     "id": "sanjh-e-rass-2026-10-18",
     "slug": "sanjh-e-rass",
     "title": "Sanjh-E-Rass",
@@ -273,18 +57,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-30/3900030829245453",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.190Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.190Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.190Z"
   },
   {
     "id": "yellow-diary-2026-10-23",
@@ -343,18 +127,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-with-celebrities-at-dehradun/3900030712228448",
-        "checkedAt": "2026-10-18T03:32:24.113Z",
+        "checkedAt": "2026-10-18T06:39:16.190Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.113Z"
+    "lastSeenAt": "2026-10-18T06:39:16.190Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.190Z"
   },
   {
     "id": "32e35b4793d08a95",
@@ -379,18 +163,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-dehradun-by-hindustan/3900030829381530",
-        "checkedAt": "2026-10-18T03:32:24.113Z",
+        "checkedAt": "2026-10-18T06:39:16.190Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.113Z"
+    "lastSeenAt": "2026-10-18T06:39:16.190Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.190Z"
   },
   {
     "id": "4b3b576264066b9f",
@@ -415,54 +199,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dehradun-half-marathon-2026-13th-edition-tickets/80001963730516",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
-  },
-  {
-    "id": "acfd4277960a58f8",
-    "slug": "dark-side-of-basque-og-shez",
-    "title": "Dark Side of Basque - OG SHEZ",
-    "description": "Get ready to turn up the dark side this Halloween with OG SHEZ, one of Mumbai’s most exciting genre-bending DJs. Known for her high-energy sets and eclectic sound, OG SHEZ seamlessly blends Hip-Hop, Afro House, Jersey Club, Desi Rap, Baile Funk, Juke, R&a",
-    "startAt": "2026-10-30",
-    "endAt": "2026-10-31",
-    "venue": {
-      "name": "Basque | Malsi, Dehradun",
-      "address": "Malsi, Dehradun Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Music"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/dark-side-of-basque-og-shez/4100030812793427",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 5
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "96297d668f206584",
@@ -486,18 +234,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/rajat-chauhan-live-a-solo-standup-comedy-show/3900030824167154",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "c44fbdc5a7afacd7",
@@ -522,18 +270,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/zumba-instructor-training-with-steve-frank-in-dehra-dun-uttarakhand-in/200030777510326",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
+        "checkedAt": "2026-10-18T06:39:16.192Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
+    "lastSeenAt": "2026-10-18T06:39:16.192Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.192Z"
   },
   {
     "id": "ec12add48765568e",
@@ -558,18 +306,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/begin-your-yoga-teaching-journey-with-kunwar-yogas-100-hour-ttc-in-dehradun-tickets/80002105880868",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.192Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.192Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.192Z"
   },
   {
     "id": "b92833bddecc255a",
@@ -594,18 +342,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/300-hour-advanced-yoga-teacher-training-in-dehradun-india-tickets/80002793874803",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
+        "checkedAt": "2026-10-18T06:39:16.192Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
+    "lastSeenAt": "2026-10-18T06:39:16.192Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.192Z"
   },
   {
     "id": "296ba68ddf38e8e2",
@@ -631,18 +379,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/weekend-sizzler-pool-party-belly-dance-ramp-show-games-buffet-dinner-and-drinks-dehradun-tickets/80001819168334",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "0bfa172498606cb2",
@@ -666,18 +414,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/daru-badnaam-a-comedy-show-by-inder-sahani/3900030713294008",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "bd2f326507984520",
@@ -702,18 +450,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/safarnama-by-krishna-shukla/3900030659387200",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "fe076565e26a0fd8",
@@ -738,18 +486,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/operation-forge-x-tickets/80001487149685",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
+        "checkedAt": "2026-10-18T06:39:16.192Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
+    "lastSeenAt": "2026-10-18T06:39:16.192Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.192Z"
   },
   {
     "id": "5a0be2a175cd6a49",
@@ -774,18 +522,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/halki-halki-fati-by-vikas-kush-sharma/3900030845664301",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   },
   {
     "id": "562de29d0166cb06",
@@ -810,18 +558,18 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
-        "checkedAt": "2026-10-18T03:32:24.115Z",
+        "checkedAt": "2026-10-18T06:39:16.192Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.115Z"
+    "lastSeenAt": "2026-10-18T06:39:16.192Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.192Z"
   },
   {
     "id": "4adc16d3d6234306",
@@ -846,17 +594,17 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dehradun-ultra-run-2027-4th-edition-tickets/80001080698758",
-        "checkedAt": "2026-10-18T03:32:24.114Z",
+        "checkedAt": "2026-10-18T06:39:16.191Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "verified",
+    "verificationStatus": "review",
     "curation": {
       "status": "published",
-      "score": 5
+      "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastCheckedAt": "2026-10-18T03:32:24.114Z"
+    "lastSeenAt": "2026-10-18T06:39:16.191Z",
+    "lastCheckedAt": "2026-10-18T06:39:16.191Z"
   }
 ]
