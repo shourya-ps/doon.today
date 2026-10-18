@@ -48,7 +48,7 @@ const lastChecked = published.map(e => new Date(e.lastCheckedAt).getTime()).filt
     const add=(iso,n)=>{const d=new Date(`${iso}T12:00:00+05:30`);d.setUTCDate(d.getUTCDate()+n);return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)};
     const tomorrow=add(today,1);
     const weekday=new Date(`${today}T12:00:00+05:30`).getDay();
-    const untilSat=(6-weekday+7)%7; const sat=add(today,untilSat); const sun=add(sat,1);
+    const untilSat=weekday===0?-1:(6-weekday+7)%7; const sat=add(today,untilSat); const sun=add(sat,1);
     const groups=[...document.querySelectorAll('.day-group')]; const empty=document.querySelector('#empty-state');
     function apply(which){let shown=0;groups.forEach(g=>{const d=g.dataset.date;const show=which==='all'||(which==='today'&&d===today)||(which==='tomorrow'&&d===tomorrow)||(which==='weekend'&&(d===sat||d===sun));g.hidden=!show;if(show)shown++;});empty.hidden=shown!==0;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===which));}
     document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.filter))); apply('all');
