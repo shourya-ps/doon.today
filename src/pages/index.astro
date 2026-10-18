@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EventRow from '../components/EventRow.astro';
 import { events } from '../data/events';
-import { ingestStatus } from '../data/status';
+import { ingestStatus, staleSources } from '../data/status';
 
 const published = events
   .filter((event) => event.curation.status === 'published')
@@ -10,6 +10,7 @@ const published = events
 const grouped = Map.groupBy(published, (event) => event.startAt.slice(0, 10));
 const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 const refreshedAt = Date.parse(ingestStatus.ranAt);
+const stale = staleSources();
 ---
 <BaseLayout title="doon.today — What's happening in Dehradun">
   <section class="hero">
@@ -30,7 +31,10 @@ const refreshedAt = Date.parse(ingestStatus.ranAt);
       {Number.isFinite(refreshedAt) && <small>Data refreshed {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(refreshedAt)}</small>}
     </div>
     {ingestStatus.health === 'degraded' && (
-      <p class="source-health">Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.</p>
+      <p class="source-health">
+        Some primary sources are temporarily unavailable; showing the latest retained and secondary-source events.
+        {stale.length > 0 && <> Last successful refresh: {stale.map((s) => `${s.label} ${s.lastSuccess}`).join(' · ')}.</>}
+      </p>
     )}
     <div id="empty-state" class="empty-state" hidden>No events found for this view yet.</div>
     {[...grouped.entries()].map(([day, dayEvents]) => (

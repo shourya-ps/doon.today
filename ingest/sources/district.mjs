@@ -16,5 +16,11 @@ export async function fetchDistrict(){
   if(next){try{candidates.push(...flattenObjects(JSON.parse(next[1])))}catch{}}
   const seen=new Set(); const events=[];
   for(const o of candidates){const e=toEvent(o); if(e&&!seen.has(e.id)){seen.add(e.id);events.push(e)}}
-  return {source:'district',events,diagnostics:{candidates:candidates.length}};
+  // A 200 that yields nothing (challenge page, changed markup) must not be recorded as a healthy fetch.
+  if(events.length===0){
+    const error=new Error('District listing yielded no Dehradun events; feed cannot be verified');
+    error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(html),candidates:candidates.length,eventsParsed:0,hasNextData:Boolean(next)};
+    throw error;
+  }
+  return {source:'district',events,diagnostics:{listingBytes:Buffer.byteLength(html),candidates:candidates.length,eventsParsed:events.length}};
 }

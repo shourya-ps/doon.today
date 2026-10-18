@@ -7,15 +7,21 @@ on:
 permissions:
   contents: write
 concurrency:
+  # Shared with refresh-primary.yml so the two jobs never commit to data/ at the same time.
   group: refresh-events
   cancel-in-progress: false
 jobs:
   refresh:
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest moves to Ubuntu 26 on 2026-10-19.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
+    env:
+      # District and BookMyShow return 403 to GitHub-hosted runners (bot protection on datacenter IPs).
+      # They are fetched by refresh-primary.yml from a self-hosted runner instead.
+      INGEST_SKIP: district,bookmyshow
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
@@ -37,4 +43,9 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add data/
           git commit -m "data: refresh events"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
+      - name: Check primary sources are fresh
+        # Last on purpose: the data above is already committed. This turns the run red when District or
+        # BookMyShow have not refreshed for 48h, so a dead self-hosted runner is not silent.
+        run: npm run check:health

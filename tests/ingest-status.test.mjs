@@ -1,0 +1,73 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {adapterName,selectAdapters,recordAttempt,computeHealth,primaryFreshness} from '../ingest/lib/status.mjs';
+
+async function fetchDistrict(){}
+async function fetchBookMyShow(){}
+async function fetchAllEvents(){}
+async function fetchReddit(){}
+const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchReddit];
+const names=(list)=>list.map(adapterName);
+
+test('selectAdapters supports only, skip and unknown names',()=>{
+  assert.deepEqual(names(selectAdapters(adapters)),['district','bookmyshow','allevents','reddit']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'district, BookMyShow'})),['district','bookmyshow']);
+  assert.deepEqual(names(selectAdapters(adapters,{skip:'district,bookmyshow'})),['allevents','reddit']);
+  assert.deepEqual(names(selectAdapters(adapters,{only:'',skip:''})),['district','bookmyshow','allevents','reddit']);
+  assert.throws(()=>selectAdapters(adapters,{only:'distrct'}),/Unknown ingest source "distrct"/);
+});
+
+test('recordAttempt tracks last success and consecutive failures',()=>{
+  const t1='2026-10-18T00:00:00.000Z', t2='2026-10-18T08:00:00.000Z', t3='2026-10-18T16:00:00.000Z';
+  const ok=recordAttempt(undefined,{status:'ok',events:12},t1);
+  assert.equal(ok.lastSuccessAt,t1);
+  assert.equal(ok.consecutiveFailures,0);
+  const failed=recordAttempt(ok,{status:'failed',error:'403'},t2);
+  assert.equal(failed.lastSuccessAt,t1,'a failure keeps the previous success time');
+  assert.equal(failed.lastAttemptAt,t2);
+  assert.equal(failed.consecutiveFailures,1);
+  assert.equal(recordAttempt(failed,{status:'failed',error:'403'},t3).consecutiveFailures,2);
+  assert.equal(recordAttempt(failed,{status:'ok',events:3},t3).consecutiveFailures,0);
+});
+
+const now=Date.parse('2026-10-19T00:00:00.000Z');
+const hoursAgo=(h)=>new Date(now-h*3_600_000).toISOString();
+
+test('health is healthy only while both primary sources have a recent success',()=>{
+  const sources={
+    district:{status:'ok',lastSuccessAt:hoursAgo(2)},
+    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(10)},
+    allevents:{status:'ok'}
+  };
+  assert.equal(computeHealth(sources,{now,published:30}).health,'healthy');
+});
+
+test('a primary source carried forward past the max age makes the site degraded',()=>{
+  const sources={
+    district:{status:'ok',lastSuccessAt:hoursAgo(40)},
+    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(1)},
+    allevents:{status:'ok'}
+  };
+  const result=computeHealth(sources,{now,published:30,maxAgeHours:36});
+  assert.equal(result.health,'degraded');
+  assert.deepEqual(result.primarySourcesAvailable,['bookmyshow']);
+  assert.equal(result.primarySources.district.fresh,false);
+});
+
+test('one failed attempt does not degrade a source that succeeded recently',()=>{
+  const sources={
+    district:{status:'failed',lastSuccessAt:hoursAgo(8),consecutiveFailures:1},
+    bookmyshow:{status:'ok',lastSuccessAt:hoursAgo(1)}
+  };
+  assert.equal(computeHealth(sources,{now,published:5}).health,'healthy');
+});
+
+test('a primary source that never succeeded is not fresh, and zero published is failed',()=>{
+  const sources={district:{status:'failed'},bookmyshow:{status:'failed'},allevents:{status:'ok'}};
+  const freshness=primaryFreshness(sources,{now});
+  assert.equal(freshness.district.lastSuccessAt,null);
+  assert.equal(freshness.district.fresh,false);
+  assert.equal(computeHealth(sources,{now,published:4}).health,'degraded');
+  assert.equal(computeHealth(sources,{now,published:0}).health,'failed');
+  assert.equal(computeHealth({district:{status:'failed'},bookmyshow:{status:'failed'}},{now,published:4}).health,'failed');
+});
