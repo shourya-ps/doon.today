@@ -1,0 +1,107 @@
+[
+  {
+    "id": "book-club-social-2026-10-18",
+    "slug": "book-club-meetup-all-we-read",
+    "title": "Book Club Meetup with All We Read",
+    "startAt": "2026-10-18T12:00:00+05:30",
+    "venue": {
+      "name": "Dehradun SOCIAL",
+      "area": "Hathibarkala",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Books",
+      "Community"
+    ],
+    "pricing": {
+      "type": "free",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "district",
+        "url": "https://www.district.in/events/upcoming-events-in-dehradun",
+        "checkedAt": "2026-10-18T08:00:00+05:30",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 8
+    },
+    "firstSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastCheckedAt": "2026-10-18T08:00:00+05:30"
+  },
+  {
+    "id": "sanjh-e-rass-2026-10-18",
+    "slug": "sanjh-e-rass",
+    "title": "Sanjh-E-Rass",
+    "startAt": "2026-10-18T15:00:00+05:30",
+    "venue": {
+      "name": "J P Plaza & Garden",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Culture",
+      "Festive"
+    ],
+    "pricing": {
+      "type": "paid",
+      "minPrice": 799,
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "district",
+        "url": "https://www.district.in/events/upcoming-events-in-dehradun",
+        "checkedAt": "2026-10-18T08:00:00+05:30",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastCheckedAt": "2026-10-18T08:00:00+05:30"
+  },
+  {
+    "id": "yellow-diary-2026-10-23",
+    "slug": "the-yellow-diary-icwf-tour",
+    "title": "The Yellow Diary \u2014 ICWF Tour",
+    "startAt": "2026-10-23T21:00:00+05:30",
+    "venue": {
+      "name": "Playboy Beer Garden",
+      "area": "Rajpur Road",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Music"
+    ],
+    "pricing": {
+      "type": "paid",
+      "minPrice": 799,
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "district",
+        "url": "https://www.district.in/events/upcoming-events-in-dehradun",
+        "checkedAt": "2026-10-18T08:00:00+05:30",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 8
+    },
+    "firstSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastSeenAt": "2026-10-18T08:00:00+05:30",
+    "lastCheckedAt": "2026-10-18T08:00:00+05:30"
+  }
+]

@@ -1,0 +1,33 @@
+---
+import '../styles/global.css';
+const { title = 'doon.today', description = 'A semi-curated calendar of things happening in Dehradun.' } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f6f1e8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell nav-wrap">
+        <a class="brand" href="/">doon.today</a>
+        <nav aria-label="Primary navigation">
+          <a aria-current="page" href="/">Events</a>
+          <a href="/calendars">Calendars</a>
+          <a href="/about">About</a>
+        </nav>
+      </div>
+    </header>
+    <main class="shell"><slot /></main>
+    <footer class="shell footer">
+      <p>Doon.today is a semi-curated calendar of things happening in Dehradun.</p>
+      <p>Source provenance is shown on each event. Data may change; verify with the original organizer before travelling.</p>
+    </footer>
+  </body>
+</html>

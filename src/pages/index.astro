@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EventRow from '../components/EventRow.astro';
+import { events } from '../data/events';
+
+const published = events
+  .filter((event) => event.curation.status === 'published')
+  .sort((a, b) => a.startAt.localeCompare(b.startAt));
+const grouped = Map.groupBy(published, (event) => event.startAt.slice(0, 10));
+const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
+const lastChecked = published.map(e => new Date(e.lastCheckedAt).getTime()).filter(Number.isFinite).sort((a,b)=>b-a)[0];
+---
+<BaseLayout title="doon.today — What's happening in Dehradun">
+  <section class="hero">
+    <p class="eyebrow">DEHRADUN · UTTARAKHAND</p>
+    <h1>What’s happening<br />in Doon?</h1>
+    <p class="lede">A quiet, useful calendar of events worth knowing about.</p>
+    <div class="filters" aria-label="Event date filters">
+      <button class="active" data-filter="all">Upcoming</button>
+      <button data-filter="today">Today</button>
+      <button data-filter="tomorrow">Tomorrow</button>
+      <button data-filter="weekend">Weekend</button>
+    </div>
+  </section>
+
+  <section class="curated">
+    <div class="section-heading">
+      <h2>Curated</h2><span>{published.length}</span>
+      {lastChecked && <small>Checked {new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',timeZone:'Asia/Kolkata'}).format(lastChecked)}</small>}
+    </div>
+    <div id="empty-state" class="empty-state" hidden>No events found for this view yet.</div>
+    {[...grouped.entries()].map(([day, dayEvents]) => (
+      <section class="day-group" data-date={day}>
+        <h3>{dateFmt.format(new Date(`${day}T12:00:00+05:30`))}</h3>
+        {dayEvents.map((event) => <EventRow event={event} />)}
+      </section>
+    ))}
+  </section>
+
+  <script is:inline>
+    const parts = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit',weekday:'short'}).formatToParts(new Date());
+    const val=(type)=>parts.find(p=>p.type===type)?.value;
+    const today=`${val('year')}-${val('month')}-${val('day')}`;
+    const add=(iso,n)=>{const d=new Date(`${iso}T12:00:00+05:30`);d.setUTCDate(d.getUTCDate()+n);return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)};
+    const tomorrow=add(today,1);
+    const weekday=new Date(`${today}T12:00:00+05:30`).getDay();
+    const untilSat=(6-weekday+7)%7; const sat=add(today,untilSat); const sun=add(sat,1);
+    const groups=[...document.querySelectorAll('.day-group')]; const empty=document.querySelector('#empty-state');
+    function apply(which){let shown=0;groups.forEach(g=>{const d=g.dataset.date;const show=which==='all'||(which==='today'&&d===today)||(which==='tomorrow'&&d===tomorrow)||(which==='weekend'&&(d===sat||d===sun));g.hidden=!show;if(show)shown++;});empty.hidden=shown!==0;document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===which));}
+    document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>apply(b.dataset.filter))); apply('all');
+  </script>
+</BaseLayout>

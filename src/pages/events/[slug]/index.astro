@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { events } from '../../../data/events';
+
+export function getStaticPaths() {
+  return events.filter(e => e.curation.status === 'published').map((event) => ({ params: { slug: event.slug }, props: { event } }));
+}
+
+const { event } = Astro.props;
+const start = new Date(event.startAt);
+const date = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' }).format(start);
+const time = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(start);
+---
+<BaseLayout title={`${event.title} — doon.today`}>
+  <article class="detail">
+    <a class="back" href="/">← Events</a>
+    <p class="eyebrow">{event.categories.join(' · ')}</p>
+    <h1>{event.title}</h1>
+    <dl>
+      <div><dt>When</dt><dd>{date}<br />{time}</dd></div>
+      <div><dt>Where</dt><dd>{event.venue.name}{event.venue.area ? <><br />{event.venue.area}</> : null}</dd></div>
+      <div><dt>Price</dt><dd>{event.pricing.type === 'free' ? 'Free' : event.pricing.minPrice ? `From ₹${event.pricing.minPrice}` : 'Check source'}</dd></div>
+    </dl>
+    <div class="source-block">
+      <h2>Source</h2>
+      {event.sources.map((source) => <p><a href={source.url}>{source.provider}</a> · checked {new Date(source.checkedAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}</p>)}
+      {event.verificationStatus === 'community-reported' && <p class="notice">Community reported — verify details with the organizer before travelling.</p>}
+    </div>
+  </article>
+</BaseLayout>
