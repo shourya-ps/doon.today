@@ -12,7 +12,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Art"
+      "Culture"
     ],
     "pricing": {
       "type": "paid",
@@ -123,7 +123,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Food"
     ],
     "pricing": {
       "type": "paid",
@@ -196,7 +196,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Live shows"
     ],
     "pricing": {
       "type": "paid",
@@ -231,7 +231,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Live shows"
     ],
     "pricing": {
       "type": "paid",
@@ -276,8 +276,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Music",
-      "Culture"
+      "Music"
     ],
     "pricing": {
       "type": "paid",
@@ -647,7 +646,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Live shows"
     ],
     "pricing": {
       "type": "paid",
@@ -684,7 +683,8 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Workshop",
+      "Wellness"
     ],
     "pricing": {
       "type": "unknown",
@@ -720,7 +720,8 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Workshop",
+      "Wellness"
     ],
     "pricing": {
       "type": "unknown",
@@ -756,7 +757,8 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Other"
+      "Workshop",
+      "Wellness"
     ],
     "pricing": {
       "type": "unknown",
@@ -792,8 +794,7 @@
       "city": "Dehradun"
     },
     "categories": [
-      "Music",
-      "Art"
+      "Music"
     ],
     "pricing": {
       "type": "unknown",
