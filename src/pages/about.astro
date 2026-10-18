@@ -1,16 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { REPO_URL, suggestEventUrl } from '../lib/report.mjs';
-
-const sources = [
-  { name: 'District', role: 'Ticketing platform, our main source. Events here count as verified.' },
-  { name: 'Townscript', role: 'Ticketing platform. Verified.' },
-  { name: 'Virasat, Thrill Zone, Dehradun Literature Festival, Meetup', role: 'Organizers\' own pages. Verified.' },
-  { name: 'AllEvents', role: 'An aggregator. An event that only AllEvents lists is labelled "Source reported".' },
-  { name: 'r/Dehradun', role: 'Community posts. Never published on their own; kept for review.' }
-];
+import { suggestEventUrl } from '../lib/report.mjs';
 ---
-<BaseLayout title="About — doon.today" description="How doon.today collects, filters and labels Dehradun events, and how to report a mistake.">
+<BaseLayout title="About — doon.today" description="What doon.today is, and how to report a mistake or a missing event.">
   <section class="simple-page prose">
     <p class="eyebrow">ABOUT</p>
     <h1>A calendar for Doon.</h1>
@@ -18,25 +10,7 @@ const sources = [
     <p>The project is intentionally text-first and calendar-first. It is not a ticket marketplace and does not require an account.</p>
     <p>Events retain source provenance and freshness metadata so you can verify details before making plans.</p>
 
-    <h2>Where events come from</h2>
-    <ul class="about-list">
-      {sources.map((s) => <li><strong>{s.name}.</strong> {s.role}</li>)}
-    </ul>
-    <p class="about-note">BookMyShow blocks automated access, so it is not used for now.</p>
-
-    <h2>How events are chosen</h2>
-    <ul class="about-list">
-      <li>The sources above are read about three times a day. District is fetched from a home connection because it refuses cloud servers, so it can lag when that machine is off. When a source is behind, the home page says so.</li>
-      <li>An event is kept when its venue, address or title points to Dehradun. Events that name other cities are dropped.</li>
-      <li>The same event from two sources is merged into one, keeping every source on the page.</li>
-      <li>Categories are guessed from the title and description with simple keyword rules, so some are wrong. Tell us when you see one.</li>
-      <li>An event its sources stop listing is removed after a few refreshes.</li>
-    </ul>
-
     <h2>Spot a mistake, or a missing event?</h2>
     <p>Every event page has a "Report a problem" link that opens a prefilled issue on GitHub. To suggest an event we have missed, <a href={suggestEventUrl()}>open an issue</a>. There is no email address for this yet.</p>
-
-    <h2>Open source</h2>
-    <p>The code and the event data are public at <a href={REPO_URL}>github.com/srijan-kapoor/doon.today</a>, under the AGPL-3.0-or-later licence. Doon.today is not affiliated with any of the sources above.</p>
   </section>
 </BaseLayout>

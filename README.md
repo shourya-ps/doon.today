@@ -61,6 +61,16 @@ Every event carries its sources, a verification status and when it was first see
 
 The evidence and the options for District and BookMyShow are in [docs/primary-sources.md](docs/primary-sources.md).
 
+## How events are chosen
+
+- The sources above are read about three times a day. District is fetched from a home connection because it refuses cloud servers, so it can lag when that machine is off. When a source is behind, the home page says so.
+- An event is kept when its venue, address or title points to Dehradun. Events that name other cities are dropped.
+- The same event from two sources is merged into one, keeping every source on the page.
+- Categories are guessed from the title and description with simple keyword rules, so some are wrong.
+- An event its sources stop listing is removed after a few refreshes.
+
+Doon.today is not affiliated with any of the sources it reads.
+
 ## Refresh jobs
 
 Event data is refreshed three times a day, at 06:00, 14:00 and 22:00 IST.
