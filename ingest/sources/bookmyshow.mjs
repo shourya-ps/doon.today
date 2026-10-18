@@ -20,8 +20,18 @@ function fromLd(o,url){
 }
 export async function fetchBookMyShow(){
   const listing=await fetchText(LIST); const urls=links(listing); const events=[]; const errors=[];
-  for(const url of urls){
-    try{const html=await fetchText(url); for(const o of eventLikeObjects(html)){const e=fromLd(o,url); if(e) events.push(e);} await sleep(120);}catch(e){errors.push({url,error:String(e.message||e)});}
+  if(urls.length===0) {
+    const error=new Error('BookMyShow listing returned no event links; feed cannot be verified');
+    error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(listing),discoveredUrls:0};
+    throw error;
   }
-  return {source:'bookmyshow',events,diagnostics:{discoveredUrls:urls.length,errors}};
+  for(const url of urls){
+    try{const html=await fetchText(url); for(const o of eventLikeObjects(html)){const e=fromLd(o,url); if(e) events.push(e);} await sleep(120);}catch(e){errors.push({url,error:String(e.message||e),...(e.diagnostics ? {diagnostics:e.diagnostics} : {})});}
+  }
+  if(events.length===0) {
+    const error=new Error('BookMyShow event links yielded no Dehradun events; feed cannot be verified');
+    error.diagnostics={listingUrl:LIST,listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:0,errors};
+    throw error;
+  }
+  return {source:'bookmyshow',events,diagnostics:{listingBytes:Buffer.byteLength(listing),discoveredUrls:urls.length,eventsParsed:events.length,errors}};
 }

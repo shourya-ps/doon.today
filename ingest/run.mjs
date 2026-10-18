@@ -22,7 +22,7 @@ for(const fn of adapters){
       diagnostics:r.diagnostics||{}
     };
   } catch(e) {
-    status.sources[name]={status:'failed',error:String(e?.stack||e)};
+    status.sources[name]={status:'failed',error:String(e?.stack||e),...(e?.diagnostics ? {diagnostics:e.diagnostics} : {})};
   }
 }
 

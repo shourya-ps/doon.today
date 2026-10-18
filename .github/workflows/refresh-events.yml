@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      - name: Test ingest adapters
+        run: npm test
       - name: Fetch and normalize events
         run: npm run ingest
       - name: Validate event data
