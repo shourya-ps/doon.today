@@ -6,6 +6,7 @@ const SOURCE_RANK = {
   district: 95,
   bookmyshow: 95,
   townscript: 85,
+  virasat: 90,
   allevents: 75,
   reddit: 50
 };
@@ -31,7 +32,7 @@ function eventTimestamp(e) {
 }
 function verificationStatus(sources=[]) {
   const providers=new Set(sources.map(source => source.provider));
-  if (['manual','district','bookmyshow','townscript'].some(provider => providers.has(provider))) return 'verified';
+  if (['manual','district','bookmyshow','townscript','virasat'].some(provider => providers.has(provider))) return 'verified';
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }

@@ -4,9 +4,10 @@ import {fetchBookMyShow} from './sources/bookmyshow.mjs';
 import {fetchReddit} from './sources/reddit.mjs';
 import {fetchAllEvents} from './sources/allevents.mjs';
 import {fetchTownscript} from './sources/townscript.mjs';
+import {fetchVirasat} from './sources/virasat.mjs';
 import {mergeAndWrite} from './merge.mjs';
 
-const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchReddit];
+const adapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchVirasat,fetchReddit];
 const results=[];
 const status={ranAt:new Date().toISOString(),sources:{}};
 
