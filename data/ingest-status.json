@@ -1,9 +1,9 @@
 {
-  "ranAt": "2026-10-18T07:06:08.633Z",
+  "ranAt": "2026-10-18T07:15:27.454Z",
   "sources": {
     "district": {
       "status": "failed",
-      "error": "Error: 403 Forbidden from https://www.district.in/events/upcoming-events-in-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:16:13",
+      "error": "Error: 403 Forbidden from https://www.district.in/events/upcoming-events-in-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchDistrict (file:///home/runner/work/doon.today/doon.today/ingest/sources/district.mjs:14:14)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:17:13",
       "diagnostics": {
         "status": 403,
         "requestedUrl": "https://www.district.in/events/upcoming-events-in-dehradun",
@@ -16,7 +16,7 @@
     },
     "bookmyshow": {
       "status": "failed",
-      "error": "Error: 403 Forbidden from https://in.bookmyshow.com/explore/events-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:16:13",
+      "error": "Error: 403 Forbidden from https://in.bookmyshow.com/explore/events-dehradun\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchBookMyShow (file:///home/runner/work/doon.today/doon.today/ingest/sources/bookmyshow.mjs:22:17)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:17:13",
       "diagnostics": {
         "status": 403,
         "requestedUrl": "https://in.bookmyshow.com/explore/events-dehradun",
@@ -41,6 +41,19 @@
       "review": 0,
       "diagnostics": {
         "candidates": 0
+      }
+    },
+    "virasat": {
+      "status": "failed",
+      "error": "Error: 500 Internal Server Error from https://reachvirasat.org/programme\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async Promise.all (index 0)\n    at async fetchVirasat (file:///home/runner/work/doon.today/doon.today/ingest/sources/virasat.mjs:74:29)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:17:13",
+      "diagnostics": {
+        "status": 500,
+        "requestedUrl": "https://reachvirasat.org/programme",
+        "finalUrl": "https://reachvirasat.org/programme",
+        "contentType": "text/html; charset=UTF-8",
+        "server": "LiteSpeed",
+        "cacheStatus": null,
+        "retryAfter": null
       }
     },
     "reddit": {
