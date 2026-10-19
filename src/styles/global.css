@@ -30,6 +30,7 @@ h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.6rem, 11
 .filters button { font: inherit; background: transparent; cursor: pointer; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--green); font-size: .88rem; }
 .filters + .filters { margin-top: 10px; }
 .filters .filter-count { opacity: .65; font-size: .78rem; margin-left: 2px; }
+.filters button.empty:not(.active) { opacity: .45; }
 .filter-select { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--muted); }
 .filter-select select { appearance: none; -webkit-appearance: none; font: inherit; font-size: .88rem; color: var(--green); border: 1px solid var(--line); border-radius: 999px; padding: 8px 34px 8px 14px; cursor: pointer;
   background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%230b5b3f' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center / 12px 8px; }
