@@ -73,10 +73,10 @@ Doon.today is not affiliated with any of the sources it reads.
 
 ## Refresh jobs
 
-Event data is refreshed three times a day, at 06:00, 14:00 and 22:00 IST.
+Event data is refreshed three times a day, scheduled for about 05:47, 13:47 and 21:47 IST. GitHub starts scheduled runs when it has capacity, so a run can start minutes to a few hours late; a manual run (Actions, Refresh events, Run workflow) always starts at once.
 
 - **Refresh events** (`.github/workflows/refresh-events.yml`) runs on a GitHub-hosted runner: tests, every source except District, validation, build, then commits `data/` when it changed.
-- **District** is fetched ten minutes earlier from a normal home connection, either by `scripts/refresh-primary-local.sh` (cron or launchd on your own machine) or by the self-hosted runner workflow `.github/workflows/refresh-primary.yml`. Setup, and the security notes for a self-hosted runner on a public repo, are in [docs/primary-sources.md](docs/primary-sources.md).
+- **District** is fetched shortly before the hosted refresh from a normal home connection, either by `scripts/refresh-primary-local.sh` (cron or launchd on your own machine) or by the self-hosted runner workflow `.github/workflows/refresh-primary.yml`. Setup, and the security notes for a self-hosted runner on a public repo, are in [docs/primary-sources.md](docs/primary-sources.md).
 
 Both jobs share one concurrency group so they never commit at the same time.
 
