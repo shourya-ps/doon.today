@@ -1,8 +1,13 @@
 {
-  "ranAt": "2026-10-18T08:05:55.410Z",
+  "ranAt": "2026-10-19T03:52:44.504Z",
   "ran": [
-    "district",
-    "bookmyshow"
+    "allevents",
+    "townscript",
+    "virasat",
+    "thrillzone",
+    "literaturefestival",
+    "meetup",
+    "reddit"
   ],
   "sources": {
     "district": {
@@ -35,11 +40,14 @@
     },
     "allevents": {
       "status": "ok",
-      "events": 20,
+      "events": 18,
       "review": 0,
       "diagnostics": {
-        "candidates": 29
-      }
+        "candidates": 21
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "townscript": {
       "status": "ok",
@@ -47,20 +55,23 @@
       "review": 0,
       "diagnostics": {
         "candidates": 0
-      }
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "virasat": {
-      "status": "failed",
-      "error": "Error: 500 Internal Server Error from https://reachvirasat.org/programme\n    at fetchText (file:///home/runner/work/doon.today/doon.today/ingest/lib/http.mjs:25:21)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async fetchVirasat (file:///home/runner/work/doon.today/doon.today/ingest/sources/virasat.mjs:74:32)\n    at async file:///home/runner/work/doon.today/doon.today/ingest/run.mjs:20:13",
+      "status": "ok",
+      "events": 13,
+      "review": 0,
       "diagnostics": {
-        "status": 500,
-        "requestedUrl": "https://reachvirasat.org/programme",
-        "finalUrl": "https://reachvirasat.org/programme",
-        "contentType": "text/html; charset=UTF-8",
-        "server": "LiteSpeed",
-        "cacheStatus": null,
-        "retryAfter": null
-      }
+        "dayBlocks": 15,
+        "headlineCandidates": 13,
+        "eventsParsed": 13
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "thrillzone": {
       "status": "ok",
@@ -69,7 +80,10 @@
       "diagnostics": {
         "cards": 8,
         "eventsParsed": 2
-      }
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "literaturefestival": {
       "status": "ok",
@@ -78,7 +92,10 @@
       "diagnostics": {
         "festivalDates": "2026-11-27/2026-11-29",
         "sessionsParsed": 0
-      }
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "meetup": {
       "status": "ok",
@@ -87,20 +104,27 @@
       "diagnostics": {
         "candidates": 1,
         "eventsParsed": 1
-      }
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     },
     "reddit": {
       "status": "ok",
       "events": 0,
-      "review": 0,
+      "review": 1,
       "diagnostics": {
-        "candidates": 0
-      }
+        "candidates": 1
+      },
+      "lastAttemptAt": "2026-10-19T03:52:44.504Z",
+      "lastSuccessAt": "2026-10-19T03:52:44.504Z",
+      "consecutiveFailures": 0
     }
   },
   "output": {
-    "published": 29,
-    "review": 0
+    "published": 39,
+    "review": 1,
+    "dropped": 0
   },
   "health": "healthy",
   "primarySourcesAvailable": [
@@ -112,7 +136,7 @@
   "primarySources": {
     "district": {
       "lastSuccessAt": "2026-10-18T08:05:55.410Z",
-      "ageHours": 0,
+      "ageHours": 19.8,
       "fresh": true
     }
   }
