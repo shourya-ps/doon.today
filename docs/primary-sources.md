@@ -31,11 +31,14 @@ sources it ran and keeps the other sources' entries in `data/ingest-status.json`
    GitHub shows. When `./config.sh` asks for extra labels, enter `doon-primary`.
 2. Install it as a service so it survives restarts: `./svc.sh install && ./svc.sh start` (macOS and Linux).
 3. Needs Node 22+ (`.nvmrc`) and git on that machine. The machine has to be on around 05:50, 13:50 and
-   21:50 IST; a job queued while the runner is offline waits and is dropped after 24 hours.
+   21:50 IST; a job queued while the runner is offline waits, blocks the hosted refresh behind it, and is dropped after 24 hours.
 4. Trigger it once from **Actions → Refresh primary sources → Run workflow** and check the log.
+5. Then restore the `schedule:` block in `.github/workflows/refresh-primary.yml` (the commented lines near the top).
+   It is off while no runner is registered, because a scheduled run nobody picks up holds the shared
+   concurrency group and blocks every hosted refresh behind it (this happened on 18 Oct 2026).
 
 **Security.** The repository is public and a self-hosted runner runs workflow code on your machine.
-`refresh-primary.yml` only has `schedule` and `workflow_dispatch` triggers, which fork contributors cannot
+`refresh-primary.yml` only has `workflow_dispatch` (and, once enabled, `schedule`) triggers, which fork contributors cannot
 fire. Do not add `pull_request`, `pull_request_target` or `issue_comment` triggers to it. In **Settings →
 Actions → General**, set "Fork pull request workflows" to require approval for all outside collaborators.
 

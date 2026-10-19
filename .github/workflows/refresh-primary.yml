@@ -7,9 +7,11 @@ name: Refresh primary sources
 # pull_request_target, issue_comment or any other trigger that fork contributors can fire.
 on:
   workflow_dispatch:
-  schedule:
-    # Ten minutes before the hosted refresh (06:00, 14:00, 22:00 IST) so its build sees fresh data.
-    - cron: '20 0,8,16 * * *'
+  # No schedule while no self-hosted runner is registered: a scheduled run with nobody to pick it up sits
+  # in the queue and, because it shares a concurrency group with refresh-events.yml, blocks every hosted
+  # refresh behind it. Once a runner exists, restore (ten minutes before the hosted refresh):
+  #   schedule:
+  #     - cron: '20 0,8,16 * * *'
 permissions:
   contents: write
 concurrency:
