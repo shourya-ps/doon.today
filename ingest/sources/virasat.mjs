@@ -5,8 +5,10 @@ const PROGRAMME='https://reachvirasat.org/programme';
 // Ticketed performances are published whatever their category: the programme gives most headline acts
 // (bands, fusion, tributes) no category at all, so a whitelist of categories silently dropped them.
 // Non-performance categories (a vintage car rally, talks) are not ticketed, and ceremonies and
-// placeholders are skipped by title.
-const NOT_A_PERFORMANCE=/\b(inauguration|to be announced|tba)\b/i;
+// ceremonies are skipped by title. A slot still marked "to be announced" is listed as such, so the time
+// is on the site before the act is named.
+const NOT_A_PERFORMANCE=/\binauguration\b/i;
+const TO_BE_ANNOUNCED=/^(to be announced|tba)\b/i;
 const DANCE=/\b(kathak|bharatnatyam|bharatanatyam|odissi|kuchipudi|dance|tridhara)\b/i;
 const MONTHS={january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
 
@@ -38,8 +40,9 @@ export function parseVirasatProgramme(programme,checkedAt=nowIso()) {
       const category=article[1].match(/\bdata-cat=["']([^"']*)["']/i)?.[1]?.toLowerCase();
       const ticketed=article[1].match(/\bdata-tix=["']([^"']*)["']/i)?.[1]==='1';
       if(!ticketed) continue;
-      const title=stripHtml(article[2].match(/<div\s+class=["']sx-title["']>([\s\S]*?)<\/div>/i)?.[1]||'');
-      if(NOT_A_PERFORMANCE.test(title)) continue;
+      const rawTitle=stripHtml(article[2].match(/<div\s+class=["']sx-title["']>([\s\S]*?)<\/div>/i)?.[1]||'');
+      if(NOT_A_PERFORMANCE.test(rawTitle)) continue;
+      const title=TO_BE_ANNOUNCED.test(rawTitle) ? 'To be announced' : rawTitle;
       headlineCandidates++;
       const timeText=stripHtml(article[2].match(/<div\s+class=["']sx-time["']>([\s\S]*?)<\/div>/i)?.[1]||'');
       const startTime=timeText.match(/\b\d{1,2}:\d{2}\s*[AP]M\b/i)?.[0];

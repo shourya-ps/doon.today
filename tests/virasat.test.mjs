@@ -10,10 +10,10 @@ test('Virasat imports only dated, ticketed headline performances',async()=>{
     await fixture('virasat-programme.html'),
     '2026-10-18T00:00:00.000Z'
   );
-  assert.equal(result.events.length,3);
+  assert.equal(result.events.length,4);
   assert.equal(result.diagnostics.dayBlocks,2);
-  assert.equal(result.diagnostics.headlineCandidates,3,'the inauguration, the placeholder and the unticketed rally are not candidates');
-  assert.deepEqual(result.events.map(event=>event.title),['Virasat 2026: Inaugural Concert','Virasat 2026: Doon Dance','Virasat 2026: Indian Ocean LIVE']);
+  assert.equal(result.diagnostics.headlineCandidates,4,'the inauguration and the unticketed rally are not candidates');
+  assert.deepEqual(result.events.map(event=>event.title),['Virasat 2026: Inaugural Concert','Virasat 2026: Doon Dance','Virasat 2026: Indian Ocean LIVE','Virasat 2026: To be announced']);
   assert.equal(result.events[0].startAt,'2026-10-23T21:00:00+05:30');
   assert.equal(result.events[0].endAt,'2026-10-23T23:00:00+05:30');
   assert.equal(result.events[1].startAt,'2026-10-24T19:30:00+05:30');
@@ -22,6 +22,9 @@ test('Virasat imports only dated, ticketed headline performances',async()=>{
   assert.equal(band.startAt,'2026-10-24T20:00:00+05:30','a ticketed act with no category is published');
   assert.equal(band.endAt,'2026-10-24T22:00:00+05:30');
   assert.deepEqual(band.categories,['Music','Culture']);
+  const tba=result.events[3];
+  assert.equal(tba.startAt,'2026-10-24T20:00:00+05:30','a slot to be announced is listed at its time');
+  assert.equal(tba.endAt,undefined,'an end before the start is dropped');
   assert.equal(result.events[0].venue.city,'Dehradun');
   assert.equal(result.events[0].sources[0].url,'https://reachvirasat.org/programme#day-1');
   assert.equal(result.events[0].verificationStatus,'verified');
