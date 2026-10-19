@@ -31,6 +31,7 @@ Other scripts:
 | `npm run ingest` | Fetch every source and rewrite `data/` (needs network) |
 | `npm run ingest:primary` | Fetch District only |
 | `npm run validate:data` | Check `data/events.json` for missing fields, duplicates and events outside Dehradun |
+| `npm run review` | Go through community leads: approve one to publish it as a hand-checked event, or reject it for good |
 | `npm run check:health` | Fail if District has gone too long without a successful refresh |
 
 `INGEST_ONLY=name1,name2` and `INGEST_SKIP=name1,name2` choose which sources `npm run ingest` runs. BookMyShow only runs when named in `INGEST_ONLY`.
@@ -70,6 +71,14 @@ The evidence and the options for District and BookMyShow are in [docs/primary-so
 - An event its sources stop listing is removed after a few refreshes.
 
 Doon.today is not affiliated with any of the sources it reads.
+
+## Reviewing community leads
+
+Posts on r/Dehradun that look like events are never published on their own. They wait in `data/review/reddit.json`. To work through them, run `npm run review` on `main`; `npm run review -- --list` only shows them.
+
+- **Approve** asks you to confirm the title, start time (IST), venue, price and categories, then publishes the event as verified. It is saved in `data/curated-events.json` and stays on the site until its date passes, whatever the sources say.
+- **Reject** remembers the post, so it does not come back.
+- Both choices are recorded in `data/review/decisions.json`, and `data/events.json` is rebuilt straight away. The script can commit and push to `main` for you; nothing is live until that push deploys.
 
 ## Refresh jobs
 

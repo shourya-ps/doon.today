@@ -12,7 +12,8 @@
     "validate:data": "node scripts/validate-data.mjs",
     "test": "node --test",
     "ingest:primary": "INGEST_ONLY=district node ingest/run.mjs",
-    "check:health": "node scripts/check-health.mjs"
+    "check:health": "node scripts/check-health.mjs",
+    "review": "node scripts/review.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
