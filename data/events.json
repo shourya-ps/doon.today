@@ -1,80 +1,5 @@
 [
   {
-    "id": "22e2e3829a47b335",
-    "slug": "dandia-night",
-    "title": "Dandia Night",
-    "description": "",
-    "startAt": "2026-10-19",
-    "endAt": "2026-10-19",
-    "venue": {
-      "name": "Retro - Fine Dine Restaurant: Dehradun",
-      "address": "Siddharth Regal, 182, Rajpur Road, IAS Officers Colony, Rajpur, Dehradun, Uttarakhand 248001, India Dehradun",
-      "city": "Dehradun",
-      "area": "Rajpur"
-    },
-    "categories": [
-      "Other"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/dandia-night/3900030829345756",
-        "checkedAt": "2026-10-19T05:02:20.426Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "review",
-    "curation": {
-      "status": "published",
-      "score": 4
-    },
-    "firstSeenAt": "2026-10-19T05:02:20.426Z",
-    "lastSeenAt": "2026-10-19T05:02:20.426Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.426Z"
-  },
-  {
-    "id": "a4f31eb6153cdeff",
-    "slug": "all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun",
-    "title": "All You Can Eat & Drink – Unlimited Feast at Underdoggs Dehradun",
-    "description": "",
-    "startAt": "2026-10-19T06:30:00.000Z",
-    "endAt": "2026-10-26T11:30:00.000Z",
-    "venue": {
-      "name": "Underdoggs | Hathibarkala Salwala, Dehradun",
-      "address": "Dehradun",
-      "city": "Dehradun",
-      "area": "Hathibarkala"
-    },
-    "categories": [
-      "Food"
-    ],
-    "pricing": {
-      "type": "paid",
-      "minPrice": 999,
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "district",
-        "url": "https://www.district.in/events/all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun-may4-2026-buy-tickets",
-        "checkedAt": "2026-10-19T04:17:19.318Z",
-        "confidence": 0.95
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 8
-    },
-    "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-19T04:17:19.318Z",
-    "lastCheckedAt": "2026-10-19T04:17:19.318Z"
-  },
-  {
     "id": "7be0e7530a818fb5",
     "slug": "dandiya-night-3-0",
     "title": "DANDIYA NIGHT 3.0",
@@ -98,7 +23,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-30/3900030829245453",
-        "checkedAt": "2026-10-19T05:02:20.426Z",
+        "checkedAt": "2026-10-19T14:47:57.836Z",
         "confidence": 0.75
       }
     ],
@@ -108,8 +33,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.426Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.426Z"
+    "lastSeenAt": "2026-10-19T14:47:57.836Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.836Z"
   },
   {
     "id": "8c4a0a5f50c1c36f",
@@ -217,7 +142,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-1",
         "externalId": "2026-1-choliya-folk-form-of-uttarakhand",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -227,8 +152,47 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "4b895bd738d680ab",
+    "slug": "virasat-2026-mangal-gayan-by-upreti-sisters",
+    "title": "Virasat 2026: Mangal Gayan by Upreti Sisters",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-23T20:00:00+05:30",
+    "endAt": "2026-10-23T21:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-1",
+        "externalId": "2026-1-mangal-gayan-by-upreti-sisters",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "d324233f60708895",
@@ -256,7 +220,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-1",
         "externalId": "2026-1-inaugural-concert-by-sajan-misra-and-swaransh-misra",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -266,8 +230,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-18T07:10:00.000Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "1aa83c22aaf0a117",
@@ -292,7 +256,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-with-celebrities-at-dehradun/3900030712228448",
-        "checkedAt": "2026-10-19T05:02:20.425Z",
+        "checkedAt": "2026-10-19T14:47:57.834Z",
         "confidence": 0.75
       }
     ],
@@ -302,8 +266,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-19T05:02:20.425Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.425Z",
+    "lastSeenAt": "2026-10-19T14:47:57.834Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.834Z",
     "endAt": "2026-10-24",
     "sequence": 1,
     "modifiedAt": "2026-10-19T03:52:53.137Z"
@@ -331,7 +295,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/jalsa-the-dandiya-festival-2026/3900030829302633",
-        "checkedAt": "2026-10-19T05:02:20.426Z",
+        "checkedAt": "2026-10-19T14:47:57.836Z",
         "confidence": 0.75
       }
     ],
@@ -341,8 +305,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-19T03:52:46.074Z",
-    "lastSeenAt": "2026-10-19T05:02:20.426Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.426Z"
+    "lastSeenAt": "2026-10-19T14:47:57.836Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.836Z"
   },
   {
     "id": "96dd6d16931fc0c9",
@@ -445,7 +409,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-2",
         "externalId": "2026-2-sarod-recital-smit-tiwari",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -455,8 +419,47 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "870a11452bbe907e",
+    "slug": "virasat-2026-a-tribute-to-raja-sahab-by-jasbir-jassi",
+    "title": "Virasat 2026: A tribute to Raja Sahab by Jasbir Jassi",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-24T20:30:00+05:30",
+    "endAt": "2026-10-24T22:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-2",
+        "externalId": "2026-2-a-tribute-to-raja-sahab-by-jasbir-jassi",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "32e35b4793d08a95",
@@ -482,7 +485,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dandiya-night-dehradun-by-hindustan/3900030829381530",
-        "checkedAt": "2026-10-19T05:02:20.426Z",
+        "checkedAt": "2026-10-19T14:47:57.835Z",
         "confidence": 0.75
       }
     ],
@@ -492,8 +495,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-19T05:02:20.426Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.426Z"
+    "lastSeenAt": "2026-10-19T14:47:57.835Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.835Z"
   },
   {
     "id": "4b3b576264066b9f",
@@ -518,13 +521,13 @@
       {
         "provider": "thrillzone",
         "url": "https://www.sportifiindia.com/events/dhm",
-        "checkedAt": "2026-10-19T05:02:25.753Z",
+        "checkedAt": "2026-10-19T14:48:02.809Z",
         "confidence": 0.9
       },
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dehradun-half-marathon-2026-13th-edition-tickets/80001963730516",
-        "checkedAt": "2026-10-19T05:02:20.428Z",
+        "checkedAt": "2026-10-19T14:47:57.837Z",
         "confidence": 0.75
       }
     ],
@@ -534,8 +537,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:25.753Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.753Z"
+    "lastSeenAt": "2026-10-19T14:48:02.809Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.809Z"
   },
   {
     "id": "7190160ac45bf9e5",
@@ -562,7 +565,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-3",
         "externalId": "2026-3-carnatic-vocal-by-t-m-krishna",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -572,8 +575,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "bdb6e6ba22d24d6e",
@@ -599,7 +602,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-4",
         "externalId": "2026-4-kathak-performance-by-shinjini-kulkarni",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -609,8 +612,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "f2d1f5ff58101ee4",
@@ -637,7 +640,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-4",
         "externalId": "2026-4-thumri-by-ivy-banerjee",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -647,8 +650,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "af4f8cb4985ebdb9",
@@ -676,7 +679,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-5",
         "externalId": "2026-5-violin-recital-by-dr-n-rajam",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -686,8 +689,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "49b14f6b2632f654",
@@ -714,7 +717,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-5",
         "externalId": "2026-5-chandini-mehfil-with-manjari-chaturvedi-the-tawaif-story",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -724,8 +727,47 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "08ba11ca7e95a349",
+    "slug": "virasat-2026-flute-by-ashwin-sriniivasan",
+    "title": "Virasat 2026: Flute by Ashwin Sriniivasan",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-28T19:00:00+05:30",
+    "endAt": "2026-10-28T20:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-6",
+        "externalId": "2026-6-flute-by-ashwin-sriniivasan",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "31e6147cb500477c",
@@ -753,7 +795,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-6",
         "externalId": "2026-6-geet-and-ghazals-by-priyanka-barve",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -763,8 +805,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "605b9fcf7277ea1c",
@@ -792,7 +834,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-7",
         "externalId": "2026-7-vocal-recital-by-siddharth-belmannu",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -802,8 +844,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "36b7e2dad3c908ce",
@@ -831,7 +873,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-7",
         "externalId": "2026-7-veena-recital-by-rajhesh-vaidhya",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -841,8 +883,8 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "e7b921ae8508fd72",
@@ -908,7 +950,7 @@
         "provider": "virasat",
         "url": "https://reachvirasat.org/programme#day-8",
         "externalId": "2026-8-sitar-recital-by-dhruv-bedi",
-        "checkedAt": "2026-10-19T05:02:25.459Z",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
         "confidence": 0.95
       }
     ],
@@ -918,8 +960,47 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-19T05:02:25.459Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.459Z"
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "84b798a1be8f1db3",
+    "slug": "virasat-2026-indian-ocean-live",
+    "title": "Virasat 2026: Indian Ocean LIVE",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-30T20:00:00+05:30",
+    "endAt": "2026-10-30T22:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-8",
+        "externalId": "2026-8-indian-ocean-live",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "96297d668f206584",
@@ -944,7 +1025,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/rajat-chauhan-live-a-solo-standup-comedy-show/3900030824167154",
-        "checkedAt": "2026-10-19T05:02:20.427Z",
+        "checkedAt": "2026-10-19T14:47:57.836Z",
         "confidence": 0.75
       }
     ],
@@ -954,8 +1035,11 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.427Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.427Z"
+    "lastSeenAt": "2026-10-19T14:47:57.836Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.836Z",
+    "endAt": "2026-10-31",
+    "sequence": 1,
+    "modifiedAt": "2026-10-19T14:48:07.549Z"
   },
   {
     "id": "1326f36e49ca9a74",
@@ -982,7 +1066,7 @@
         "provider": "meetup",
         "url": "https://www.meetup.com/aws-sbg-at-graphic-era-deemed-to-be-university/events/316766651/",
         "externalId": "316766651",
-        "checkedAt": "2026-10-19T05:02:29.299Z",
+        "checkedAt": "2026-10-19T14:48:07.100Z",
         "confidence": 0.9
       }
     ],
@@ -992,8 +1076,8 @@
       "score": 6
     },
     "firstSeenAt": "2026-10-18T07:29:54.460Z",
-    "lastSeenAt": "2026-10-19T05:02:29.299Z",
-    "lastCheckedAt": "2026-10-19T05:02:29.299Z"
+    "lastSeenAt": "2026-10-19T14:48:07.100Z",
+    "lastCheckedAt": "2026-10-19T14:48:07.100Z"
   },
   {
     "id": "9c6337b759a5bb0a",
@@ -1108,6 +1192,83 @@
     "lastCheckedAt": "2026-10-19T04:17:19.321Z"
   },
   {
+    "id": "1ae45826e052b876",
+    "slug": "virasat-2026-tawaif-nama-a-journey-in-memory-of-gauhar-jaan-125-years-of-gramophone-record",
+    "title": "Virasat 2026: Tawaif Nama - A journey - In memory of Gauhar Jaan. 125 years of Gramophone Recording in India",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-31T19:00:00+05:30",
+    "endAt": "2026-10-31T20:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-9",
+        "externalId": "2026-9-tawaif-nama-a-journey-in-memory-of-gauhar-jaan-125-years-of-gramophone-recording-in-india",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "1728668acb3fa60f",
+    "slug": "virasat-2026-to-be-announced",
+    "title": "Virasat 2026: To be announced",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-10-31T20:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-9",
+        "externalId": "2026-9-to-be-announced",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
     "id": "c44fbdc5a7afacd7",
     "slug": "zumba-instructor-training-with-steve-frank-in-dehra-dun-uttarakhand-in",
     "title": "Zumba Instructor Training with Steve Frank in Dehra Dun, Uttarakhand, IN",
@@ -1131,7 +1292,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/zumba-instructor-training-with-steve-frank-in-dehra-dun-uttarakhand-in/200030777510326",
-        "checkedAt": "2026-10-19T05:02:20.429Z",
+        "checkedAt": "2026-10-19T14:47:57.838Z",
         "confidence": 0.75
       }
     ],
@@ -1141,8 +1302,86 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-19T05:02:20.429Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.429Z"
+    "lastSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.838Z"
+  },
+  {
+    "id": "1c4ace039d50feb3",
+    "slug": "virasat-2026-violin-recital-by-ragini-shankar",
+    "title": "Virasat 2026: Violin Recital by Ragini Shankar",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-01T19:00:00+05:30",
+    "endAt": "2026-11-01T21:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-10",
+        "externalId": "2026-10-violin-recital-by-ragini-shankar",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "d5e06f78f6501fac",
+    "slug": "virasat-2026-vocal-recital-by-begum-parween-sultana",
+    "title": "Virasat 2026: Vocal Recital by Begum Parween Sultana",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-01T21:00:00+05:30",
+    "endAt": "2026-11-01T23:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-10",
+        "externalId": "2026-10-vocal-recital-by-begum-parween-sultana",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "ec12add48765568e",
@@ -1168,7 +1407,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/begin-your-yoga-teaching-journey-with-kunwar-yogas-100-hour-ttc-in-dehradun-tickets/80002105880868",
-        "checkedAt": "2026-10-19T05:02:20.428Z",
+        "checkedAt": "2026-10-19T14:47:57.837Z",
         "confidence": 0.75
       }
     ],
@@ -1178,8 +1417,237 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.428Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.428Z"
+    "lastSeenAt": "2026-10-19T14:47:57.837Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.837Z"
+  },
+  {
+    "id": "6c05317125ae81a6",
+    "slug": "virasat-2026-tridhara-bharatnatayam-odissi-and-kathak-by-arohi-munshi-vani-madhav-and-moum",
+    "title": "Virasat 2026: “Tridhara” Bharatnatayam , Odissi and Kathak by Arohi Munshi , Vani Madhav and Moumala Nayak",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-02T19:00:00+05:30",
+    "endAt": "2026-11-02T21:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-11",
+        "externalId": "2026-11-tridhara-bharatnatayam-odissi-and-kathak-by-arohi-munshi-vani-madhav-and-moumala-nayak",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "92cc4f89dc1d9aca",
+    "slug": "virasat-2026-osman-mir",
+    "title": "Virasat 2026: Osman Mir",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-02T21:00:00+05:30",
+    "endAt": "2026-11-02T23:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-11",
+        "externalId": "2026-11-osman-mir",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "0ae1e5bf1b7cd230",
+    "slug": "virasat-2026-sitar-recital-by-samanwaya-sarkar",
+    "title": "Virasat 2026: Sitar recital by Samanwaya Sarkar",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-03T19:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-12",
+        "externalId": "2026-12-sitar-recital-by-samanwaya-sarkar",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "8bde503b6c4c0626",
+    "slug": "virasat-2026-vocal-recital-by-mahesh-kale",
+    "title": "Virasat 2026: Vocal recital by Mahesh Kale",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-03T21:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-12",
+        "externalId": "2026-12-vocal-recital-by-mahesh-kale",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "8805545d02e0fe02",
+    "slug": "virasat-2026-veena-recital-by-ramana-balachandran",
+    "title": "Virasat 2026: Veena recital by Ramana Balachandran",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-04T19:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-13",
+        "externalId": "2026-13-veena-recital-by-ramana-balachandran",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "f04ca668435389a9",
+    "slug": "virasat-2026-vocal-recital-by-anol-chatterjee",
+    "title": "Virasat 2026: Vocal recital by Anol Chatterjee",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-04T20:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-13",
+        "externalId": "2026-13-vocal-recital-by-anol-chatterjee",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "b92833bddecc255a",
@@ -1205,7 +1673,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/300-hour-advanced-yoga-teacher-training-in-dehradun-india-tickets/80002793874803",
-        "checkedAt": "2026-10-19T05:02:20.429Z",
+        "checkedAt": "2026-10-19T14:47:57.838Z",
         "confidence": 0.75
       }
     ],
@@ -1215,8 +1683,160 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-19T05:02:20.429Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.429Z"
+    "lastSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.838Z"
+  },
+  {
+    "id": "3f54ac689b6f0c57",
+    "slug": "virasat-2026-an-evening-of-confluence",
+    "title": "Virasat 2026: An evening of confluence",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-05T20:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-14",
+        "externalId": "2026-14-an-evening-of-confluence",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "589c4c1212ae33a9",
+    "slug": "virasat-2026-closing-ceremony",
+    "title": "Virasat 2026: Closing Ceremony",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-06T18:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-15",
+        "externalId": "2026-15-closing-ceremony",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "fcca59fd3003c63f",
+    "slug": "virasat-2026-gaya-ang-thumri",
+    "title": "Virasat 2026: Gaya Ang Thumri",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-06T19:00:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-15",
+        "externalId": "2026-15-gaya-ang-thumri",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
+  },
+  {
+    "id": "026b60166805ecc4",
+    "slug": "virasat-2026-usha-uthup-live",
+    "title": "Virasat 2026: Usha Uthup Live!",
+    "description": "Ticketed performance at Virasat 2026. Check the official programme and ticket page for details.",
+    "startAt": "2026-11-06T20:30:00+05:30",
+    "venue": {
+      "name": "Himalayan Cultural Centre — Auditorium",
+      "address": "Garhi Cantt",
+      "city": "Dehradun",
+      "area": "Garhi Cantt"
+    },
+    "categories": [
+      "Music",
+      "Culture"
+    ],
+    "pricing": {
+      "type": "paid",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "virasat",
+        "url": "https://reachvirasat.org/programme#day-15",
+        "externalId": "2026-15-usha-uthup-live",
+        "checkedAt": "2026-10-19T14:48:02.685Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 7
+    },
+    "firstSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastSeenAt": "2026-10-19T14:48:02.685Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.685Z"
   },
   {
     "id": "296ba68ddf38e8e2",
@@ -1241,7 +1861,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/weekend-sizzler-pool-party-belly-dance-ramp-show-games-buffet-dinner-and-drinks-dehradun-tickets/80001819168334",
-        "checkedAt": "2026-10-19T05:02:20.428Z",
+        "checkedAt": "2026-10-19T14:47:57.837Z",
         "confidence": 0.75
       }
     ],
@@ -1251,8 +1871,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.428Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.428Z"
+    "lastSeenAt": "2026-10-19T14:47:57.837Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.837Z"
   },
   {
     "id": "0bfa172498606cb2",
@@ -1277,7 +1897,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/daru-badnaam-a-comedy-show-by-inder-sahani/3900030713294008",
-        "checkedAt": "2026-10-19T05:02:20.427Z",
+        "checkedAt": "2026-10-19T14:47:57.836Z",
         "confidence": 0.75
       }
     ],
@@ -1287,11 +1907,48 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.427Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.427Z",
+    "lastSeenAt": "2026-10-19T14:47:57.836Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.836Z",
     "endAt": "2026-11-15",
     "sequence": 1,
     "modifiedAt": "2026-10-19T03:52:53.139Z"
+  },
+  {
+    "id": "ad57ae690c9c760f",
+    "slug": "merry-bright-holiday-market-frankenmuth",
+    "title": "'MERRY & BRIGHT' HOLIDAY MARKET FRANKENMUTH",
+    "description": "Time & Location Nov 21st, 2026 10:00 AM – 4:00 PM Kern Pavilion Frankenmuth , 599 Weiss St, Frankenmuth, MI 48734, About the Event 🎄 Merry & Bright: The Heritage Christmas Market Make your holiday season truly unforgettable by joining us for",
+    "startAt": "2026-11-21",
+    "endAt": "2026-11-22",
+    "venue": {
+      "name": "Traveling Vintage Market",
+      "address": "Friends Travelling Agents, Pant Road, Indira Market, Race Course, Dehradun 248001, India Dehradun",
+      "city": "Dehradun",
+      "area": "Race Course"
+    },
+    "categories": [
+      "Culture"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "allevents",
+        "url": "https://allevents.in/dehradun/merry-and-bright-holiday-market-frankenmuth/200030854224657",
+        "checkedAt": "2026-10-19T14:47:57.838Z",
+        "confidence": 0.75
+      }
+    ],
+    "verificationStatus": "review",
+    "curation": {
+      "status": "published",
+      "score": 4
+    },
+    "firstSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.838Z"
   },
   {
     "id": "bd2f326507984520",
@@ -1316,7 +1973,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/safarnama-by-krishna-shukla/3900030659387200",
-        "checkedAt": "2026-10-19T05:02:20.427Z",
+        "checkedAt": "2026-10-19T14:47:57.836Z",
         "confidence": 0.75
       }
     ],
@@ -1326,8 +1983,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.427Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.427Z"
+    "lastSeenAt": "2026-10-19T14:47:57.836Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.836Z"
   },
   {
     "id": "fe076565e26a0fd8",
@@ -1353,7 +2010,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/operation-forge-x-tickets/80001487149685",
-        "checkedAt": "2026-10-19T05:02:20.429Z",
+        "checkedAt": "2026-10-19T14:47:57.838Z",
         "confidence": 0.75
       }
     ],
@@ -1363,8 +2020,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-19T05:02:20.429Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.429Z"
+    "lastSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.838Z"
   },
   {
     "id": "809c9f869a253782",
@@ -1396,7 +2053,7 @@
       {
         "provider": "literaturefestival",
         "url": "https://www.dehradunliteraturefestival.com/",
-        "checkedAt": "2026-10-19T05:02:25.889Z",
+        "checkedAt": "2026-10-19T14:48:04.123Z",
         "confidence": 0.9
       }
     ],
@@ -1406,8 +2063,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.461Z",
-    "lastSeenAt": "2026-10-19T05:02:25.889Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.889Z"
+    "lastSeenAt": "2026-10-19T14:48:04.123Z",
+    "lastCheckedAt": "2026-10-19T14:48:04.123Z"
   },
   {
     "id": "5a0be2a175cd6a49",
@@ -1433,7 +2090,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/halki-halki-fati-by-vikas-kush-sharma/3900030845664301",
-        "checkedAt": "2026-10-19T05:02:20.427Z",
+        "checkedAt": "2026-10-19T14:47:57.837Z",
         "confidence": 0.75
       }
     ],
@@ -1443,8 +2100,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:20.427Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.427Z"
+    "lastSeenAt": "2026-10-19T14:47:57.837Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.837Z"
   },
   {
     "id": "562de29d0166cb06",
@@ -1469,7 +2126,7 @@
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
-        "checkedAt": "2026-10-19T05:02:20.429Z",
+        "checkedAt": "2026-10-19T14:47:57.838Z",
         "confidence": 0.75
       }
     ],
@@ -1479,8 +2136,8 @@
       "score": 4
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-19T05:02:20.429Z",
-    "lastCheckedAt": "2026-10-19T05:02:20.429Z"
+    "lastSeenAt": "2026-10-19T14:47:57.838Z",
+    "lastCheckedAt": "2026-10-19T14:47:57.838Z"
   },
   {
     "id": "4adc16d3d6234306",
@@ -1505,13 +2162,13 @@
       {
         "provider": "thrillzone",
         "url": "https://www.sportifiindia.com/events/ddn-ultra-run",
-        "checkedAt": "2026-10-19T05:02:25.753Z",
+        "checkedAt": "2026-10-19T14:48:02.809Z",
         "confidence": 0.9
       },
       {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/dehradun-ultra-run-2027-4th-edition-tickets/80001080698758",
-        "checkedAt": "2026-10-19T05:02:20.428Z",
+        "checkedAt": "2026-10-19T14:47:57.837Z",
         "confidence": 0.75
       }
     ],
@@ -1521,7 +2178,7 @@
       "score": 7
     },
     "firstSeenAt": "2026-10-18T03:32:24.114Z",
-    "lastSeenAt": "2026-10-19T05:02:25.753Z",
-    "lastCheckedAt": "2026-10-19T05:02:25.753Z"
+    "lastSeenAt": "2026-10-19T14:48:02.809Z",
+    "lastCheckedAt": "2026-10-19T14:48:02.809Z"
   }
 ]
