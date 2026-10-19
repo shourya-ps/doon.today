@@ -51,7 +51,7 @@ const healthMessage = stale.length > 0
         <label class="filter-select">Area
           <select id="area-filter">
             <option value="">Anywhere in Dehradun</option>
-            {areaOptions.map(([name, count]) => <option value={slug(name)}>{name} ({count})</option>)}
+            {areaOptions.map(([name, count]) => <option value={slug(name)} data-name={name}>{name} ({count})</option>)}
           </select>
         </label>
       )}
@@ -115,23 +115,34 @@ const healthMessage = stale.length > 0
       area: areaSelect && [...areaSelect.options].some(o=>o.value===params.get('area')) ? params.get('area') : ''
     };
 
+    const dayOk=(d)=>state.when==='all'||(state.when==='today'&&d===today)||(state.when==='tomorrow'&&d===tomorrow)||(state.when==='weekend'&&(d===sat||d===sun));
+    // A row matches every active filter except the one named in `ignore`, so each filter's counts reflect the others.
+    const matches=(row,ignore)=>dayOk(row.closest('.day-group').dataset.date)
+      && (ignore==='category' || !state.category || row.dataset.categories.split(' ').includes(state.category))
+      && (ignore==='price' || !state.price || row.dataset.price===state.price)
+      && (ignore==='area' || !state.area || row.dataset.area===state.area);
+    const rows=[...document.querySelectorAll('.event-row')];
+
     function apply(){
       let shown=0;
       groups.forEach(g=>{
-        const d=g.dataset.date;
-        const dayOk=state.when==='all'||(state.when==='today'&&d===today)||(state.when==='tomorrow'&&d===tomorrow)||(state.when==='weekend'&&(d===sat||d===sun));
         let visible=0;
         g.querySelectorAll('.event-row').forEach(row=>{
-          const ok=dayOk
-            && (!state.category || row.dataset.categories.split(' ').includes(state.category))
-            && (!state.price || row.dataset.price===state.price)
-            && (!state.area || row.dataset.area===state.area);
+          const ok=matches(row);
           row.hidden=!ok; if(ok) visible++;
         });
         g.hidden=visible===0; shown+=visible;
       });
       empty.hidden=shown!==0;
       if(count) count.textContent=String(shown);
+      document.querySelectorAll('[data-category]:not([data-category=""])').forEach(b=>{
+        const n=rows.filter(r=>matches(r,'category')&&r.dataset.categories.split(' ').includes(b.dataset.category)).length;
+        b.querySelector('.filter-count').textContent=String(n); b.classList.toggle('empty',n===0);
+      });
+      if(areaSelect) [...areaSelect.options].forEach(o=>{
+        if(!o.value) return;
+        o.textContent=`${o.dataset.name} (${rows.filter(r=>matches(r,'area')&&r.dataset.area===o.value).length})`;
+      });
       const mark=(btn,on)=>{btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on));};
       document.querySelectorAll('[data-filter]').forEach(b=>mark(b,b.dataset.filter===state.when));
       document.querySelectorAll('[data-category]').forEach(b=>mark(b,b.dataset.category===state.category));
