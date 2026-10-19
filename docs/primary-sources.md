@@ -30,8 +30,8 @@ sources it ran and keeps the other sources' entries in `data/ingest-status.json`
 1. Repo **Settings → Actions → Runners → New self-hosted runner**, pick your OS, and run the commands
    GitHub shows. When `./config.sh` asks for extra labels, enter `doon-primary`.
 2. Install it as a service so it survives restarts: `./svc.sh install && ./svc.sh start` (macOS and Linux).
-3. Needs Node 22+ (`.nvmrc`) and git on that machine. The machine has to be on around 05:50, 13:50 and
-   21:50 IST; a job queued while the runner is offline waits, blocks the hosted refresh behind it, and is dropped after 24 hours.
+3. Needs Node 22+ (`.nvmrc`) and git on that machine. The machine has to be on around 05:37, 13:37 and
+   21:37 IST; a job queued while the runner is offline waits, blocks the hosted refresh behind it, and is dropped after 24 hours.
 4. Trigger it once from **Actions → Refresh primary sources → Run workflow** and check the log.
 5. Then restore the `schedule:` block in `.github/workflows/refresh-primary.yml` (the commented lines near the top).
    It is off while no runner is registered, because a scheduled run nobody picks up holds the shared
@@ -49,7 +49,7 @@ District, validate, commit `data/`, push. Try it first with `DRY_RUN=1`. Example
 (times are local; this one assumes the machine is on IST):
 
 ```
-20 6,14,22 * * * cd /path/to/doon.today && ./scripts/refresh-primary-local.sh >> ~/doon-primary.log 2>&1
+37 5,13,21 * * * cd /path/to/doon.today && ./scripts/refresh-primary-local.sh >> ~/doon-primary.log 2>&1
 ```
 
 ## Detecting trouble
