@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import { slugify, eventPassesGeo, areaFromText } from './lib/utils.mjs';
+import { readJson, CURATED_PATH, DECISIONS_PATH, QUEUE_PATH, pendingCandidates } from './lib/review.mjs';
 
 const SOURCE_RANK = {
   manual: 100,
@@ -133,7 +134,10 @@ function mergePair(a,b) {
   };
 }
 
-export async function mergeAndWrite(results) {
+export async function mergeAndWrite(sourceResults) {
+  // Events a person checked by hand always take part, like another source that returned them.
+  const curated=await readJson(CURATED_PATH,[]);
+  const results=curated.length ? [...sourceResults,{source:'manual',events:curated}] : sourceResults;
   let previous=[];
   try { previous=JSON.parse(await fs.readFile('data/events.json','utf8')); } catch {}
 
@@ -197,15 +201,12 @@ export async function mergeAndWrite(results) {
   await fs.writeFile('data/events.json',JSON.stringify(out,null,2)+'\n');
 
   // A partial run (e.g. a District-only run) must not wipe the Reddit review queue.
+  // Leads someone already approved or rejected stay out of the queue.
   const redditRan=results.some(r=>r.source==='reddit');
+  const decisions=await readJson(DECISIONS_PATH,{});
   await fs.mkdir('data/review',{recursive:true});
-  let reviewCount;
-  if (redditRan) {
-    const review=results.flatMap(r=>r.reviewCandidates||[]);
-    await fs.writeFile('data/review/reddit.json',JSON.stringify(review,null,2)+'\n');
-    reviewCount=review.length;
-  } else {
-    try { reviewCount=JSON.parse(await fs.readFile('data/review/reddit.json','utf8')).length; } catch { reviewCount=0; }
-  }
+  const review=pendingCandidates(redditRan ? results.flatMap(r=>r.reviewCandidates||[]) : await readJson(QUEUE_PATH,[]),decisions);
+  await fs.writeFile(QUEUE_PATH,JSON.stringify(review,null,2)+'\n');
+  const reviewCount=review.length;
   return {published:out.length,review:reviewCount,dropped};
 }
