@@ -2,7 +2,14 @@ import {fetchText} from '../lib/http.mjs';
 import {stableId,slugify,stripHtml,nowIso} from '../lib/utils.mjs';
 
 const PROGRAMME='https://reachvirasat.org/programme';
-const HEADLINE_CATEGORIES=new Set(['vocal','instrumental','dance','folk']);
+// Ticketed performances are published whatever their category: the programme gives most headline acts
+// (bands, fusion, tributes) no category at all, so a whitelist of categories silently dropped them.
+// Non-performance categories (a vintage car rally, talks) are not ticketed, and ceremonies and
+// ceremonies are skipped by title. A slot still marked "to be announced" is listed as such, so the time
+// is on the site before the act is named.
+const NOT_A_PERFORMANCE=/\binauguration\b/i;
+const TO_BE_ANNOUNCED=/^(to be announced|tba)\b/i;
+const DANCE=/\b(kathak|bharatnatyam|bharatanatyam|odissi|kuchipudi|dance|tridhara)\b/i;
 const MONTHS={january:1,february:2,march:3,april:4,may:5,june:6,july:7,august:8,september:9,october:10,november:11,december:12};
 
 function localDateTime(year,month,day,time) {
@@ -32,9 +39,11 @@ export function parseVirasatProgramme(programme,checkedAt=nowIso()) {
     for(const article of block[2].matchAll(/<article\b([^>]*)>([\s\S]*?)<\/article>/gi)) {
       const category=article[1].match(/\bdata-cat=["']([^"']*)["']/i)?.[1]?.toLowerCase();
       const ticketed=article[1].match(/\bdata-tix=["']([^"']*)["']/i)?.[1]==='1';
-      if(!ticketed || !HEADLINE_CATEGORIES.has(category)) continue;
+      if(!ticketed) continue;
+      const rawTitle=stripHtml(article[2].match(/<div\s+class=["']sx-title["']>([\s\S]*?)<\/div>/i)?.[1]||'');
+      if(NOT_A_PERFORMANCE.test(rawTitle)) continue;
+      const title=TO_BE_ANNOUNCED.test(rawTitle) ? 'To be announced' : rawTitle;
       headlineCandidates++;
-      const title=stripHtml(article[2].match(/<div\s+class=["']sx-title["']>([\s\S]*?)<\/div>/i)?.[1]||'');
       const timeText=stripHtml(article[2].match(/<div\s+class=["']sx-time["']>([\s\S]*?)<\/div>/i)?.[1]||'');
       const startTime=timeText.match(/\b\d{1,2}:\d{2}\s*[AP]M\b/i)?.[0];
       const endTime=timeText.match(/\bto\s+(\d{1,2}:\d{2}\s*[AP]M)\b/i)?.[1];
@@ -45,12 +54,13 @@ export function parseVirasatProgramme(programme,checkedAt=nowIso()) {
       if(!startAt) continue;
       const fullTitle=`Virasat ${year}: ${title}`;
       const sourceUrl=`${PROGRAMME}#day-${dayNumber}`;
-      const categories=category==='dance'||category==='folk' ? ['Culture'] : ['Music','Culture'];
+      const categories=category==='dance'||category==='folk'||DANCE.test(title) ? ['Culture'] : ['Music','Culture'];
+      const kind=category ? `${category} performance` : 'performance';
       events.push({
         id:stableId('virasat',year,day,title),
         slug:slugify(fullTitle),
         title:fullTitle,
-        description:`Ticketed ${category} performance at Virasat ${year}. Check the official programme and ticket page for details.`,
+        description:`Ticketed ${kind} at Virasat ${year}. Check the official programme and ticket page for details.`,
         startAt,...(endAt ? {endAt} : {}),
         venue:{name:`${venue} — Auditorium`,address:'Garhi Cantt',city:'Dehradun'},
         categories,
