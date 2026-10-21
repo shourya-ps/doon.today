@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "80f5d2bf1a7a16f3",
+    "slug": "solo-travel-in-december",
+    "title": "Solo travel in december",
+    "description": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;Hey travelling to Uttarakhand in december &lt;/p&gt; &lt;p&gt;Need stay from 25th dec- dorms, the prices are extremely high in hosteller and others. Can anybody suggest some good stays( rishikesh/mussoorie/doon/anywhere) &lt;/p&gt; &lt;/div&gt;&lt;!-- SC_ON --&gt; &#32; submitted by &#32; &lt;a href=\"https://www.reddit.com/user/ValuableSort5348\"&gt; /u/ValuableSort5348 &lt;/a&gt; &lt;br/&gt; &lt;span&gt;&lt;a href=\"https://www.reddit.com/r/Dehr",
+    "startAt": "2026-12-25T06:30:00.000Z",
+    "venue": {
+      "name": "See community post",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Other"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "reddit",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xbb4wd/solo_travel_in_december/",
+        "checkedAt": "2026-10-21T04:57:12.994Z",
+        "confidence": 0.5
+      }
+    ],
+    "verificationStatus": "community-reported",
+    "curation": {
+      "status": "review",
+      "score": 3
+    },
+    "firstSeenAt": "2026-10-21T04:57:12.994Z",
+    "lastSeenAt": "2026-10-21T04:57:12.994Z",
+    "lastCheckedAt": "2026-10-21T04:57:12.994Z"
+  }
+]
