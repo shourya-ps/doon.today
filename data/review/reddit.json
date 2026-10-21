@@ -20,7 +20,7 @@
       {
         "provider": "reddit",
         "url": "https://www.reddit.com/r/Dehradun/comments/1xbb4wd/solo_travel_in_december/",
-        "checkedAt": "2026-10-21T04:57:12.994Z",
+        "checkedAt": "2026-10-21T13:53:13.260Z",
         "confidence": 0.5
       }
     ],
@@ -29,8 +29,8 @@
       "status": "review",
       "score": 3
     },
-    "firstSeenAt": "2026-10-21T04:57:12.994Z",
-    "lastSeenAt": "2026-10-21T04:57:12.994Z",
-    "lastCheckedAt": "2026-10-21T04:57:12.994Z"
+    "firstSeenAt": "2026-10-21T13:53:13.260Z",
+    "lastSeenAt": "2026-10-21T13:53:13.260Z",
+    "lastCheckedAt": "2026-10-21T13:53:13.260Z"
   }
 ]
