@@ -12,7 +12,7 @@ const categories = CATEGORY_NAMES.map(String).filter((name) => name !== 'Other')
     <p class="lede">Send an event happening in or around Dehradun. Every entry is checked by hand before it goes on the site. The event details are reviewed in public on GitHub; your contact details are not shared.</p>
 
     <!-- Netlify Forms reads this form at build time. Field names match formLead in ingest/lib/leads.mjs. -->
-    <form class="submit-form" name="submit-event" method="POST" action="/submit/thanks/" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+    <form class="submit-form" name="submit-event" method="POST" action="/submit/thanks/" data-netlify="true" netlify-honeypot="bot-field">
       <input type="hidden" name="form-name" value="submit-event" />
       <p class="trap" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
 
@@ -53,7 +53,6 @@ const categories = CATEGORY_NAMES.map(String).filter((name) => name !== 'Other')
         <legend>Links</legend>
         <label><span>Link to the listing <span class="optional">optional</span></span> <input type="url" name="listing_url" placeholder="https://" /></label>
         <label>How to join <input name="how_to_join" required maxlength="300" placeholder="A ticket link, or e.g. DM @club on Instagram" /></label>
-        <label><span>Poster <span class="optional">optional, used only to check the details</span></span> <input type="file" name="poster" accept="image/*" /></label>
       </fieldset>
 
       <fieldset>

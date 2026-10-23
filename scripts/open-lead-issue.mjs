@@ -20,7 +20,6 @@ const lead = formLead({
   organizer_link: input.organizerLink,
   how_to_join: input.howToJoin,
   repeats: input.repeats,
-  poster: input.poster,
   description: input.description
 });
 if (!lead) {

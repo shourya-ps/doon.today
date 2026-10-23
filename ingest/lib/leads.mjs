@@ -24,7 +24,6 @@ const FIELDS = [
   ['organizerLink', 'organizer link'],
   ['howToJoin', 'how to join'],
   ['repeats', 'repeats'],
-  ['poster', 'poster'],
   ['post', 'post'],
   ['description', 'description']
 ];
@@ -78,7 +77,6 @@ export function formLead(data = {}) {
     organizerLink: cleanLine(data.organizer_link),
     howToJoin: cleanLine(data.how_to_join),
     repeats: cleanLine(data.repeats),
-    poster: cleanUrl(data.poster),
     post: '',
     description: cleanText(data.description)
   };
@@ -108,7 +106,6 @@ export function redditLead(candidate) {
     organizerLink: '',
     howToJoin: '',
     repeats: '',
-    poster: '',
     post: cleanUrl(candidate.sources?.[0]?.url),
     description: cleanText(candidate.description)
   };
