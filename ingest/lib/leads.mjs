@@ -5,7 +5,7 @@
 // Everything in a lead comes from the public, so it is treated as text: it stays inside the fenced block
 // (where "@name" and "#12" don't notify or link anyone), loses backticks, and is cut to a sane length.
 import { buildCuratedEvent, parsePrice, parseWhen } from './review.mjs';
-import { CATEGORY_NAMES, areaFromText, categoryFromText } from './utils.mjs';
+import { CATEGORY_NAMES, areaFromText, categoryFromText, decodeEntities, stripHtml } from './utils.mjs';
 
 export const LEAD_LABEL = 'lead';
 export const APPROVE_LABEL = 'approve';
@@ -107,7 +107,8 @@ export function redditLead(candidate) {
     howToJoin: '',
     repeats: '',
     post: cleanUrl(candidate.sources?.[0]?.url),
-    description: cleanText(candidate.description)
+    // Leads queued before the adapter decoded Reddit's escaped HTML still carry it, so clean it here too.
+    description: cleanText(stripHtml(decodeEntities(candidate.description || '')))
   };
 }
 

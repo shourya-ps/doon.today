@@ -10,8 +10,19 @@ export function slugify(input='') {
 export function stableId(...parts) {
   return crypto.createHash('sha1').update(parts.filter(Boolean).join('|').toLowerCase()).digest('hex').slice(0, 16);
 }
+// Undoes one layer of HTML/XML escaping. Feeds like Reddit's Atom send a post's HTML escaped ("&lt;p&gt;"),
+// so it has to be decoded before stripHtml can remove the tags. "&amp;" goes last so "&amp;lt;" stays "&lt;".
+export function decodeEntities(s='') {
+  return String(s)
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;|&#39;/g, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
+}
 export function stripHtml(s='') {
-  return s.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/g,' ').trim();
+  const text = String(s).replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/<[^>]*$/,' ');
+  // Entities are decoded after the tags are gone, so an escaped "&lt;b&gt;" in the text stays text.
+  return decodeEntities(text).replace(/[\u200b-\u200d\ufeff]/g,'').replace(/\s+/g,' ').trim();
 }
 export function parseMoney(text='') {
   const m = text.replace(/,/g,'').match(/(?:₹|Rs\.?|INR)\s*(\d+)/i);
