@@ -66,6 +66,8 @@ test('an approved form lead becomes a published event', () => {
   assert.equal(e.startAt, '2026-10-25T16:30:00+05:30');
   assert.equal(e.endAt, '2026-10-25T18:00:00+05:30');
   assert.equal(e.venue.area, 'Rajpur', 'a typed area is matched to the area list');
+  const loose = leadToEvent({ ...parsed, fields: { ...parsed.fields, area: 'near ISBT' } }, { issueUrl: 'https://github.com/o/r/issues/40', now: NOW });
+  assert.equal(loose.venue.area, undefined, 'an area not on the list is left for the merge to work out');
   assert.deepEqual(e.categories, ['Music']);
   assert.deepEqual(e.pricing, { type: 'paid', minPrice: 300, currency: 'INR' });
   assert.equal(e.sources[0].url, 'https://example.com/melophile');

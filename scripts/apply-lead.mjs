@@ -52,6 +52,7 @@ if (mode === 'reject') {
 }
 
 if (mode !== 'approve') throw new Error(`Unknown mode: ${mode}`);
+let published = null;
 try {
   const parsed = parseLeadIssue(issue.body);
   if (!parsed) throw new Error('the "Event details" block is missing or its ```text fence was changed');
@@ -68,16 +69,22 @@ try {
   await mergeAndWrite([]);
   execFileSync('node', ['scripts/validate-data.mjs'], { stdio: 'inherit' });
   await commitAndPush(`data: publish lead #${issue.number}`);
-
-  await gh.comment(issue.number, `Published as https://doon.today/events/${event.slug}/ — it goes live when Netlify finishes the deploy.`);
-  await gh.close(issue.number, 'completed');
-  console.log(`Published ${event.id} from #${issue.number}.`);
+  published = event;
 } catch (error) {
-  // Leave the issue open with the reason, and take the label off so adding it again retries.
+  // Nothing was pushed: leave the issue open with the reason, and take the label off so adding it again retries.
   try { git('checkout', '--', 'data/'); } catch {}
   const reason = cleanLine(error.message, 400);
-  await gh.comment(issue.number, `Couldn't publish this: \`${reason}\`. Fix the details in the issue, then add the \`${APPROVE_LABEL}\` label again.`);
-  await gh.removeLabel(issue.number, APPROVE_LABEL);
+  try {
+    await gh.comment(issue.number, `Couldn't publish this: \`${reason}\`. Fix the details in the issue, then add the \`${APPROVE_LABEL}\` label again.`);
+    await gh.removeLabel(issue.number, APPROVE_LABEL);
+  } catch (apiError) {
+    console.error(`Could not report on the issue: ${apiError.message}`);
+  }
   console.error(reason);
   process.exit(1);
 }
+
+// The event is on main by now, so a failure here only affects the issue, not what is published.
+await gh.comment(issue.number, `Published as https://doon.today/events/${published.slug}/ — it goes live when Netlify finishes the deploy.`);
+await gh.close(issue.number, 'completed');
+console.log(`Published ${published.id} from #${issue.number}.`);

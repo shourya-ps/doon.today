@@ -209,6 +209,8 @@ export function leadToEvent(parsed, { issueUrl, candidate, now } = {}) {
     description,
     categories: categories.length ? categories : categoryFromText(`${f.title} ${description}`)
   }, now);
-  const area = f.area && (areaFromText(f.area) || f.area);
+  // Only names on the area list, so a typo or "near ISBT" never reaches the Area filter; without one, the
+  // merge reads the area from the venue as it does for every other event.
+  const area = f.area && areaFromText(f.area);
   return area ? { ...event, venue: { ...event.venue, area } } : event;
 }
