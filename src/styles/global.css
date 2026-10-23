@@ -109,3 +109,18 @@ dd { margin: 0; }
 .about-list li { margin-bottom: 8px; }
 .about-note { color: var(--muted); font-size: .92rem; }
 .report { margin-top: 18px; font-size: .9rem; }
+
+/* Submit-an-event form */
+.submit-form { margin-top: 32px; display: grid; gap: 28px; max-width: 620px; }
+.submit-form fieldset { border: 0; border-top: 1px solid var(--line); padding: 18px 0 0; margin: 0; display: grid; gap: 14px; }
+.submit-form legend { font-family: Georgia, serif; font-size: 1.15rem; color: var(--green); padding: 0 8px 0 0; }
+.submit-form label { display: grid; gap: 6px; font-size: .9rem; color: var(--ink); }
+.submit-form .optional { color: var(--muted); font-size: .8rem; }
+.submit-form input:not([type="checkbox"]):not([type="radio"]), .submit-form select, .submit-form textarea { font: inherit; font-size: 1rem; color: var(--ink); background: color-mix(in srgb, var(--paper) 60%, white); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.submit-form input:focus-visible, .submit-form select:focus-visible, .submit-form textarea:focus-visible { outline: 2px solid var(--green); outline-offset: 1px; }
+.submit-form .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.submit-form .check { display: flex; align-items: center; gap: 8px; }
+.submit-form .choices { display: flex; flex-wrap: wrap; gap: 18px; }
+.submit-form .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.submit-form button[type="submit"] { justify-self: start; font: inherit; font-size: 1rem; background: var(--green); color: var(--paper); border: 0; border-radius: 999px; padding: 12px 22px; cursor: pointer; }
+.submit-form button[type="submit"]:hover { background: color-mix(in srgb, var(--green) 85%, black); }

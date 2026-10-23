@@ -5,5 +5,6 @@ export default defineConfig({
   site: 'https://doon.today',
   output: 'static',
   // Generates sitemap-index.xml, which public/robots.txt points at.
-  integrations: [sitemap()]
+  // The submit form's thank-you page is not worth indexing.
+  integrations: [sitemap({ filter: (page) => !page.endsWith('/submit/thanks/') })]
 });

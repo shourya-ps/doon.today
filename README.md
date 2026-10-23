@@ -31,7 +31,7 @@ Other scripts:
 | `npm run ingest` | Fetch every source and rewrite `data/` (needs network) |
 | `npm run ingest:primary` | Fetch District only |
 | `npm run validate:data` | Check `data/events.json` for missing fields, duplicates and events outside Dehradun |
-| `npm run review` | Go through community leads: approve one to publish it as a hand-checked event, or reject it for good |
+| `npm run review` | Go through community leads: approve one to publish it as a hand-checked event, or reject it for good (or use the GitHub issues, below) |
 | `npm run check:health` | Fail if District has gone too long without a successful refresh |
 
 `INGEST_ONLY=name1,name2` and `INGEST_SKIP=name1,name2` choose which sources `npm run ingest` runs. BookMyShow only runs when named in `INGEST_ONLY`.
@@ -79,6 +79,22 @@ Posts on r/Dehradun that look like events are never published on their own. They
 - **Approve** asks you to confirm the title, start time (IST), venue, price and categories, then publishes the event as verified. It is saved in `data/curated-events.json` and stays on the site until its date passes, whatever the sources say.
 - **Reject** remembers the post, so it does not come back.
 - Both choices are recorded in `data/review/decisions.json`, and `data/events.json` is rebuilt straight away. The script can commit and push to `main` for you; nothing is live until that push deploys.
+
+### The review queue on GitHub
+
+Every lead also gets a GitHub issue labelled `lead`, so you're notified when something is waiting:
+
+- **Submit form** (`/submit/`): Netlify verifies the entry and runs `netlify/functions/lead-intake.mjs`, which starts the "Open lead issue" workflow. That workflow opens the issue as github-actions[bot]. Contact details stay in Netlify Forms; issues and workflow inputs are public.
+- **r/Dehradun**: after each refresh, `scripts/sync-lead-issues.mjs` opens an issue for each new lead, and closes issues for leads already decided with `npm run review`.
+
+To review on GitHub, edit the "Event details" block in the issue if anything is wrong, then:
+
+- add the `approve` label to publish it (the "Review lead" workflow writes `data/curated-events.json`, pushes to `main` and closes the issue), or
+- close the issue to reject it. A rejected Reddit post is remembered; a form entry simply isn't published.
+
+If a detail can't be read, the workflow comments with the reason, removes the label and leaves the issue open. Only the repo owner's label or close counts.
+
+Setup, once: create the `lead` and `approve` labels; enable form detection in Netlify; and set `DOON_GITHUB_TOKEN` in Netlify's production environment to a fine-grained token for this repo with only "Actions: read and write". Without the token, entries still arrive in Netlify Forms but no issue is opened.
 
 ## Refresh jobs
 

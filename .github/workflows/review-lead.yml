@@ -1,0 +1,58 @@
+name: Review lead
+# Publishes a lead when the repo owner adds the "approve" label to its issue, and records a rejection when
+# the owner closes it without that label. See ingest/lib/leads.mjs for the issue format.
+on:
+  issues:
+    types: [labeled, closed]
+permissions:
+  contents: write
+  issues: write
+concurrency:
+  # One run per issue. Not shared with the refresh group: a pending run there is replaced by the next one,
+  # which would silently drop an approval made while a refresh is running.
+  group: review-lead-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  approve:
+    if: >-
+      github.event.action == 'labeled' && github.event.label.name == 'approve' &&
+      contains(github.event.issue.labels.*.name, 'lead') &&
+      github.event.sender.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: |
+          git config user.name "doon.today bot"
+          git config user.email "actions@users.noreply.github.com"
+      - name: Publish the event
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/apply-lead.mjs approve
+  reject:
+    if: >-
+      github.event.action == 'closed' &&
+      contains(github.event.issue.labels.*.name, 'lead') &&
+      !contains(github.event.issue.labels.*.name, 'approve') &&
+      github.event.sender.login == github.repository_owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: |
+          git config user.name "doon.today bot"
+          git config user.email "actions@users.noreply.github.com"
+      - name: Record the rejection
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/apply-lead.mjs reject
