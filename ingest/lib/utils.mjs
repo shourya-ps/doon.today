@@ -24,7 +24,7 @@ export function parseMoney(text='') {
 const DEHRADUN_TERMS = [
   'dehradun','dehra dun','rajpur','raipur road','dalanwala','hathibarkala','jakhan','malsi','clement town',
   'race course','kaulagarh','prem nagar','sahastradhara','ballupur','gms road',
-  'clock tower','paltan bazaar','doon library','garhi cantt','niranjanpur','vikasnagar'
+  'clock tower','paltan bazaar','doon library','garhi cantt','niranjanpur','vikasnagar','maldevta'
 ];
 
 // Raipur is a Dehradun locality and a city in Chhattisgarh, so only "Raipur Road" counts as Dehradun.
@@ -117,7 +117,8 @@ const AREAS = [
   ['Paltan Bazaar', ['paltan bazaar']],
   ['Garhi Cantt', ['garhi cantt']],
   ['Niranjanpur', ['niranjanpur']],
-  ['Vikasnagar', ['vikasnagar']]
+  ['Vikasnagar', ['vikasnagar']],
+  ['Maldevta', ['maldevta']]
 ].map(([name, terms]) => [name, wordMatcher(terms)]);
 
 export function areaFromText(text = '') {
