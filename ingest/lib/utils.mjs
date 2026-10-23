@@ -120,6 +120,9 @@ const AREAS = [
   ['Vikasnagar', ['vikasnagar']]
 ].map(([name, terms]) => [name, wordMatcher(terms)]);
 
+/** Area names, for the suggestions on the submit form. */
+export const AREA_NAMES = AREAS.map(([name]) => name);
+
 export function areaFromText(text = '') {
   return AREAS.find(([, re]) => re.test(text))?.[0];
 }

@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { AREA_NAMES, CATEGORY_NAMES } from '../../../ingest/lib/utils.mjs';
+
+const areas = AREA_NAMES.map(String);
+const categories = CATEGORY_NAMES.map(String).filter((name) => name !== 'Other');
+---
+<BaseLayout title="Submit an event — doon.today" description="Send an event happening in Dehradun. Every entry is checked by hand before it is published.">
+  <section class="simple-page">
+    <p class="eyebrow">SUBMIT AN EVENT</p>
+    <h1>Tell us what's on.</h1>
+    <p class="lede">Send an event happening in or around Dehradun. Every entry is checked by hand before it goes on the site. The event details are reviewed in public on GitHub; your contact details are not shared.</p>
+
+    <!-- Netlify Forms reads this form at build time. Field names match formLead in ingest/lib/leads.mjs. -->
+    <form class="submit-form" name="submit-event" method="POST" action="/submit/thanks/" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="submit-event" />
+      <p class="trap" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+      <fieldset>
+        <legend>The event</legend>
+        <label>Event name <input name="title" required maxlength="200" /></label>
+        <div class="row">
+          <label>Date <input type="date" name="date" required /></label>
+          <label>Starts <input type="time" name="time" /></label>
+          <label><span>Ends <span class="optional">optional</span></span> <input type="time" name="end_time" /></label>
+        </div>
+        <label class="check"><input type="checkbox" name="time_tbd" value="yes" /> The time isn't fixed yet</label>
+        <div class="row">
+          <label>Venue <input name="venue" required maxlength="200" placeholder="Name of the place" /></label>
+          <label>Area <input name="area" list="area-names" maxlength="100" placeholder="e.g. Rajpur" /></label>
+        </div>
+        <datalist id="area-names">{areas.map((name) => <option value={name} />)}</datalist>
+        <label><span>Category <span class="optional">optional</span></span>
+          <select name="category">
+            <option value="">Not sure</option>
+            {categories.map((name) => <option value={name}>{name}</option>)}
+          </select>
+        </label>
+        <label><span>Short description <span class="optional">optional</span></span> <textarea name="description" rows="4" maxlength="1000"></textarea></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Price</legend>
+        <div class="choices">
+          <label class="check"><input type="radio" name="price_type" value="free" /> Free</label>
+          <label class="check"><input type="radio" name="price_type" value="paid" /> Paid</label>
+          <label class="check"><input type="radio" name="price_type" value="unsure" checked /> Not sure</label>
+        </div>
+        <label>Price in rupees, if paid <input type="number" name="price_amount" min="0" step="1" inputmode="numeric" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Links</legend>
+        <label><span>Link to the listing <span class="optional">optional</span></span> <input type="url" name="listing_url" placeholder="https://" /></label>
+        <label>How to join <input name="how_to_join" required maxlength="300" placeholder="A ticket link, or e.g. DM @club on Instagram" /></label>
+        <label><span>Poster <span class="optional">optional, used only to check the details</span></span> <input type="file" name="poster" accept="image/*" /></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Organizer</legend>
+        <label>Organizer name <input name="organizer" required maxlength="200" /></label>
+        <label><span>Organizer's Instagram or website <span class="optional">optional</span></span> <input name="organizer_link" maxlength="300" placeholder="@handle or https://" /></label>
+        <label><span>Does it happen regularly? <span class="optional">optional</span></span> <input name="repeats" maxlength="300" placeholder="e.g. every second Sunday" /></label>
+        <label><span>Your email or phone <span class="optional">optional, only for questions about this event, never published</span></span> <input name="contact" maxlength="200" autocomplete="email" /></label>
+        <label class="check"><input type="checkbox" name="permission" value="yes" required /> I'm the organizer, or I have their permission to share this</label>
+      </fieldset>
+
+      <button type="submit">Send the event</button>
+    </form>
+  </section>
+</BaseLayout>

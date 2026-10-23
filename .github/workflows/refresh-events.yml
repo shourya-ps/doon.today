@@ -8,6 +8,8 @@ on:
     - cron: '17 0,8,16 * * *'
 permissions:
   contents: write
+  # For opening review issues for new r/Dehradun leads.
+  issues: write
 concurrency:
   # Shared with refresh-primary.yml so the two jobs never commit to data/ at the same time.
   group: refresh-events
@@ -48,6 +50,13 @@ jobs:
           git commit -m "data: refresh events"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
+      - name: Sync the review queue with GitHub issues
+        # Opens an issue for each new Reddit lead and closes issues already decided with npm run review.
+        # A GitHub API hiccup here should not fail the refresh.
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sync-lead-issues.mjs
       - name: Check primary sources are fresh
         # Last on purpose: the data above is already committed. This turns the run red when District has
         # not refreshed for 48h, so a dead self-hosted runner is not silent.

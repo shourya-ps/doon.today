@@ -60,7 +60,9 @@ export function buildCuratedEvent(candidate, details, now = new Date().toISOStri
   if (!venueName) throw new Error('A venue is needed');
 
   const event = {
-    id: stableId('manual', post, startAt),
+    // Without a post (a hand-added or submitted event) the details link identifies it, so two events at the
+    // same time don't share an id.
+    id: stableId('manual', post || details.url || title, startAt),
     slug: slugify(title),
     title,
     description: details.description ?? candidate.description ?? '',

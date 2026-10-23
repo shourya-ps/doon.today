@@ -1,0 +1,30 @@
+name: Open lead issue
+# Started by the Netlify function netlify/functions/lead-intake.mjs for each verified submit-form entry.
+# It opens the review issue here, with this workflow's token, so the issue is authored by
+# github-actions[bot] and the repo owner gets a notification. The input never holds contact details:
+# workflow inputs are public on a public repo.
+on:
+  workflow_dispatch:
+    inputs:
+      lead:
+        description: The form entry as JSON (see formLead in ingest/lib/leads.mjs)
+        required: true
+        type: string
+permissions:
+  contents: read
+  issues: write
+jobs:
+  open:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Open the issue
+        env:
+          # Passed through the environment, never interpolated into the script, because it is public text.
+          LEAD: ${{ inputs.lead }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/open-lead-issue.mjs

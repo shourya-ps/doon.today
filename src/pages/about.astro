@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { suggestEventUrl } from '../lib/report.mjs';
 ---
 <BaseLayout title="About — doon.today" description="What doon.today is, and how to report a mistake or a missing event.">
   <section class="simple-page prose">
@@ -11,6 +10,6 @@ import { suggestEventUrl } from '../lib/report.mjs';
     <p>Events retain source provenance and freshness metadata so you can verify details before making plans.</p>
 
     <h2>Spot a mistake, or a missing event?</h2>
-    <p>Every event page has a "Report a problem" link that opens a prefilled issue on GitHub. To suggest an event we have missed, <a href={suggestEventUrl()}>open an issue</a>. There is no email address for this yet.</p>
+    <p>Every event page has a "Report a problem" link that opens a prefilled issue on GitHub. To add an event we have missed, <a href="/submit/">submit it here</a>; every entry is checked by hand before it is published.</p>
   </section>
 </BaseLayout>
