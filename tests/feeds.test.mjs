@@ -41,6 +41,7 @@ test('areas are read from addresses on whole words',()=>{
   assert.equal(areaFromText('Studio XO Rajpur, Dehradun'),'Rajpur');
   assert.equal(areaFromText('64/2, Race Course Road, Guru Nanak Vihar'),'Race Course');
   assert.equal(areaFromText('Forest Edge, Mussoorie Rd, Salan Gaon, Malsi, Dehradun'),'Malsi');
+  assert.equal(areaFromText('Maldevta'),'Maldevta','a venue name alone is enough');
   assert.equal(areaFromText('Somewhere in Dehradun'),undefined);
   assert.equal(areaFromText('Malsiwala Farm'),undefined,'"malsi" inside another word does not count');
 });
