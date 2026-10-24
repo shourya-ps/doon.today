@@ -4,7 +4,7 @@ import { events } from '../../../data/events';
 import { ingestStatus } from '../../../data/status';
 import { googleDateRange, toInstant } from '../../../lib/ics.mjs';
 import { eventJsonLd, eventSummary } from '../../../lib/seo.mjs';
-import { sourceLabel, detailsLinkLabel } from '../../../lib/sources.mjs';
+import { sourceLabel, detailsLinkLabel, priceLabel } from '../../../lib/sources.mjs';
 import { reportEventUrl } from '../../../lib/report.mjs';
 
 export function getStaticPaths() {
@@ -53,7 +53,7 @@ const detailsLabel = detailsLinkLabel(primarySource);
     <dl>
       <div><dt>When</dt><dd>{date}<br />{time}</dd></div>
       <div><dt>Where</dt><dd>{event.venue.name}{address ? <><br />{address}</> : null}{event.venue.area && !`${event.venue.name} ${address ?? ''}`.toLowerCase().includes(event.venue.area.toLowerCase()) ? <><br />{event.venue.area}</> : null}</dd></div>
-      <div><dt>Price</dt><dd>{event.pricing.type === 'free' ? 'Free' : event.pricing.minPrice ? `From ₹${event.pricing.minPrice}` : 'Check source'}</dd></div>
+      <div><dt>Price</dt><dd>{priceLabel(event.pricing) || 'Check source'}</dd></div>
     </dl>
 
     {event.description && <p class="event-description">{event.description}</p>}

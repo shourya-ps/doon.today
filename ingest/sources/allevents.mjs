@@ -1,8 +1,19 @@
 import { fetchText } from '../lib/http.mjs';
-import { eventLikeObjects, flattenObjects } from '../lib/jsonld.mjs';
-import { stableId, slugify, parseMoney, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso } from '../lib/utils.mjs';
+import { eventLikeObjects, extractJsonLd, flattenObjects } from '../lib/jsonld.mjs';
+import { stableId, slugify, priceFromOffers, priceFromText, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, sleep } from '../lib/utils.mjs';
 
 const LIST = 'https://allevents.in/dehradun';
+// The city listing rarely carries prices; each event's own page does. Fetched one at a time, and capped.
+const MAX_PRICE_PAGES = 25;
+const PRICE_PAGE_DELAY_MS = 700;
+const PRICE_PAGE_TIMEOUT_MS = 10000;
+// After this many blocked or rate-limited answers in a row, stop asking for more pages this run.
+const MAX_BLOCKED_IN_A_ROW = 2;
+// ...or after this many failures of any kind in a row (timeouts, errors).
+const MAX_FAILED_IN_A_ROW = 3;
+// An event that started this long ago is dropped by the merge anyway, so its page isn't worth a fetch.
+const STARTED_GRACE_MS = 6 * 3600_000;
+const startTime = (v = '') => Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(v) ? `${v}T23:59:59+05:30` : v);
 
 function toEvent(o, url = LIST) {
   const loc = o.location || o.venue || {};
@@ -23,7 +34,6 @@ function toEvent(o, url = LIST) {
   })) return null;
 
   const checkedAt = nowIso();
-  const offers = Array.isArray(o.offers) ? o.offers[0] : o.offers;
   const text = [title, description, venueName, addr, o.city].filter(Boolean).join(' ');
 
   return {
@@ -35,9 +45,7 @@ function toEvent(o, url = LIST) {
     endAt: o.endDate || o.end_at,
     venue: { name: venueName, address: stripHtml(addr || ''), city: 'Dehradun' },
     categories: categoryFromText(text),
-    pricing: offers?.price != null
-      ? { type: Number(offers.price) === 0 ? 'free' : 'paid', minPrice: Number(offers.price) || undefined, currency: 'INR' }
-      : parseMoney(JSON.stringify(o)),
+    pricing: priceFromOffers(o.offers) || priceFromText(`${title} ${description}`),
     sources: [{ provider: 'allevents', url: o.url || url, externalId: String(o.id || '') || undefined, checkedAt, confidence: 0.75 }],
     verificationStatus: 'review',
     curation: { status: 'published', score: 4 },
@@ -47,8 +55,53 @@ function toEvent(o, url = LIST) {
   };
 }
 
-export async function fetchAllEvents() {
-  const html = await fetchText(LIST);
+const pagePath = (value = '') => { try { return new URL(value).pathname.replace(/\/+$/, '').toLowerCase(); } catch { return ''; } };
+const isEventType = (t) => [].concat(t || []).some((x) => /Event$/.test(String(x)));
+
+/**
+ * The price on an event's own AllEvents page, or null when the page gives none. Only this event's own
+ * structured data counts, matched by its link or title, so a "similar events" block can't lend its price.
+ * Throws when the page can't be fetched, so the caller can tell a missing price from a blocked page.
+ */
+export async function priceFromEventPage(url, { title = '', fetchPage = fetchText } = {}) {
+  const html = await fetchPage(url, { timeoutMs: PRICE_PAGE_TIMEOUT_MS });
+  const events = flattenObjects(extractJsonLd(html)).filter((o) => isEventType(o?.['@type']));
+  const own = events.find((o) => pagePath(o.url) && pagePath(o.url) === pagePath(url))
+    || events.find((o) => title && stripHtml(o.name || '').toLowerCase() === title.toLowerCase())
+    || (events.length === 1 ? events[0] : null);
+  return own ? priceFromOffers(own.offers) : null;
+}
+
+/**
+ * Fills in prices the listing didn't give, from each event's own page: soonest events first, one page at a
+ * time, capped per run, and stopping early if AllEvents starts refusing. A failed page keeps "unknown".
+ */
+export async function addPricesFromEventPages(events, { fetchPage = fetchText, delayMs = PRICE_PAGE_DELAY_MS, max = MAX_PRICE_PAGES, now = Date.now() } = {}) {
+  const missing = events
+    .filter((e) => e.pricing.type === 'unknown' && /^https:\/\/allevents\.in\//.test(e.sources[0]?.url || ''))
+    .filter((e) => !(startTime(e.startAt) < now - STARTED_GRACE_MS))
+    .sort((a, b) => String(a.startAt).localeCompare(String(b.startAt)))
+    .slice(0, max);
+  let fetched = 0, found = 0, failed = 0, blockedInARow = 0, failedInARow = 0;
+  const stop = () => blockedInARow >= MAX_BLOCKED_IN_A_ROW || failedInARow >= MAX_FAILED_IN_A_ROW;
+  for (const e of missing) {
+    if (stop()) break;
+    if (fetched > 0 && delayMs) await sleep(delayMs);
+    fetched++;
+    try {
+      const price = await priceFromEventPage(e.sources[0].url, { title: e.title, fetchPage });
+      blockedInARow = 0; failedInARow = 0;
+      if (price) { e.pricing = price; found++; }
+    } catch (error) {
+      failed++; failedInARow++;
+      if ([403, 429].includes(error?.diagnostics?.status)) blockedInARow++;
+    }
+  }
+  return { pricePagesFetched: fetched, pricesFound: found, pricePagesFailed: failed, ...(stop() ? { pricePagesStoppedEarly: true } : {}) };
+}
+
+export async function fetchAllEvents({ fetchPage = fetchText, delayMs } = {}) {
+  const html = await fetchPage(LIST);
   const candidates = [...eventLikeObjects(html)];
   const next = html.match(/<script[^>]+id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i);
   if (next) {
@@ -60,5 +113,6 @@ export async function fetchAllEvents() {
     const e = toEvent(o);
     if (e && !seen.has(e.id)) { seen.add(e.id); events.push(e); }
   }
-  return { source: 'allevents', events, diagnostics: { candidates: candidates.length } };
+  const prices = await addPricesFromEventPages(events, { fetchPage, delayMs });
+  return { source: 'allevents', events, diagnostics: { candidates: candidates.length, ...prices } };
 }

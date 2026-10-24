@@ -114,7 +114,21 @@ function missedRunsAfter(e, returned) {
   if (providers.length === 0) return before;
   return providers.every(p => (returned.get(p)||0) > 0) ? before+1 : before;
 }
-function mergePair(a,b) {
+// Prices from two sources of one event. A known price beats an unknown one. With `combine` (two sources in
+// the same run), two paid prices make one range, so "From ₹..." is never above the real minimum. Without
+// it (this run against the stored copy), the preferred side's price stands, so a stale price can't stick.
+// A hand-checked price is never changed by another source, and free against paid goes to the preferred.
+function mergePricing(preferred={type:'unknown'}, secondary={type:'unknown'}, {combine=false, handChecked=false}={}) {
+  // "Paid" with no amount says less than another source's amount, so it is treated like unknown.
+  const known = (p) => p.type === 'free' || (p.type === 'paid' && p.minPrice > 0);
+  if (!known(preferred)) return known(secondary) ? secondary : preferred;
+  if (!combine || handChecked) return preferred;
+  if (preferred.type !== 'paid' || secondary.type !== 'paid' || !preferred.minPrice || !secondary.minPrice) return preferred;
+  const minPrice = Math.min(preferred.minPrice, secondary.minPrice);
+  const maxPrice = Math.max(preferred.maxPrice || preferred.minPrice, secondary.maxPrice || secondary.minPrice);
+  return { ...preferred, minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}) };
+}
+function mergePair(a,b,{combinePrices=false}={}) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
   const sources=[...(a.sources||[]),...(b.sources||[])];
@@ -134,7 +148,8 @@ function mergePair(a,b) {
     // The preferred source wins, except where it only has a stand-in and the other source knows better:
     // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
     venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
-    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description
+    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
+    pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') })
   };
 }
 
@@ -152,7 +167,7 @@ export async function mergeAndWrite(sourceResults) {
     for (const incoming of r.events || []) {
       if (!eventPassesGeo(incoming)) continue;
       const idx=current.findIndex(existing => sameEvent(existing,incoming));
-      if (idx >= 0) current[idx]=mergePair(current[idx],incoming);
+      if (idx >= 0) current[idx]=mergePair(current[idx],incoming,{combinePrices:true});
       else current.push({...incoming, verificationStatus: verificationStatus(incoming.sources)});
     }
   }

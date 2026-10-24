@@ -1,5 +1,6 @@
 // Search and link-preview metadata for event pages.
 import { toInstant } from './ics.mjs';
+import { priceLabel } from './sources.mjs';
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
 const HAS_ZONE = /(Z|[+-]\d{2}:?\d{2})$/i;
@@ -39,6 +40,8 @@ export function eventJsonLd(e, { pageUrl, imageUrl }) {
   if (e.pricing?.type === 'free') {
     ld.isAccessibleForFree = true;
     ld.offers = { '@type': 'Offer', price: 0, priceCurrency: 'INR', ...(sourceUrl ? { url: sourceUrl } : {}) };
+  } else if (e.pricing?.minPrice && e.pricing.maxPrice > e.pricing.minPrice) {
+    ld.offers = { '@type': 'AggregateOffer', lowPrice: e.pricing.minPrice, highPrice: e.pricing.maxPrice, priceCurrency: 'INR', ...(sourceUrl ? { url: sourceUrl } : {}) };
   } else if (e.pricing?.minPrice) {
     ld.offers = { '@type': 'Offer', price: e.pricing.minPrice, priceCurrency: 'INR', ...(sourceUrl ? { url: sourceUrl } : {}) };
   }
@@ -51,7 +54,7 @@ export function eventSummary(e) {
   const when = new Intl.DateTimeFormat('en-IN', {
     weekday: 'short', day: 'numeric', month: 'short', ...(dateOnly ? {} : { hour: 'numeric', minute: '2-digit', hour12: true }), timeZone: 'Asia/Kolkata'
   }).format(dateOnly ? new Date(`${e.startAt}T12:00:00+05:30`) : toInstant(e.startAt));
-  const price = e.pricing?.type === 'free' ? 'Free' : e.pricing?.minPrice ? `From ₹${e.pricing.minPrice}` : '';
+  const price = priceLabel(e.pricing);
   const head = [`${when} at ${e.venue.name}`, e.venue.area, 'Dehradun'].filter(Boolean).join(', ');
   const base = price ? `${head}. ${price}.` : `${head}.`;
   return e.description ? clip(`${base} ${e.description}`, 200) : base;
