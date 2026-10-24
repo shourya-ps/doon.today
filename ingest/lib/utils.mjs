@@ -39,36 +39,52 @@ export function stripHtml(s='') {
  */
 export function priceFromOffers(offers) {
   const list = flattenOffers(offers);
+  // The amount after "₹" if there is one, else the first number: "1,500.00", "Rs. 500" and "Starts 2 Nov,
+  // ₹499" read as 1500, 500 and 499; "TBA" reads as no price.
+  let unreadable = false;
   const amount = (v) => {
-    if (v === null || v === undefined || String(v).trim() === '') return null;
-    const n = Number(String(v).replace(/[^\d.]/g, ''));
+    const text = String(v ?? '');
+    const m = text.match(/₹\s*(\d[\d,]*(?:\.\d+)?)/)?.slice(1) || text.match(/\d[\d,]*(?:\.\d+)?/);
+    if (!m && text.trim()) unreadable = true;
+    if (!m) return null;
+    const n = Number(m[0].replace(/,/g, ''));
     return Number.isFinite(n) ? n : null;
   };
+  const rupees = (n) => Math.max(1, Math.round(n));
   const lows = [], highs = [];
   for (const o of list) {
     if (String(o.priceCurrency || 'INR').toUpperCase() !== 'INR') continue;
     for (const v of [o.price, o.lowPrice]) { const n = amount(v); if (n !== null) lows.push(n); }
     for (const v of [o.highPrice, o.price]) { const n = amount(v); if (n !== null) highs.push(n); }
   }
-  if (!lows.length) return null;
+  if (!lows.length && !highs.length) return null;
   const top = Math.max(...lows, ...highs);
+  // Free only when every price given can be read and all are 0: "lowPrice 0, highPrice TBA" isn't free.
+  if (top === 0) return unreadable ? null : { type: 'free', currency: 'INR' };
+  // A free tier next to paid ones ("lowPrice 0, highPrice 500") is not a free event: show the paid price.
   const paid = lows.filter((n) => n > 0);
-  if (!paid.length) return top === 0 ? { type: 'free', currency: 'INR' } : null;
-  const minPrice = Math.round(Math.min(...paid));
-  const maxPrice = Math.round(top);
+  const minPrice = rupees(paid.length ? Math.min(...paid) : Math.min(...highs.filter((n) => n > 0)));
+  const maxPrice = rupees(top);
   return { type: 'paid', minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}), currency: 'INR' };
 }
-function flattenOffers(offers, out = []) {
+// Offers nested in an AggregateOffer take its currency when they don't state their own.
+function flattenOffers(offers, out = [], currency) {
   if (!offers) return out;
-  if (Array.isArray(offers)) { offers.forEach((o) => flattenOffers(o, out)); return out; }
-  if (typeof offers === 'object') { out.push(offers); if (offers.offers) flattenOffers(offers.offers, out); }
+  if (Array.isArray(offers)) { offers.forEach((o) => flattenOffers(o, out, currency)); return out; }
+  if (typeof offers === 'object') {
+    const own = offers.priceCurrency || currency;
+    out.push(own && !offers.priceCurrency ? { ...offers, priceCurrency: own } : offers);
+    if (offers.offers) flattenOffers(offers.offers, out, own);
+  }
   return out;
 }
 
 /** A price stated in an event's own words: a rupee amount, or plainly a free event. Never a guess. */
 export function priceFromText(text='') {
-  const m = String(text).replace(/,/g,'').match(/(?:₹|Rs\.?|INR)\s*(\d+)/i);
-  if (m) return {type:'paid', minPrice:Number(m[1]), currency:'INR'};
+  // "Rs" and "INR" only as words of their own, so "Doors 6:30" or "years 18" are not prices; and an amount
+  // under ₹10 is more likely a time or an age than a ticket.
+  const m = String(text).replace(/(\d),(?=\d)/g,'$1').match(/(?:₹|\b(?:Rs|INR)(?![a-z])\.?)\s*(\d+)/i);
+  if (m && Number(m[1]) >= 10) return {type:'paid', minPrice:Number(m[1]), currency:'INR'};
   if (/\bfree\s+(?:entry|event|admission|registration|of\s+cost)\b|\bentry\s+(?:is\s+)?free\b|\bit'?s\s+a\s+free\b/i.test(text)) return {type:'free', currency:'INR'};
   return {type:'unknown', currency:'INR'};
 }
