@@ -64,7 +64,8 @@ dd { margin: 0; }
 .calendar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; margin-top: 44px; }
 .calendar-grid section { display: flex; flex-direction: column; gap: 10px; }
 .prose { max-width: 660px; }
-.prose p { font-family: Georgia, serif; font-size: 1.25rem; line-height: 1.6; }
+/* Body text uses the site font like every other page; only headings are set in Georgia. */
+.prose p { line-height: 1.6; }
 .footer { border-top: 1px solid var(--line); padding: 26px 0 44px; color: var(--muted); font-size: .76rem; line-height: 1.5; }
 @media (max-width: 620px) {
   .shell { width: min(100% - 24px, 760px); }
