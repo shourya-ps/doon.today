@@ -19,6 +19,13 @@ export function decodeEntities(s='') {
     .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;|&#39;/g, "'").replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&');
 }
+// Stand-ins sources use when they don't know the venue or have no real description. A merge never lets
+// one of these replace a real value from another source of the same event.
+const PLACEHOLDER_VENUE = /^\s*(?:venue\s*)?(?:tba|tbd|to be (?:announced|decided|confirmed))\s*[:,.\-–]?\s*(?:dehradun)?\s*$|^\s*see community post\s*$/i;
+const PLACEHOLDER_DESCRIPTION = /\bcheck the organi[sz]er for\b/i;
+export const isPlaceholderVenue = (name = '') => !String(name).trim() || PLACEHOLDER_VENUE.test(String(name));
+export const isPlaceholderDescription = (text = '') => !String(text).trim() || PLACEHOLDER_DESCRIPTION.test(String(text));
+
 export function stripHtml(s='') {
   const text = String(s).replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/<[^>]*$/,' ');
   // Entities are decoded after the tags are gone, so an escaped "&lt;b&gt;" in the text stays text.

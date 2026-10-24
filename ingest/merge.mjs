@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { slugify, eventPassesGeo, areaFromText } from './lib/utils.mjs';
+import { slugify, eventPassesGeo, areaFromText, isPlaceholderVenue, isPlaceholderDescription } from './lib/utils.mjs';
 import { readJson, CURATED_PATH, DECISIONS_PATH, QUEUE_PATH, pendingCandidates } from './lib/review.mjs';
 
 const SOURCE_RANK = {
@@ -64,7 +64,7 @@ export function sameEvent(a,b) {
   if (istDay(a.startAt) !== istDay(b.startAt)) return false;
   const titleScore=similarity(a.title,b.title);
   const venueScore=venueSimilarity(a.venue?.name,b.venue?.name);
-  return titleScore >= 0.72 && (venueScore >= 0.5 || /venue tba/i.test(a.venue?.name||'') || /venue tba/i.test(b.venue?.name||''));
+  return titleScore >= 0.72 && (venueScore >= 0.5 || isPlaceholderVenue(a.venue?.name) || isPlaceholderVenue(b.venue?.name));
 }
 function sourceKey(s){ return `${s.provider}|${s.url}`; }
 
@@ -130,7 +130,11 @@ function mergePair(a,b) {
     firstSeenAt: [a.firstSeenAt,b.firstSeenAt].filter(Boolean).sort()[0],
     lastSeenAt: [a.lastSeenAt,b.lastSeenAt].filter(Boolean).sort().at(-1),
     lastCheckedAt: [a.lastCheckedAt,b.lastCheckedAt].filter(Boolean).sort().at(-1),
-    curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation
+    curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation,
+    // The preferred source wins, except where it only has a stand-in and the other source knows better:
+    // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
+    venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
+    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description
   };
 }
 
