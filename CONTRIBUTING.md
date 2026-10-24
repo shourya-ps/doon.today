@@ -30,14 +30,14 @@ npm run build
 
 ## Files you shouldn't edit
 
-- `data/`: the refresh jobs and the review workflow write these files and commit them straight to `main` several times a day. A pull request that changes them will almost always conflict. Change the code that produces the data instead.
+- `data/`: these files are generated and updated automatically several times a day, so a pull request that changes them will almost always conflict. Change the code that produces the data instead.
 - `.github/workflows/` and `netlify/`: changes here run with the repository's permissions after merging, so they get a closer review. Explain why they're needed.
 
 ## How your pull request is checked
 
 - CI runs the checks above on every pull request. For a first-time contributor, the owner approves the first run.
 - Pull requests from forks run with a read-only token and no secrets.
-- The owner reviews and merges; nobody else can push to `main`.
+- The owner reviews and merges every pull request.
 
 ## License
 
