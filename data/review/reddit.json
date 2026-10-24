@@ -1,1 +1,37 @@
-[]
+[
+  {
+    "id": "790cb6d321f81c50",
+    "slug": "art-meet-and-greet-by-wildflower-community",
+    "title": "Art Meet and Greet By Wildflower Community",
+    "description": "&lt;!-- SC_OFF --&gt;&lt;div class=\"md\"&gt;&lt;p&gt;A chill artist meet and greet where you get to meet fellow creatives and have a chill drawing and crafting session while having conversations and good coffee! ☕🖌️ Don't wanna make art but still wanna join and meet a creative crowd, you're most welcome too! 🤝&lt;/p&gt; &lt;p&gt;It's a FREE event! Bring along your friends or come solo, all are welcome! ✨🎀&lt;/p&gt; &lt;p&gt;Just bring your own sketchbook and some supplies or any art project yo",
+    "startAt": "2026-10-24T06:30:00.000Z",
+    "venue": {
+      "name": "See community post",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Art",
+      "Community"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "reddit",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xdwqhx/art_meet_and_greet_by_wildflower_community/",
+        "checkedAt": "2026-10-24T04:03:28.800Z",
+        "confidence": 0.5
+      }
+    ],
+    "verificationStatus": "community-reported",
+    "curation": {
+      "status": "review",
+      "score": 3
+    },
+    "firstSeenAt": "2026-10-24T04:03:28.800Z",
+    "lastSeenAt": "2026-10-24T04:03:28.800Z",
+    "lastCheckedAt": "2026-10-24T04:03:28.800Z"
+  }
+]
