@@ -1,45 +1,5 @@
 [
   {
-    "id": "1aa83c22aaf0a117",
-    "slug": "dandiya-night-with-celebrities-at-dehradun",
-    "title": "Dandiya Night with Celebrities at Dehradun",
-    "description": "Get ready for an unforgettable evening of music, dance, colours, culture, and celebration at Uttarakhand`s Biggest Dandiya Night 2026!This festive extravaganza brings the vibrant spirit of Navratri to Dehradun with",
-    "startAt": "2026-10-24",
-    "venue": {
-      "name": "Institute Of Hotel Management: Dehradun",
-      "address": "Near, ONGC Helipad Rd, Garhi Cantt, Dehradun, Uttarakhand 248003, India Dehradun",
-      "city": "Dehradun",
-      "area": "Garhi Cantt"
-    },
-    "categories": [
-      "Music",
-      "Culture"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/dandiya-night-with-celebrities-at-dehradun/3900030712228448",
-        "checkedAt": "2026-10-24T04:03:21.633Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "review",
-    "curation": {
-      "status": "published",
-      "score": 4
-    },
-    "firstSeenAt": "2026-10-18T03:32:24.113Z",
-    "lastSeenAt": "2026-10-24T04:03:21.633Z",
-    "lastCheckedAt": "2026-10-24T04:03:21.633Z",
-    "endAt": "2026-10-24",
-    "sequence": 1,
-    "modifiedAt": "2026-10-19T03:52:53.137Z"
-  },
-  {
     "id": "96dd6d16931fc0c9",
     "slug": "jalsa-the-dandiya-festival-2026",
     "title": "Jalsa - The Dandiya Festival | 2026",
@@ -113,6 +73,49 @@
     "firstSeenAt": "2026-10-19T04:17:19.322Z",
     "lastSeenAt": "2026-10-23T02:43:06.190Z",
     "lastCheckedAt": "2026-10-23T02:43:06.190Z"
+  },
+  {
+    "id": "a456c0d4f50f076d",
+    "slug": "art-meet-and-greet-by-wildflower-community",
+    "title": "Art Meet and Greet by Wildflower Community",
+    "description": "A relaxed meet-up for artists: drawing and crafting over coffee and conversation. Non-artists who want to meet a creative crowd are welcome too. Come solo or bring friends.\n\nOrganized by Wildflower Community. How to join: Free, just turn up. Bring a sketchbook and supplies, or a project to finish.",
+    "startAt": "2026-10-24T16:00:00+05:30",
+    "endAt": "2026-10-24T19:00:00+05:30",
+    "venue": {
+      "name": "Akio Coffee Roasters",
+      "city": "Dehradun",
+      "area": "Race Course"
+    },
+    "categories": [
+      "Art",
+      "Community"
+    ],
+    "pricing": {
+      "type": "free",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xdwqhx/art_meet_and_greet_by_wildflower_community/",
+        "checkedAt": "2026-10-24T04:05:21.492Z",
+        "confidence": 1
+      },
+      {
+        "provider": "reddit",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xdwqhx/art_meet_and_greet_by_wildflower_community/",
+        "checkedAt": "2026-10-24T04:03:28.800Z",
+        "confidence": 0.5
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-24T04:05:21.492Z",
+    "lastSeenAt": "2026-10-24T04:05:21.492Z",
+    "lastCheckedAt": "2026-10-24T04:05:21.492Z"
   },
   {
     "id": "01f795efec3b13ae",

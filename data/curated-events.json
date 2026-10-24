@@ -32,5 +32,48 @@
     "firstSeenAt": "2026-10-23T03:38:19.075Z",
     "lastSeenAt": "2026-10-23T03:38:19.075Z",
     "lastCheckedAt": "2026-10-23T03:38:19.075Z"
+  },
+  {
+    "id": "a456c0d4f50f076d",
+    "slug": "art-meet-and-greet-by-wildflower-community",
+    "title": "Art Meet and Greet by Wildflower Community",
+    "description": "A relaxed meet-up for artists: drawing and crafting over coffee and conversation. Non-artists who want to meet a creative crowd are welcome too. Come solo or bring friends.\n\nOrganized by Wildflower Community. How to join: Free, just turn up. Bring a sketchbook and supplies, or a project to finish.",
+    "startAt": "2026-10-24T16:00:00+05:30",
+    "endAt": "2026-10-24T19:00:00+05:30",
+    "venue": {
+      "name": "Akio Coffee Roasters",
+      "city": "Dehradun",
+      "area": "Race Course"
+    },
+    "categories": [
+      "Art",
+      "Community"
+    ],
+    "pricing": {
+      "type": "free",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xdwqhx/art_meet_and_greet_by_wildflower_community/",
+        "checkedAt": "2026-10-24T04:05:21.492Z",
+        "confidence": 1
+      },
+      {
+        "provider": "reddit",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xdwqhx/art_meet_and_greet_by_wildflower_community/",
+        "checkedAt": "2026-10-24T04:03:28.800Z",
+        "confidence": 0.5
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-24T04:05:21.492Z",
+    "lastSeenAt": "2026-10-24T04:05:21.492Z",
+    "lastCheckedAt": "2026-10-24T04:05:21.492Z"
   }
 ]
