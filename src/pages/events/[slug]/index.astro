@@ -4,7 +4,7 @@ import { events } from '../../../data/events';
 import { ingestStatus } from '../../../data/status';
 import { googleDateRange, toInstant } from '../../../lib/ics.mjs';
 import { eventJsonLd, eventSummary } from '../../../lib/seo.mjs';
-import { sourceLabel } from '../../../lib/sources.mjs';
+import { sourceLabel, detailsLinkLabel } from '../../../lib/sources.mjs';
 import { reportEventUrl } from '../../../lib/report.mjs';
 
 export function getStaticPaths() {
@@ -38,6 +38,7 @@ const googleParams = new URLSearchParams({
 const googleCalendarUrl = `https://calendar.google.com/calendar/render?${googleParams.toString()}`;
 const sourceUnavailable = event.sources?.some((source) => ingestStatus.sources?.[source.provider]?.status === 'failed');
 const primarySource = event.sources?.[0];
+const detailsLabel = detailsLinkLabel(primarySource);
 ---
 <BaseLayout
   title={`${event.title} — doon.today`}
@@ -60,7 +61,7 @@ const primarySource = event.sources?.[0];
     <div class="event-actions" style="display:flex;flex-wrap:wrap;gap:.75rem;margin:1.5rem 0 2rem">
       <a class="primary-link" href={`/events/${event.slug}.ics`}>Add to calendar</a>
       <a class="primary-link" href={googleCalendarUrl} target="_blank" rel="noreferrer">Google Calendar ↗</a>
-      {primarySource?.url && <a class="primary-link" href={primarySource.url} target="_blank" rel="noreferrer">Tickets and details on {sourceLabel(primarySource.provider)} ↗</a>}
+      {detailsLabel && <a class="primary-link" href={primarySource.url} target="_blank" rel="noreferrer">{detailsLabel} ↗</a>}
     </div>
 
     <div class="source-block">
