@@ -1,0 +1,29 @@
+name: CI
+# Checks every pull request before review. Pull requests from forks run with a read-only token and no
+# secrets, and GitHub asks the owner to approve the first run for first-time contributors.
+on:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Tests
+        run: npm test
+      - name: Type check
+        run: npm run check
+      - name: Validate event data
+        run: npm run validate:data
+      - name: Build
+        run: npm run build
