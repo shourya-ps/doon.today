@@ -114,6 +114,16 @@ function missedRunsAfter(e, returned) {
   if (providers.length === 0) return before;
   return providers.every(p => (returned.get(p)||0) > 0) ? before+1 : before;
 }
+// Prices from two sources of one event: a known price beats an unknown one, and when both list paid
+// prices the range spans both, so "From ₹..." is never above the real minimum. If one says free and the
+// other paid, the preferred source decides.
+function mergePricing(preferred={type:'unknown'}, secondary={type:'unknown'}) {
+  if (preferred.type === 'unknown') return secondary.type === 'unknown' ? preferred : secondary;
+  if (preferred.type !== 'paid' || secondary.type !== 'paid' || !preferred.minPrice || !secondary.minPrice) return preferred;
+  const minPrice = Math.min(preferred.minPrice, secondary.minPrice);
+  const maxPrice = Math.max(preferred.maxPrice || preferred.minPrice, secondary.maxPrice || secondary.minPrice);
+  return { ...preferred, minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}) };
+}
 function mergePair(a,b) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
@@ -134,7 +144,8 @@ function mergePair(a,b) {
     // The preferred source wins, except where it only has a stand-in and the other source knows better:
     // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
     venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
-    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description
+    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
+    pricing: mergePricing(preferred.pricing, secondary.pricing)
   };
 }
 

@@ -30,3 +30,16 @@ export function detailsLinkLabel(source) {
   if (host === 'instagram.com') return 'Details on Instagram';
   return `Details on ${host}`;
 }
+
+const rupees = (n) => `₹${Number(n).toLocaleString('en-IN')}`;
+
+/**
+ * An event's price for display. `long` is for the event page ("₹1,500–4,000", "From ₹1,500", "Free");
+ * `short` is for list rows ("₹1,500+", "FREE"). Empty when the price is unknown.
+ */
+export function priceLabel(pricing, style = 'long') {
+  if (pricing?.type === 'free') return style === 'short' ? 'FREE' : 'Free';
+  if (!pricing?.minPrice) return '';
+  if (style === 'short') return `${rupees(pricing.minPrice)}+`;
+  return pricing.maxPrice > pricing.minPrice ? `${rupees(pricing.minPrice)}–${Number(pricing.maxPrice).toLocaleString('en-IN')}` : `From ${rupees(pricing.minPrice)}`;
+}

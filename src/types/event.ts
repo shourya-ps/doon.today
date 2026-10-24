@@ -35,6 +35,8 @@ export interface EventRecord {
   pricing: {
     type: 'free' | 'paid' | 'unknown';
     minPrice?: number;
+    // Set when tickets cost different amounts; the top of the range.
+    maxPrice?: number;
     currency: 'INR';
   };
   sources: EventSource[];

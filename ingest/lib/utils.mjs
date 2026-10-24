@@ -31,6 +31,48 @@ export function stripHtml(s='') {
   // Entities are decoded after the tags are gone, so an escaped "&lt;b&gt;" in the text stays text.
   return decodeEntities(text).replace(/[\u200b-\u200d\ufeff]/g,'').replace(/\s+/g,' ').trim();
 }
+/**
+ * The price that schema.org offers give, in rupees, or null when they give none. Offers may be one object,
+ * a list, or an AggregateOffer with its own list. The lowest real price wins; a higher one becomes the
+ * range's top. An event is free only when every offer is 0, and a price in another currency is ignored
+ * rather than shown as rupees.
+ */
+export function priceFromOffers(offers) {
+  const list = flattenOffers(offers);
+  const amount = (v) => {
+    if (v === null || v === undefined || String(v).trim() === '') return null;
+    const n = Number(String(v).replace(/[^\d.]/g, ''));
+    return Number.isFinite(n) ? n : null;
+  };
+  const lows = [], highs = [];
+  for (const o of list) {
+    if (String(o.priceCurrency || 'INR').toUpperCase() !== 'INR') continue;
+    for (const v of [o.price, o.lowPrice]) { const n = amount(v); if (n !== null) lows.push(n); }
+    for (const v of [o.highPrice, o.price]) { const n = amount(v); if (n !== null) highs.push(n); }
+  }
+  if (!lows.length) return null;
+  const top = Math.max(...lows, ...highs);
+  const paid = lows.filter((n) => n > 0);
+  if (!paid.length) return top === 0 ? { type: 'free', currency: 'INR' } : null;
+  const minPrice = Math.round(Math.min(...paid));
+  const maxPrice = Math.round(top);
+  return { type: 'paid', minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}), currency: 'INR' };
+}
+function flattenOffers(offers, out = []) {
+  if (!offers) return out;
+  if (Array.isArray(offers)) { offers.forEach((o) => flattenOffers(o, out)); return out; }
+  if (typeof offers === 'object') { out.push(offers); if (offers.offers) flattenOffers(offers.offers, out); }
+  return out;
+}
+
+/** A price stated in an event's own words: a rupee amount, or plainly a free event. Never a guess. */
+export function priceFromText(text='') {
+  const m = String(text).replace(/,/g,'').match(/(?:₹|Rs\.?|INR)\s*(\d+)/i);
+  if (m) return {type:'paid', minPrice:Number(m[1]), currency:'INR'};
+  if (/\bfree\s+(?:entry|event|admission|registration|of\s+cost)\b|\bentry\s+(?:is\s+)?free\b|\bit'?s\s+a\s+free\b/i.test(text)) return {type:'free', currency:'INR'};
+  return {type:'unknown', currency:'INR'};
+}
+
 export function parseMoney(text='') {
   const m = text.replace(/,/g,'').match(/(?:₹|Rs\.?|INR)\s*(\d+)/i);
   if (/\bfree\b/i.test(text)) return {type:'free', currency:'INR'};

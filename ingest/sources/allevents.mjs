@@ -1,8 +1,11 @@
 import { fetchText } from '../lib/http.mjs';
 import { eventLikeObjects, flattenObjects } from '../lib/jsonld.mjs';
-import { stableId, slugify, parseMoney, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso } from '../lib/utils.mjs';
+import { stableId, slugify, priceFromOffers, priceFromText, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, sleep } from '../lib/utils.mjs';
 
 const LIST = 'https://allevents.in/dehradun';
+// The city listing rarely carries prices; each event's own page does. Fetched one at a time, and capped.
+const MAX_PRICE_PAGES = 25;
+const PRICE_PAGE_DELAY_MS = 700;
 
 function toEvent(o, url = LIST) {
   const loc = o.location || o.venue || {};
@@ -23,7 +26,6 @@ function toEvent(o, url = LIST) {
   })) return null;
 
   const checkedAt = nowIso();
-  const offers = Array.isArray(o.offers) ? o.offers[0] : o.offers;
   const text = [title, description, venueName, addr, o.city].filter(Boolean).join(' ');
 
   return {
@@ -35,9 +37,7 @@ function toEvent(o, url = LIST) {
     endAt: o.endDate || o.end_at,
     venue: { name: venueName, address: stripHtml(addr || ''), city: 'Dehradun' },
     categories: categoryFromText(text),
-    pricing: offers?.price != null
-      ? { type: Number(offers.price) === 0 ? 'free' : 'paid', minPrice: Number(offers.price) || undefined, currency: 'INR' }
-      : parseMoney(JSON.stringify(o)),
+    pricing: priceFromOffers(o.offers) || priceFromText(`${title} ${description}`),
     sources: [{ provider: 'allevents', url: o.url || url, externalId: String(o.id || '') || undefined, checkedAt, confidence: 0.75 }],
     verificationStatus: 'review',
     curation: { status: 'published', score: 4 },
@@ -47,8 +47,32 @@ function toEvent(o, url = LIST) {
   };
 }
 
-export async function fetchAllEvents() {
-  const html = await fetchText(LIST);
+/** The price from an event's own AllEvents page, or null when the page gives none or can't be read. */
+export async function priceFromEventPage(url, fetchPage = fetchText) {
+  try {
+    const objects = [...eventLikeObjects(await fetchPage(url))];
+    for (const o of objects) {
+      const price = priceFromOffers(o.offers);
+      if (price) return price;
+    }
+  } catch {}
+  return null;
+}
+
+/** Fills in prices the listing didn't give, from each event's own page. */
+export async function addPricesFromEventPages(events, { fetchPage = fetchText, delayMs = PRICE_PAGE_DELAY_MS, max = MAX_PRICE_PAGES } = {}) {
+  const missing = events.filter((e) => e.pricing.type === 'unknown' && /^https:\/\/allevents\.in\//.test(e.sources[0]?.url || '')).slice(0, max);
+  let found = 0;
+  for (const [i, e] of missing.entries()) {
+    if (i > 0 && delayMs) await sleep(delayMs);
+    const price = await priceFromEventPage(e.sources[0].url, fetchPage);
+    if (price) { e.pricing = price; found++; }
+  }
+  return { pricePagesFetched: missing.length, pricesFound: found };
+}
+
+export async function fetchAllEvents({ fetchPage = fetchText, delayMs } = {}) {
+  const html = await fetchPage(LIST);
   const candidates = [...eventLikeObjects(html)];
   const next = html.match(/<script[^>]+id=["']__NEXT_DATA__["'][^>]*>([\s\S]*?)<\/script>/i);
   if (next) {
@@ -60,5 +84,6 @@ export async function fetchAllEvents() {
     const e = toEvent(o);
     if (e && !seen.has(e.id)) { seen.add(e.id); events.push(e); }
   }
-  return { source: 'allevents', events, diagnostics: { candidates: candidates.length } };
+  const prices = await addPricesFromEventPages(events, { fetchPage, delayMs });
+  return { source: 'allevents', events, diagnostics: { candidates: candidates.length, ...prices } };
 }
