@@ -131,3 +131,29 @@ test('issuesWithLabel pages through issues and skips pull requests', async () =>
   const issues = await github({ token: 't', repo: 'o/r', fetchImpl }).issuesWithLabel('lead');
   assert.equal(issues.length, 101);
 });
+
+test('Reddit text arrives as plain words, not escaped HTML', async () => {
+  const { decodeEntities, stripHtml } = await import('../ingest/lib/utils.mjs');
+  const escaped = '&lt;!-- SC_OFF --&gt;&lt;div class="md"&gt;&lt;p&gt;&amp;#x200B;&lt;/p&gt; &lt;p&gt;Hi everyone!&lt;/p&gt; &lt;p&gt;&lt;strong&gt;Dates:&lt;/strong&gt; 24&#x2013;25 October&lt;/p&gt;&lt;/div&gt;';
+  assert.equal(stripHtml(decodeEntities(escaped)), 'Hi everyone! Dates: 24–25 October');
+  assert.equal(decodeEntities('Tom &amp;amp; Jerry'), 'Tom &amp; Jerry', 'one layer at a time');
+  assert.equal(stripHtml(decodeEntities('&lt;p&gt;Starting point: Delhi&lt;/p&gt; &lt;p&gt;&lt;stro')), 'Starting point: Delhi', 'a tag cut off at the end is dropped');
+  const lead = redditLead({ id: 'abc123', title: 'Trip', startAt: '2026-10-24', description: escaped, sources: [] });
+  assert.equal(lead.description, 'Hi everyone! Dates: 24–25 October', 'old queued leads are cleaned too');
+});
+
+test('the Reddit adapter decodes post HTML before it cuts the description', async () => {
+  const { fetchReddit } = await import('../ingest/sources/reddit.mjs');
+  const body = '&lt;p&gt;' + 'Open mic night in Dehradun at the club. '.repeat(20) + '&lt;/p&gt;';
+  const xml = `<feed><entry><title>Open mic on 2 November</title><link href="https://www.reddit.com/r/Dehradun/comments/x1/"/><content type="html">${body}</content></entry></feed>`;
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: true, status: 200, text: async () => xml, headers: new Map() });
+  try {
+    const { reviewCandidates } = await fetchReddit();
+    assert.equal(reviewCandidates.length, 1);
+    assert.ok(!/&lt;|<p>/.test(reviewCandidates[0].description));
+    assert.ok(reviewCandidates[0].description.startsWith('Open mic night in Dehradun'));
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

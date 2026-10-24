@@ -1,8 +1,8 @@
 import {fetchText} from '../lib/http.mjs';
-import {stripHtml,categoryFromText,isDehradunText,stableId,slugify,nowIso} from '../lib/utils.mjs';
+import {stripHtml,decodeEntities,categoryFromText,isDehradunText,stableId,slugify,nowIso} from '../lib/utils.mjs';
 const FEEDS=['https://www.reddit.com/r/Dehradun/new/.rss'];
 function entries(xml){return [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/gi)].map(m=>m[1]);}
-function tag(s,name){const m=s.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`,'i')); return m?stripHtml(m[1].replace(/<!\[CDATA\[|\]\]>/g,'')):''}
+function tag(s,name){const m=s.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)<\\/${name}>`,'i')); return m?stripHtml(decodeEntities(m[1].replace(/<!\[CDATA\[|\]\]>/g,''))):''}
 function href(s){const m=s.match(/<link[^>]+href=["']([^"']+)["']/i);return m?.[1]||''}
 function explicitDate(text){
   const months='Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
