@@ -37,7 +37,6 @@ npm run build
 
 - CI runs the checks above on every pull request. For a first-time contributor, the owner approves the first run.
 - Pull requests from forks run with a read-only token and no secrets.
-- The owner reviews and merges every pull request.
 
 ## License
 
