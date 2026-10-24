@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "id": "1420b76004ddc0cb",
+    "slug": "moving-to-dehradun-for-a-few-months-need-flat-room-suggestions",
+    "title": "Moving to Dehradun for a few months. Need flat/room suggestions!",
+    "description": "Hey guys! Working professional here. Planning to move to Dehradun from 1st Nov till Holi next year. Got a trekking bucket list to complete so thought why not move there. Looking for a cheap but decent 1BHK or a private room in a 2BHK with an existing flatmate. Since I’ll be out trekking quite often I don’t want to spend a bomb on rent. A gated society would be a plus since I’ve got two bikes. Any suggestions on areas to look at or leads would be great. Thanks! submitted by /u/Sweet-Demand-7971 [",
+    "startAt": "2026-11-01T06:30:00.000Z",
+    "venue": {
+      "name": "See community post",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Outdoors"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "reddit",
+        "url": "https://www.reddit.com/r/Dehradun/comments/1xe09ro/moving_to_dehradun_for_a_few_months_need_flatroom/",
+        "checkedAt": "2026-10-24T12:44:33.859Z",
+        "confidence": 0.5
+      }
+    ],
+    "verificationStatus": "community-reported",
+    "curation": {
+      "status": "review",
+      "score": 3
+    },
+    "firstSeenAt": "2026-10-24T12:44:33.859Z",
+    "lastSeenAt": "2026-10-24T12:44:33.859Z",
+    "lastCheckedAt": "2026-10-24T12:44:33.859Z"
+  }
+]
