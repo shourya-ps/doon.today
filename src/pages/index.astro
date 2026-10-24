@@ -122,6 +122,8 @@ const healthMessage = stale.length > 0
       && (ignore==='price' || !state.price || row.dataset.price===state.price)
       && (ignore==='area' || !state.area || row.dataset.area===state.area);
     const rows=[...document.querySelectorAll('.event-row')];
+    // Event rows also carry data-price; only buttons should control the price filter.
+    const priceButtons=[...document.querySelectorAll('button[data-price]')];
 
     function apply(){
       let shown=0;
@@ -146,7 +148,7 @@ const healthMessage = stale.length > 0
       const mark=(btn,on)=>{btn.classList.toggle('active',on);btn.setAttribute('aria-pressed',String(on));};
       document.querySelectorAll('[data-filter]').forEach(b=>mark(b,b.dataset.filter===state.when));
       document.querySelectorAll('[data-category]').forEach(b=>mark(b,b.dataset.category===state.category));
-      document.querySelectorAll('[data-price]').forEach(b=>mark(b,b.dataset.price===state.price));
+      priceButtons.forEach(b=>mark(b,b.dataset.price===state.price));
       if(areaSelect) areaSelect.value=state.area;
       const next=new URLSearchParams();
       if(state.when!=='all') next.set('when',state.when);
@@ -159,7 +161,7 @@ const healthMessage = stale.length > 0
 
     document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.when=b.dataset.filter;apply();}));
     document.querySelectorAll('[data-category]').forEach(b=>b.addEventListener('click',()=>{state.category=b.dataset.category;apply();}));
-    document.querySelectorAll('[data-price]').forEach(b=>b.addEventListener('click',()=>{state.price=state.price===b.dataset.price?'':b.dataset.price;apply();}));
+    priceButtons.forEach(b=>b.addEventListener('click',()=>{state.price=state.price===b.dataset.price?'':b.dataset.price;apply();}));
     if(areaSelect) areaSelect.addEventListener('change',()=>{state.area=areaSelect.value;apply();});
     apply();
   </script>
