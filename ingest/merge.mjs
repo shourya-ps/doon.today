@@ -209,7 +209,11 @@ export async function mergeAndWrite(sourceResults) {
   }
   merged.push(...retained);
 
+  // A listing someone rejected in review (by closing its lead issue) comes off the site, matched by its link.
+  const rejectedLinks=new Set(Object.values(await readJson(DECISIONS_PATH,{}))
+    .filter(d=>d?.decision==='rejected' && d.sourceUrl).map(d=>normalizeUrl(d.sourceUrl)));
   const out=merged
+    .filter(e => !(e.sources||[]).some(s => rejectedLinks.has(normalizeUrl(s.url))))
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => new Date(e.startAt).getTime() > now - 6*3600_000)
@@ -219,12 +223,16 @@ export async function mergeAndWrite(sourceResults) {
   await fs.mkdir('data',{recursive:true});
   await fs.writeFile('data/events.json',JSON.stringify(out,null,2)+'\n');
 
-  // A partial run (e.g. a District-only run) must not wipe the Reddit review queue.
-  // Leads someone already approved or rejected stay out of the queue.
-  const redditRan=results.some(r=>r.source==='reddit');
+  // The review queue holds candidates from several sources (Reddit posts, thin AllEvents listings). Each
+  // source that ran replaces its own candidates; a source that didn't run (a District-only run, a failed
+  // adapter) keeps the ones it had. Leads someone already approved or rejected stay out of the queue.
+  const ran=new Set(results.map(r=>r.source));
   const decisions=await readJson(DECISIONS_PATH,{});
   await fs.mkdir('data/review',{recursive:true});
-  const review=pendingCandidates(redditRan ? results.flatMap(r=>r.reviewCandidates||[]) : await readJson(QUEUE_PATH,[]),decisions);
+  // Candidates queued before other sources could add any were all Reddit posts.
+  const kept=(await readJson(QUEUE_PATH,[])).filter(c=>!ran.has(c.sources?.[0]?.provider || 'reddit'));
+  const queued=[...new Map([...kept,...results.flatMap(r=>r.reviewCandidates||[])].map((c,i)=>[c.id ?? `#${i}`,c])).values()];
+  const review=pendingCandidates(queued,decisions);
   await fs.writeFile(QUEUE_PATH,JSON.stringify(review,null,2)+'\n');
   const reviewCount=review.length;
   return {published:out.length,review:reviewCount,dropped};

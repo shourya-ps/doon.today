@@ -13,6 +13,14 @@ const MAX_BLOCKED_IN_A_ROW = 2;
 const MAX_FAILED_IN_A_ROW = 3;
 // An event that started this long ago is dropped by the merge anyway, so its page isn't worth a fetch.
 const STARTED_GRACE_MS = 6 * 3600_000;
+// A listing that says almost nothing about itself (a few words, a date but no time, no category) stays on
+// the site, but also goes to the review queue, so a person can check it and remove it if it isn't an event.
+const THIN_DESCRIPTION_CHARS = 60;
+export function isThinListing(e) {
+  return stripHtml(e.description || '').length < THIN_DESCRIPTION_CHARS
+    && /^\d{4}-\d{2}-\d{2}$/.test(String(e.startAt || ''))
+    && (e.categories || []).length === 1 && e.categories[0] === 'Other';
+}
 const startTime = (v = '') => Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(v) ? `${v}T23:59:59+05:30` : v);
 
 function toEvent(o, url = LIST) {
@@ -114,5 +122,6 @@ export async function fetchAllEvents({ fetchPage = fetchText, delayMs } = {}) {
     if (e && !seen.has(e.id)) { seen.add(e.id); events.push(e); }
   }
   const prices = await addPricesFromEventPages(events, { fetchPage, delayMs });
-  return { source: 'allevents', events, diagnostics: { candidates: candidates.length, ...prices } };
+  const reviewCandidates = events.filter(isThinListing).map((e) => ({ ...e, curation: { status: 'review', score: 2 } }));
+  return { source: 'allevents', events, reviewCandidates, diagnostics: { candidates: candidates.length, flaggedForReview: reviewCandidates.length, ...prices } };
 }
