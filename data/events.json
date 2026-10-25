@@ -71,44 +71,6 @@
     "lastCheckedAt": "2026-10-24T16:18:41.208Z"
   },
   {
-    "id": "7190160ac45bf9e5",
-    "slug": "virasat-2026-carnatic-vocal-by-t-m-krishna",
-    "title": "Virasat 2026: Carnatic Vocal by T M Krishna",
-    "description": "Ticketed vocal performance at Virasat 2026. Check the official programme and ticket page for details.",
-    "startAt": "2026-10-25T20:30:00+05:30",
-    "venue": {
-      "name": "Himalayan Cultural Centre — Auditorium",
-      "address": "Garhi Cantt",
-      "city": "Dehradun",
-      "area": "Garhi Cantt"
-    },
-    "categories": [
-      "Music",
-      "Culture"
-    ],
-    "pricing": {
-      "type": "paid",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "virasat",
-        "url": "https://reachvirasat.org/programme#day-3",
-        "externalId": "2026-3-carnatic-vocal-by-t-m-krishna",
-        "checkedAt": "2026-10-25T15:23:41.114Z",
-        "confidence": 0.95
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 7
-    },
-    "firstSeenAt": "2026-10-25T15:23:41.114Z",
-    "lastSeenAt": "2026-10-25T15:23:41.114Z",
-    "lastCheckedAt": "2026-10-25T15:23:41.114Z"
-  },
-  {
     "id": "e8928f4394c3963d",
     "slug": "all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun",
     "title": "All You Can Eat & Drink – Unlimited Feast at Underdoggs Dehradun",
@@ -1789,7 +1751,6 @@
     "endAt": "2027-01-02",
     "venue": {
       "name": "Triple aar school campus Kainchiwala saheshpur, Dehra Dun, Uttarakhand, India",
-      "address": "Rama Hearing & Speech Clinic, Gujrada, Dehradun 248001, India Dehradun",
       "city": "Dehradun"
     },
     "categories": [
@@ -1801,20 +1762,28 @@
     },
     "sources": [
       {
+        "provider": "manual",
+        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
+        "checkedAt": "2026-10-25T15:26:38.238Z",
+        "confidence": 1
+      },
+      {
         "provider": "allevents",
         "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
         "checkedAt": "2026-10-25T15:23:23.938Z",
         "confidence": 0.75
       }
     ],
-    "verificationStatus": "review",
+    "verificationStatus": "verified",
     "curation": {
       "status": "published",
-      "score": 4
+      "score": 5
     },
     "firstSeenAt": "2026-10-18T03:32:24.115Z",
-    "lastSeenAt": "2026-10-25T15:23:23.938Z",
-    "lastCheckedAt": "2026-10-25T15:23:23.938Z"
+    "lastSeenAt": "2026-10-25T15:26:38.238Z",
+    "lastCheckedAt": "2026-10-25T15:26:38.238Z",
+    "sequence": 1,
+    "modifiedAt": "2026-10-25T15:26:38.244Z"
   },
   {
     "id": "64e33c993e4def3d",

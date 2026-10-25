@@ -35,42 +35,6 @@
     "lastCheckedAt": "2026-10-25T15:23:23.935Z"
   },
   {
-    "id": "562de29d0166cb06",
-    "slug": "blessed-bible-verses",
-    "title": "Blessed bible verses",
-    "description": "Thanks to lord Almighty",
-    "startAt": "2027-01-02",
-    "endAt": "2027-01-02",
-    "venue": {
-      "name": "Triple aar school campus Kainchiwala saheshpur, Dehra Dun, Uttarakhand, India",
-      "address": "Rama Hearing & Speech Clinic, Gujrada, Dehradun 248001, India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Other"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
-        "checkedAt": "2026-10-25T15:23:23.938Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "review",
-    "curation": {
-      "status": "review",
-      "score": 2
-    },
-    "firstSeenAt": "2026-10-25T15:23:23.938Z",
-    "lastSeenAt": "2026-10-25T15:23:23.938Z",
-    "lastCheckedAt": "2026-10-25T15:23:23.938Z"
-  },
-  {
     "id": "b83fb3ee340999f3",
     "slug": "i-painted-my-future-and-retired-at-45-in-dehradun",
     "title": "I painted my future and retired at 45 in Dehradun",

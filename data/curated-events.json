@@ -111,5 +111,45 @@
     "firstSeenAt": "2026-10-24T16:18:41.208Z",
     "lastSeenAt": "2026-10-24T16:18:41.208Z",
     "lastCheckedAt": "2026-10-24T16:18:41.208Z"
+  },
+  {
+    "id": "5d05d86981addceb",
+    "slug": "blessed-bible-verses",
+    "title": "Blessed bible verses",
+    "description": "Thanks to lord Almighty",
+    "startAt": "2027-01-02",
+    "venue": {
+      "name": "Triple aar school campus Kainchiwala saheshpur, Dehra Dun, Uttarakhand, India",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Other"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
+        "checkedAt": "2026-10-25T15:26:38.238Z",
+        "confidence": 1
+      },
+      {
+        "provider": "allevents",
+        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
+        "checkedAt": "2026-10-25T15:23:23.938Z",
+        "confidence": 0.75
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-25T15:26:38.238Z",
+    "lastSeenAt": "2026-10-25T15:26:38.238Z",
+    "lastCheckedAt": "2026-10-25T15:26:38.238Z"
   }
 ]
