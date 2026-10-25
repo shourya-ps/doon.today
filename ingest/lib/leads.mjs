@@ -6,6 +6,7 @@
 // (where "@name" and "#12" don't notify or link anyone), loses backticks, and is cut to a sane length.
 import { buildCuratedEvent, parsePrice, parseWhen } from './review.mjs';
 import { CATEGORY_NAMES, areaFromText, categoryFromText, decodeEntities, stripHtml } from './utils.mjs';
+import { sourceLabel } from '../../src/lib/sources.mjs';
 
 export const LEAD_LABEL = 'lead';
 export const APPROVE_LABEL = 'approve';
@@ -88,43 +89,57 @@ const istText = (iso) => {
   return Number.isFinite(t) ? new Date(t + 5.5 * 3600_000).toISOString().slice(0, 16).replace('T', ' ') : '';
 };
 
-/** The lead for one r/Dehradun post the Reddit adapter queued (data/review/reddit.json). */
-export function redditLead(candidate) {
+// Kinds of lead that come from the review queue (data/review/reddit.json): an r/Dehradun post, or a listing
+// from a source like AllEvents that was too thin to publish on its own. Both are keyed by the candidate id.
+const QUEUED_KINDS = new Set(['reddit', 'listing']);
+export const isQueuedKind = (kind) => QUEUED_KINDS.has(kind);
+
+const queuedPrice = (pricing = {}) => (pricing.type === 'free' ? 'free' : pricing.type === 'paid' && pricing.minPrice ? String(pricing.minPrice) : 'unknown');
+
+/** The lead for one candidate in the review queue: a Reddit post, or a held-back listing. */
+export function sourceLead(candidate) {
+  const provider = candidate.sources?.[0]?.provider || '';
+  const kind = provider === 'reddit' ? 'reddit' : 'listing';
+  const url = cleanUrl(candidate.sources?.[0]?.url);
   const venue = cleanLine(candidate.venue?.name);
   return {
-    kind: 'reddit',
+    kind,
+    source: provider,
     id: candidate.id,
     title: cleanLine(candidate.title, MAX_TITLE),
     starts: istText(candidate.startAt),
     ends: '',
     venue: venue === 'See community post' ? '' : venue,
     area: '',
-    price: 'unknown',
+    price: kind === 'listing' ? queuedPrice(candidate.pricing) : 'unknown',
     categories: (candidate.categories || []).join(', '),
-    listing: '',
+    listing: kind === 'listing' ? url : '',
     organizer: '',
     organizerLink: '',
     howToJoin: '',
     repeats: '',
-    post: cleanUrl(candidate.sources?.[0]?.url),
+    post: kind === 'reddit' ? url : '',
     // Leads queued before the adapter decoded Reddit's escaped HTML still carry it, so clean it here too.
     description: cleanText(stripHtml(decodeEntities(candidate.description || '')))
   };
 }
+export const redditLead = sourceLead;
 
 // "@" and "#" in an issue title don't notify anyone, but keep them from reading as handles or links.
 const safeTitle = (text) => cleanLine(text, MAX_TITLE).replace(/@/g, '@​').replace(/#(\d)/g, '#​$1');
 
 /** The GitHub issue (title, body, labels) that puts a lead in the review queue. */
 export function leadIssue(lead) {
-  const marker = lead.kind === 'reddit' ? `<!-- doon-lead kind=reddit id=${cleanLine(lead.id).replace(/[^a-z0-9-]/gi, '')} -->` : '<!-- doon-lead kind=form -->';
+  const marker = isQueuedKind(lead.kind) ? `<!-- doon-lead kind=${lead.kind} id=${cleanLine(lead.id).replace(/[^a-z0-9-]/gi, '')} -->` : '<!-- doon-lead kind=form -->';
   const block = FIELDS.map(([key, label]) => {
     const value = key === 'description' ? cleanText(lead[key]) : cleanLine(lead[key], key === 'title' ? MAX_TITLE : MAX_LINE);
     return `${label}: ${value}`;
   }).join('\n');
   const intro = lead.kind === 'reddit'
     ? 'A post on r/Dehradun that looks like an event. The date and time were guessed from the post, and the venue is usually missing.'
-    : 'An event sent through the submit form on doon.today. Contact details, if given, are only in the Netlify submission.';
+    : lead.kind === 'listing'
+      ? `A listing from ${sourceLabel(lead.source)} that is on the site but says very little about itself: a short description, no start time and no category. Open the listing link and check it's a real event in Dehradun. Close this issue to remove it from the site; add the \`approve\` label to keep it as a checked event (fix the details first if needed).`
+      : 'An event sent through the submit form on doon.today. Contact details, if given, are only in the Netlify submission.';
   const body = [
     marker,
     intro,
@@ -145,7 +160,7 @@ export function leadIssue(lead) {
 
 /** The kind and Reddit id from a lead issue's hidden marker, even if the details block was edited away. */
 export function leadMarker(body = '') {
-  const m = String(body).match(/<!--\s*doon-lead\s+kind=(form|reddit)(?:\s+id=([a-z0-9-]+))?\s*-->/i);
+  const m = String(body).match(/<!--\s*doon-lead\s+kind=(form|reddit|listing)(?:\s+id=([a-z0-9-]+))?\s*-->/i);
   return m ? { kind: m[1].toLowerCase(), id: m[2] || '' } : null;
 }
 
@@ -168,8 +183,16 @@ export function parseLeadIssue(body = '') {
   return { ...marker, fields };
 }
 
-/** The review decision key for a lead: the Reddit candidate id, or the issue number for a form entry. */
-export const leadKey = (parsed, issueNumber) => (parsed.kind === 'reddit' ? parsed.id : `form-${issueNumber}`);
+/**
+ * The link a rejection should remember for a queued lead: the candidate's own, or, if the candidate has
+ * already left the queue (the listing changed or disappeared), the listing or post link in the issue.
+ */
+export function leadSourceUrl(parsed, candidate) {
+  return candidate?.sources?.[0]?.url || cleanUrl(parsed?.fields?.listing) || cleanUrl(parsed?.fields?.post) || '';
+}
+
+/** The review decision key for a lead: the queued candidate's id, or the issue number for a form entry. */
+export const leadKey = (parsed, issueNumber) => (isQueuedKind(parsed.kind) ? parsed.id : `form-${issueNumber}`);
 
 const knownCategory = new Map(CATEGORY_NAMES.map((name) => [name.toLowerCase(), name]));
 
@@ -194,7 +217,7 @@ export function leadToEvent(parsed, { issueUrl, candidate, now } = {}) {
     !f.listing && f.organizerLink && !organizerLink && `Organizer: ${f.organizerLink}`
   ].filter(Boolean).join(' ');
   const description = [f.description, extra].filter(Boolean).join('\n\n');
-  const url = cleanUrl(f.listing) || organizerLink || (parsed.kind === 'reddit' ? cleanUrl(f.post) : '') || issueUrl;
+  const url = cleanUrl(f.listing) || organizerLink || (isQueuedKind(parsed.kind) ? cleanUrl(f.post) : '') || issueUrl;
 
   const base = candidate || { title: f.title, description, sources: [] };
   const event = buildCuratedEvent(base, {
