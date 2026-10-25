@@ -129,31 +129,40 @@ export function hasOutsideGeo(text='') {
 }
 
 // Addresses that can't be in Dehradun, whatever venue a listing site attached: a US state with a ZIP code
-// ("Frankenmuth, MI 48734"), or a country other than India after a comma. "IN" is left out of the states because Indian
+// ("Frankenmuth, MI 48734"), or, in a venue address, a country other than India after a comma. "IN" is left
+// out of the states because Indian
 // addresses use it for India ("Uttarakhand, IN 248001"), and "UK" isn't a country here because it's also
 // Uttarakhand's own abbreviation.
 const US_STATES = 'AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC';
 const US_ADDRESS = new RegExp(`,\\s*(?:${US_STATES})\\s+\\d{5}(?:-\\d{4})?\\b`);
 // Only in address form, after a comma, so "a speaker from the USA" doesn't count.
 const FOREIGN_COUNTRY = /,\s*(?:USA|U\.S\.A\.?|United States|United Kingdom|England|Scotland|Canada|Australia|New Zealand|Germany|UAE|United Arab Emirates)\b/i;
-// Indian PIN codes in Dehradun district (and Mussoorie) start 2480 or 2481.
-const INDIAN_PIN = /\b(?:pin(?:code)?[:\s-]*)?([1-8]\d{5})\b/gi;
+// An Indian PIN code is the 6-digit number that ends an address, optionally followed by "India" (AllEvents
+// then repeats the city). A plot number or a phone fragment earlier in the address is not a PIN.
+// Dehradun district, Mussoorie included, has PIN codes starting 2480 or 2481.
+const TRAILING_PIN = /(?<![\d-])([1-8]\d{5})\s*(?:,?\s*(?:India|IN)\b[^\d]*)?$/i;
+/** A foreign address in free text: a US state with a ZIP code ("Frankenmuth, MI 48734"). */
 export function hasForeignAddress(text='') {
+  return US_ADDRESS.test(text);
+}
+/** A venue's own address that is abroad: a US address, or a foreign country after a comma ("Toronto, Canada"). */
+export function hasForeignVenue(text='') {
   return US_ADDRESS.test(text) || FOREIGN_COUNTRY.test(text);
 }
-/** True when an address names an Indian PIN code and none of them is in Dehradun's range. */
+/** True when an address ends in an Indian PIN code outside Dehradun's range. */
 export function hasOutsidePin(address='') {
-  const pins = [...String(address).matchAll(INDIAN_PIN)].map((m) => m[1]);
-  return pins.length > 0 && !pins.some((pin) => /^248[01]\d{2}$/.test(pin));
+  const pin = String(address).trim().match(TRAILING_PIN)?.[1];
+  return Boolean(pin) && !/^248[01]\d{2}$/.test(pin);
 }
 
 export function isLikelyDehradunEvent({title='', description='', venueName='', address='', city=''}) {
   const semantic = `${title} ${description}`;
   const venue = `${venueName} ${address} ${city}`;
 
-  // A foreign address anywhere wins over a Dehradun venue a listing site attached, and so does a venue
-  // address whose PIN code is outside Dehradun.
-  if (hasForeignAddress(semantic) || hasForeignAddress(venue)) return false;
+  // A US address in the listing's own words wins over a Dehradun venue the listing site attached. A
+  // country name only counts in the venue's address, since a description can mention other countries
+  // ("a study-abroad fair: USA, Canada"). A venue address ending in a PIN outside Dehradun counts too.
+  if (hasForeignAddress(semantic) || hasForeignVenue(venue)) return false;
   if (hasOutsidePin(address)) return false;
 
   // A structured city that names somewhere else wins over loose text matches.

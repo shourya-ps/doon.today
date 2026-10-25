@@ -210,10 +210,16 @@ export async function mergeAndWrite(sourceResults) {
   merged.push(...retained);
 
   // A listing someone rejected in review (by closing its lead issue) comes off the site, matched by its link.
+  // A hand-checked event is never removed this way, and a link several events share (a listing site's city
+  // page used as a fallback) identifies none of them.
+  const linkCount=new Map();
+  for (const e of merged) for (const u of new Set((e.sources||[]).map(s=>normalizeUrl(s.url)))) linkCount.set(u,(linkCount.get(u)||0)+1);
   const rejectedLinks=new Set(Object.values(await readJson(DECISIONS_PATH,{}))
-    .filter(d=>d?.decision==='rejected' && d.sourceUrl).map(d=>normalizeUrl(d.sourceUrl)));
+    .filter(d=>d?.decision==='rejected' && d.sourceUrl).map(d=>normalizeUrl(d.sourceUrl))
+    .filter(u=>(linkCount.get(u)||0)<=1));
+  const rejected=e=>!(e.sources||[]).some(s=>s.provider==='manual') && (e.sources||[]).some(s=>rejectedLinks.has(normalizeUrl(s.url)));
   const out=merged
-    .filter(e => !(e.sources||[]).some(s => rejectedLinks.has(normalizeUrl(s.url))))
+    .filter(e => !rejected(e))
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => new Date(e.startAt).getTime() > now - 6*3600_000)

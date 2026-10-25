@@ -183,6 +183,14 @@ export function parseLeadIssue(body = '') {
   return { ...marker, fields };
 }
 
+/**
+ * The link a rejection should remember for a queued lead: the candidate's own, or, if the candidate has
+ * already left the queue (the listing changed or disappeared), the listing or post link in the issue.
+ */
+export function leadSourceUrl(parsed, candidate) {
+  return candidate?.sources?.[0]?.url || cleanUrl(parsed?.fields?.listing) || cleanUrl(parsed?.fields?.post) || '';
+}
+
 /** The review decision key for a lead: the queued candidate's id, or the issue number for a form entry. */
 export const leadKey = (parsed, issueNumber) => (isQueuedKind(parsed.kind) ? parsed.id : `form-${issueNumber}`);
 

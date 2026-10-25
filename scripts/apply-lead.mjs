@@ -8,7 +8,7 @@
 import fs from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { readJson, writeJson, approve, reject, QUEUE_PATH, DECISIONS_PATH, CURATED_PATH } from '../ingest/lib/review.mjs';
-import { APPROVE_LABEL, isQueuedKind, leadKey, leadMarker, leadToEvent, parseLeadIssue, cleanLine } from '../ingest/lib/leads.mjs';
+import { APPROVE_LABEL, isQueuedKind, leadKey, leadMarker, leadSourceUrl, leadToEvent, parseLeadIssue, cleanLine } from '../ingest/lib/leads.mjs';
 import { mergeAndWrite } from '../ingest/merge.mjs';
 import { github } from '../ingest/lib/github.mjs';
 
@@ -46,7 +46,8 @@ if (mode === 'reject') {
   if (!key || decisions[key]) process.exit(0);
   const curated = await readJson(CURATED_PATH, []);
   const queued = (await readJson(QUEUE_PATH, [])).find((c) => c.id === key);
-  const next = reject({ decisions, curated }, { id: key, title: cleanLine(issue.title), sources: queued?.sources }, `closed on GitHub (#${issue.number})`);
+  const url = leadSourceUrl(parseLeadIssue(issue.body), queued);
+  const next = reject({ decisions, curated }, { id: key, title: cleanLine(issue.title), sources: url ? [{ url }] : [] }, `closed on GitHub (#${issue.number})`);
   await writeJson(DECISIONS_PATH, next.decisions);
   // A rejected listing that is already on the site comes off it on this rebuild.
   if (marker.kind === 'listing') await mergeAndWrite([]);
