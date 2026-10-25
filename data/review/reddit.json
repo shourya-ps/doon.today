@@ -1,40 +1,5 @@
 [
   {
-    "id": "922ab00eace53e4a",
-    "slug": "the-unfiltered-room-an-evening-with-raja-gujjar",
-    "title": "The Unfiltered Room An Evening With Raja Gujjar",
-    "description": "",
-    "startAt": "2026-10-25",
-    "venue": {
-      "name": "Venue To Be Announced: Dehradun",
-      "address": "Dehradun, Uttarakhand India Dehradun",
-      "city": "Dehradun"
-    },
-    "categories": [
-      "Other"
-    ],
-    "pricing": {
-      "type": "unknown",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "allevents",
-        "url": "https://allevents.in/dehradun/the-unfiltered-room-an-evening-with-raja-gujjar/3900030813513222",
-        "checkedAt": "2026-10-25T15:23:23.935Z",
-        "confidence": 0.75
-      }
-    ],
-    "verificationStatus": "review",
-    "curation": {
-      "status": "review",
-      "score": 2
-    },
-    "firstSeenAt": "2026-10-25T15:23:23.935Z",
-    "lastSeenAt": "2026-10-25T15:23:23.935Z",
-    "lastCheckedAt": "2026-10-25T15:23:23.935Z"
-  },
-  {
     "id": "b83fb3ee340999f3",
     "slug": "i-painted-my-future-and-retired-at-45-in-dehradun",
     "title": "I painted my future and retired at 45 in Dehradun",
