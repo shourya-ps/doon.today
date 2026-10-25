@@ -71,44 +71,6 @@
     "lastCheckedAt": "2026-10-24T16:18:41.208Z"
   },
   {
-    "id": "7190160ac45bf9e5",
-    "slug": "virasat-2026-carnatic-vocal-by-t-m-krishna",
-    "title": "Virasat 2026: Carnatic Vocal by T M Krishna",
-    "description": "Ticketed vocal performance at Virasat 2026. Check the official programme and ticket page for details.",
-    "startAt": "2026-10-25T20:30:00+05:30",
-    "venue": {
-      "name": "Himalayan Cultural Centre — Auditorium",
-      "address": "Garhi Cantt",
-      "city": "Dehradun",
-      "area": "Garhi Cantt"
-    },
-    "categories": [
-      "Music",
-      "Culture"
-    ],
-    "pricing": {
-      "type": "paid",
-      "currency": "INR"
-    },
-    "sources": [
-      {
-        "provider": "virasat",
-        "url": "https://reachvirasat.org/programme#day-3",
-        "externalId": "2026-3-carnatic-vocal-by-t-m-krishna",
-        "checkedAt": "2026-10-25T13:13:57.356Z",
-        "confidence": 0.95
-      }
-    ],
-    "verificationStatus": "verified",
-    "curation": {
-      "status": "published",
-      "score": 7
-    },
-    "firstSeenAt": "2026-10-19T03:52:50.746Z",
-    "lastSeenAt": "2026-10-25T13:13:57.356Z",
-    "lastCheckedAt": "2026-10-25T13:13:57.356Z"
-  },
-  {
     "id": "e8928f4394c3963d",
     "slug": "all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun",
     "title": "All You Can Eat & Drink – Unlimited Feast at Underdoggs Dehradun",
@@ -133,7 +95,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/all-you-can-eat-drink-unlimited-feast-at-underdoggs-dehradun-may4-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.396Z",
         "confidence": 0.95
       }
     ],
@@ -143,8 +105,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-21T06:09:46.291Z",
-    "lastSeenAt": "2026-10-24T04:13:02.804Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.804Z"
+    "lastSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.396Z"
   },
   {
     "id": "bdb6e6ba22d24d6e",
@@ -487,7 +449,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/dark-side-of-basque-og-shez-katch-jerry-oct30-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.397Z",
         "confidence": 0.95
       }
     ],
@@ -497,8 +459,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-24T04:13:02.804Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.804Z"
+    "lastSeenAt": "2026-10-25T15:11:59.397Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.397Z"
   },
   {
     "id": "064d632cbcd64e99",
@@ -762,7 +724,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/ghar-an-open-mic-for-words-by-tape-a-tale-dehradun-apr19-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.802Z",
+        "checkedAt": "2026-10-25T15:11:59.395Z",
         "confidence": 0.95
       }
     ],
@@ -772,8 +734,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-24T04:13:02.802Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.802Z"
+    "lastSeenAt": "2026-10-25T15:11:59.395Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.395Z"
   },
   {
     "id": "8033fa76e24f930a",
@@ -799,7 +761,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/tla-unscripted-oct31-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.396Z",
         "confidence": 0.95
       }
     ],
@@ -809,8 +771,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-24T04:13:02.804Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.804Z"
+    "lastSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.396Z"
   },
   {
     "id": "c29a4b593b676178",
@@ -836,7 +798,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/1157f4ec-1d01-4bc4-bf0b-19884515aac2-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.803Z",
+        "checkedAt": "2026-10-25T15:11:59.397Z",
         "confidence": 0.95
       }
     ],
@@ -846,8 +808,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-23T02:43:06.187Z",
-    "lastSeenAt": "2026-10-24T04:13:02.803Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.803Z"
+    "lastSeenAt": "2026-10-25T15:11:59.397Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.397Z"
   },
   {
     "id": "7bf79e168c37516c",
@@ -858,7 +820,7 @@
     "endAt": "2026-10-31T18:29:00.000Z",
     "venue": {
       "name": "Dehradun Social | Hathibarkala Salwala, Dehradun",
-      "address": "5674426e2fd8be115e700e99",
+      "address": "Dehradun",
       "city": "Dehradun",
       "area": "Hathibarkala"
     },
@@ -874,7 +836,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/ghosted-halloween-party-at-dehradun-social-oct31-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.396Z",
         "confidence": 0.95
       }
     ],
@@ -884,8 +846,85 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-21T06:09:46.289Z",
-    "lastSeenAt": "2026-10-24T04:13:02.804Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.804Z"
+    "lastSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.396Z",
+    "sequence": 1,
+    "modifiedAt": "2026-10-25T15:11:59.403Z"
+  },
+  {
+    "id": "51acbc24651364df",
+    "slug": "halloween-night-at-doon-bakehouse",
+    "title": "Halloween Night at Doon Bakehouse",
+    "description": "",
+    "startAt": "2026-10-31T13:30:00.000Z",
+    "endAt": "2026-10-31T17:45:00.000Z",
+    "venue": {
+      "name": "Doon Bake House",
+      "address": "Dehradun",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Other"
+    ],
+    "pricing": {
+      "type": "paid",
+      "minPrice": 999,
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "district",
+        "url": "https://www.district.in/events/halloween-night-at-doon-bakehouse-oct31-2026-buy-tickets",
+        "checkedAt": "2026-10-25T15:11:59.396Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 8
+    },
+    "firstSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.396Z"
+  },
+  {
+    "id": "a6294b81aaa91ded",
+    "slug": "halloween-party-dj-musical-monkey",
+    "title": "Halloween Party - DJ Musical Monkey",
+    "description": "",
+    "startAt": "2026-10-31T14:30:00.000Z",
+    "endAt": "2026-10-31T17:30:00.000Z",
+    "venue": {
+      "name": "Studio XO | Rajpur, Dehradun",
+      "address": "Dehradun",
+      "city": "Dehradun",
+      "area": "Rajpur"
+    },
+    "categories": [
+      "Music"
+    ],
+    "pricing": {
+      "type": "paid",
+      "minPrice": 100,
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "district",
+        "url": "https://www.district.in/events/halloween-party-dj-musical-monkey-oct31-2026-buy-tickets",
+        "checkedAt": "2026-10-25T15:11:59.396Z",
+        "confidence": 0.95
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 8
+    },
+    "firstSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastSeenAt": "2026-10-25T15:11:59.396Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.396Z"
   },
   {
     "id": "5c236c81f43b60ca",
@@ -912,7 +951,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/litchi-india-tour-oct31-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.397Z",
         "confidence": 0.95
       },
       {
@@ -928,8 +967,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.462Z",
-    "lastSeenAt": "2026-10-24T04:13:02.804Z",
-    "lastCheckedAt": "2026-10-24T04:13:02.804Z"
+    "lastSeenAt": "2026-10-25T15:11:59.397Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.397Z"
   },
   {
     "id": "1ae45826e052b876",
@@ -1842,7 +1881,7 @@
       {
         "provider": "district",
         "url": "https://www.district.in/events/dehradun-literature-festival-2026-buy-tickets",
-        "checkedAt": "2026-10-24T04:13:02.804Z",
+        "checkedAt": "2026-10-25T15:11:59.393Z",
         "confidence": 0.95
       },
       {
@@ -1858,8 +1897,8 @@
       "score": 8
     },
     "firstSeenAt": "2026-10-18T07:29:45.461Z",
-    "lastSeenAt": "2026-10-25T13:13:58.301Z",
-    "lastCheckedAt": "2026-10-25T13:13:58.301Z"
+    "lastSeenAt": "2026-10-25T15:11:59.393Z",
+    "lastCheckedAt": "2026-10-25T15:11:59.393Z"
   },
   {
     "id": "5a0be2a175cd6a49",
