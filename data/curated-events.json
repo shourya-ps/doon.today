@@ -75,5 +75,81 @@
     "firstSeenAt": "2026-10-24T04:05:21.492Z",
     "lastSeenAt": "2026-10-24T04:05:21.492Z",
     "lastCheckedAt": "2026-10-24T04:05:21.492Z"
+  },
+  {
+    "id": "bb41f2e45351d70a",
+    "slug": "blood-on-the-clocktower",
+    "title": "Blood on the Clocktower",
+    "description": "Blood on the Clocktower is a social deduction game, like Mafia or Secret Hitler but way more fun. Everyone gets a secret role, and the town has to figure out who’s lying.\n\nOrganized by Shourya. How to join: Signup via Whatsapp - https://chat.whatsapp.com/JeQp8QMJ2wsL7TEnkbo1fT",
+    "startAt": "2026-10-25T17:00:00+05:30",
+    "endAt": "2026-10-25T20:00:00+05:30",
+    "venue": {
+      "name": "Board & Banter, Doon University Road (near Bengali Kothi Chowk)",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Community"
+    ],
+    "pricing": {
+      "type": "paid",
+      "minPrice": 300,
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://www.instagram.com/singh._.shourya/",
+        "checkedAt": "2026-10-24T16:18:41.208Z",
+        "confidence": 1
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-24T16:18:41.208Z",
+    "lastSeenAt": "2026-10-24T16:18:41.208Z",
+    "lastCheckedAt": "2026-10-24T16:18:41.208Z"
+  },
+  {
+    "id": "5d05d86981addceb",
+    "slug": "blessed-bible-verses",
+    "title": "Blessed bible verses",
+    "description": "Thanks to lord Almighty",
+    "startAt": "2027-01-02",
+    "venue": {
+      "name": "Triple aar school campus Kainchiwala saheshpur, Dehra Dun, Uttarakhand, India",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Other"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
+        "checkedAt": "2026-10-25T15:26:38.238Z",
+        "confidence": 1
+      },
+      {
+        "provider": "allevents",
+        "url": "https://allevents.in/dehradun/blessed-bible-verses/200030774982732",
+        "checkedAt": "2026-10-25T15:23:23.938Z",
+        "confidence": 0.75
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-25T15:26:38.238Z",
+    "lastSeenAt": "2026-10-25T15:26:38.238Z",
+    "lastCheckedAt": "2026-10-25T15:26:38.238Z"
   }
 ]

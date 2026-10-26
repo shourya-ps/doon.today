@@ -19,11 +19,76 @@ export function decodeEntities(s='') {
     .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;|&#39;/g, "'").replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&');
 }
+// Stand-ins sources use when they don't know the venue or have no real description. A merge never lets
+// one of these replace a real value from another source of the same event.
+const PLACEHOLDER_VENUE = /^\s*(?:venue\s*)?(?:tba|tbd|to be (?:announced|decided|confirmed))\s*[:,.\-–]?\s*(?:dehradun)?\s*$|^\s*see community post\s*$/i;
+const PLACEHOLDER_DESCRIPTION = /\bcheck the organi[sz]er for\b/i;
+export const isPlaceholderVenue = (name = '') => !String(name).trim() || PLACEHOLDER_VENUE.test(String(name));
+export const isPlaceholderDescription = (text = '') => !String(text).trim() || PLACEHOLDER_DESCRIPTION.test(String(text));
+
 export function stripHtml(s='') {
   const text = String(s).replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/<[^>]*$/,' ');
   // Entities are decoded after the tags are gone, so an escaped "&lt;b&gt;" in the text stays text.
   return decodeEntities(text).replace(/[\u200b-\u200d\ufeff]/g,'').replace(/\s+/g,' ').trim();
 }
+/**
+ * The price that schema.org offers give, in rupees, or null when they give none. Offers may be one object,
+ * a list, or an AggregateOffer with its own list. The lowest real price wins; a higher one becomes the
+ * range's top. An event is free only when every offer is 0, and a price in another currency is ignored
+ * rather than shown as rupees.
+ */
+export function priceFromOffers(offers) {
+  const list = flattenOffers(offers);
+  // The amount after "₹" if there is one, else the first number: "1,500.00", "Rs. 500" and "Starts 2 Nov,
+  // ₹499" read as 1500, 500 and 499; "TBA" reads as no price.
+  let unreadable = false;
+  const amount = (v) => {
+    const text = String(v ?? '');
+    const m = text.match(/₹\s*(\d[\d,]*(?:\.\d+)?)/)?.slice(1) || text.match(/\d[\d,]*(?:\.\d+)?/);
+    if (!m && text.trim()) unreadable = true;
+    if (!m) return null;
+    const n = Number(m[0].replace(/,/g, ''));
+    return Number.isFinite(n) ? n : null;
+  };
+  const rupees = (n) => Math.max(1, Math.round(n));
+  const lows = [], highs = [];
+  for (const o of list) {
+    if (String(o.priceCurrency || 'INR').toUpperCase() !== 'INR') continue;
+    for (const v of [o.price, o.lowPrice]) { const n = amount(v); if (n !== null) lows.push(n); }
+    for (const v of [o.highPrice, o.price]) { const n = amount(v); if (n !== null) highs.push(n); }
+  }
+  if (!lows.length && !highs.length) return null;
+  const top = Math.max(...lows, ...highs);
+  // Free only when every price given can be read and all are 0: "lowPrice 0, highPrice TBA" isn't free.
+  if (top === 0) return unreadable ? null : { type: 'free', currency: 'INR' };
+  // A free tier next to paid ones ("lowPrice 0, highPrice 500") is not a free event: show the paid price.
+  const paid = lows.filter((n) => n > 0);
+  const minPrice = rupees(paid.length ? Math.min(...paid) : Math.min(...highs.filter((n) => n > 0)));
+  const maxPrice = rupees(top);
+  return { type: 'paid', minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}), currency: 'INR' };
+}
+// Offers nested in an AggregateOffer take its currency when they don't state their own.
+function flattenOffers(offers, out = [], currency) {
+  if (!offers) return out;
+  if (Array.isArray(offers)) { offers.forEach((o) => flattenOffers(o, out, currency)); return out; }
+  if (typeof offers === 'object') {
+    const own = offers.priceCurrency || currency;
+    out.push(own && !offers.priceCurrency ? { ...offers, priceCurrency: own } : offers);
+    if (offers.offers) flattenOffers(offers.offers, out, own);
+  }
+  return out;
+}
+
+/** A price stated in an event's own words: a rupee amount, or plainly a free event. Never a guess. */
+export function priceFromText(text='') {
+  // "Rs" and "INR" only as words of their own, so "Doors 6:30" or "years 18" are not prices; and an amount
+  // under ₹10 is more likely a time or an age than a ticket.
+  const m = String(text).replace(/(\d),(?=\d)/g,'$1').match(/(?:₹|\b(?:Rs|INR)(?![a-z])\.?)\s*(\d+)/i);
+  if (m && Number(m[1]) >= 10) return {type:'paid', minPrice:Number(m[1]), currency:'INR'};
+  if (/\bfree\s+(?:entry|event|admission|registration|of\s+cost)\b|\bentry\s+(?:is\s+)?free\b|\bit'?s\s+a\s+free\b/i.test(text)) return {type:'free', currency:'INR'};
+  return {type:'unknown', currency:'INR'};
+}
+
 export function parseMoney(text='') {
   const m = text.replace(/,/g,'').match(/(?:₹|Rs\.?|INR)\s*(\d+)/i);
   if (/\bfree\b/i.test(text)) return {type:'free', currency:'INR'};
@@ -63,9 +128,42 @@ export function hasOutsideGeo(text='') {
   return OUTSIDE_RE.test(text);
 }
 
+// Addresses that can't be in Dehradun, whatever venue a listing site attached: a US state with a ZIP code
+// ("Frankenmuth, MI 48734"), or, in a venue address, a country other than India after a comma. "IN" is left
+// out of the states because Indian
+// addresses use it for India ("Uttarakhand, IN 248001"), and "UK" isn't a country here because it's also
+// Uttarakhand's own abbreviation.
+const US_STATES = 'AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|DC';
+const US_ADDRESS = new RegExp(`,\\s*(?:${US_STATES})\\s+\\d{5}(?:-\\d{4})?\\b`);
+// Only in address form, after a comma, so "a speaker from the USA" doesn't count.
+const FOREIGN_COUNTRY = /,\s*(?:USA|U\.S\.A\.?|United States|United Kingdom|England|Scotland|Canada|Australia|New Zealand|Germany|UAE|United Arab Emirates)\b/i;
+// An Indian PIN code is the 6-digit number that ends an address, optionally followed by "India" (AllEvents
+// then repeats the city). A plot number or a phone fragment earlier in the address is not a PIN.
+// Dehradun district, Mussoorie included, has PIN codes starting 2480 or 2481.
+const TRAILING_PIN = /(?<![\d-])([1-8]\d{5})\s*(?:,?\s*(?:India|IN)\b[^\d]*)?$/i;
+/** A foreign address in free text: a US state with a ZIP code ("Frankenmuth, MI 48734"). */
+export function hasForeignAddress(text='') {
+  return US_ADDRESS.test(text);
+}
+/** A venue's own address that is abroad: a US address, or a foreign country after a comma ("Toronto, Canada"). */
+export function hasForeignVenue(text='') {
+  return US_ADDRESS.test(text) || FOREIGN_COUNTRY.test(text);
+}
+/** True when an address ends in an Indian PIN code outside Dehradun's range. */
+export function hasOutsidePin(address='') {
+  const pin = String(address).trim().match(TRAILING_PIN)?.[1];
+  return Boolean(pin) && !/^248[01]\d{2}$/.test(pin);
+}
+
 export function isLikelyDehradunEvent({title='', description='', venueName='', address='', city=''}) {
   const semantic = `${title} ${description}`;
   const venue = `${venueName} ${address} ${city}`;
+
+  // A US address in the listing's own words wins over a Dehradun venue the listing site attached. A
+  // country name only counts in the venue's address, since a description can mention other countries
+  // ("a study-abroad fair: USA, Canada"). A venue address ending in a PIN outside Dehradun counts too.
+  if (hasForeignAddress(semantic) || hasForeignVenue(venue)) return false;
+  if (hasOutsidePin(address)) return false;
 
   // A structured city that names somewhere else wins over loose text matches.
   if (city && !isDehradunText(city) && hasOutsideGeo(city)) return false;

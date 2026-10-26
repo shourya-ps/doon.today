@@ -96,7 +96,8 @@ export function approve({ decisions, curated }, candidate, event, now = new Date
 /** The state after rejecting a lead. The post is remembered, so it does not come back on the next run. */
 export function reject({ decisions, curated }, candidate, note = '', now = new Date().toISOString()) {
   return {
-    decisions: { ...decisions, [candidate.id]: { decision: 'rejected', title: candidate.title, at: now, ...(note ? { note } : {}) } },
+    // The source link is kept so a rejected listing that is already on the site can be removed by it.
+    decisions: { ...decisions, [candidate.id]: { decision: 'rejected', title: candidate.title, at: now, ...(candidate.sources?.[0]?.url ? { sourceUrl: candidate.sources[0].url } : {}), ...(note ? { note } : {}) } },
     curated
   };
 }

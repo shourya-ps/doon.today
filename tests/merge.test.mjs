@@ -216,3 +216,35 @@ test('mixed UTC and IST timestamps are sorted by actual start time',async t=>{
   }))}]);
   assert.deepEqual((await read()).map(e=>e.startAt),[times[2],times[0],times[1]]);
 });
+
+test('a placeholder venue or description never replaces a real one from another source',async t=>{
+  await inTempDir(t);
+  const thrillzone=ev({id:'tz',title:'Dehradun Ultra Run 2027 (4th Edition)',startAt:'2030-03-14T04:00:00+05:30',
+    venue:{name:'Venue TBA',city:'Dehradun'},description:'Thrill Zone running event in Dehradun. Check the organizer for route, venue and registration details.',
+    sources:[src('thrillzone','https://www.sportifiindia.com/events/ddn-ultra-run')]});
+  const allevents=ev({id:'ae',title:'Dehradun Ultra Run 2027 (4th Edition)',startAt:'2030-03-14T05:00:00+05:30',
+    venue:{name:'Hotel JSR INN.',address:'Near Bizapur Dam Galjwari, Garhi Cantt, Dehradun',city:'Dehradun'},description:'A 50 km trail ultra through the Doon valley.',
+    sources:[src('allevents','https://allevents.in/dehradun/ultra/1')]});
+  await mergeAndWrite([{source:'thrillzone',events:[thrillzone]},{source:'allevents',events:[allevents]}]);
+  const [e]=await read();
+  assert.equal(e.venue.name,'Hotel JSR INN.');
+  assert.equal(e.venue.area,'Garhi Cantt');
+  assert.equal(e.description,'A 50 km trail ultra through the Doon valley.');
+  assert.equal(e.startAt,'2030-03-14T04:00:00+05:30','the higher-ranked source still decides everything else');
+  assert.equal(e.sources[0].provider,'thrillzone');
+});
+
+test('a real venue from the preferred source is kept, and placeholders are recognised',async t=>{
+  const { isPlaceholderVenue, isPlaceholderDescription } = await import('../ingest/lib/utils.mjs');
+  for (const name of ['Venue TBA','Venue To Be Announced: Dehradun','TBA','To be decided','See community post','',undefined]) assert.equal(isPlaceholderVenue(name),true,String(name));
+  for (const name of ['Hotel JSR INN.','The Tabla House','TBA Cafe','Rajpur Road Hall']) assert.equal(isPlaceholderVenue(name),false,name);
+  assert.equal(isPlaceholderDescription('Check the organizer for route, venue and registration details.'),true);
+  assert.equal(isPlaceholderDescription('Bring your own sketchbook.'),false);
+  await inTempDir(t);
+  const district=ev({id:'d',venue:{name:'Rajpur Road Hall',city:'Dehradun'},description:'From District.',sources:[src('district','https://example.test/d')]});
+  const other=ev({id:'o',venue:{name:'Rajpur Road Hall annex',city:'Dehradun'},description:'From AllEvents.',sources:[src('allevents','https://example.test/o')]});
+  await mergeAndWrite([{source:'district',events:[district]},{source:'allevents',events:[other]}]);
+  const [e]=await read();
+  assert.equal(e.venue.name,'Rajpur Road Hall');
+  assert.equal(e.description,'From District.');
+});

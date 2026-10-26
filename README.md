@@ -124,7 +124,7 @@ docs/            notes on primary sources
 
 ## Reporting problems and contributing
 
-Every event page has a "Report a problem" link that opens a prefilled GitHub issue. To suggest a missing event, [open an issue](https://github.com/srijan-kapoor/doon.today/issues/new). Pull requests are welcome; run `npm test`, `npm run check` and `npm run build` first.
+Every event page has a "Report a problem" link that opens a prefilled GitHub issue. To suggest a missing event, [open an issue](https://github.com/srijan-kapoor/doon.today/issues/new). Pull requests are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). CI (`.github/workflows/ci.yml`) runs the tests, type check, data validation and build on every pull request.
 
 ## License
 

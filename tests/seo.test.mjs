@@ -51,3 +51,9 @@ test('source names are readable',()=>{
 test('an address that is only the city is not a street address',()=>{
   assert.equal(eventJsonLd(ev({venue:{name:'Hall',address:'Dehradun',city:'Dehradun'}}),opts).location.address.streetAddress,undefined);
 });
+
+test('a price range becomes an AggregateOffer, and the summary shows the range',()=>{
+  const e=ev({pricing:{type:'paid',minPrice:1500,maxPrice:4000,currency:'INR'}});
+  assert.deepEqual(eventJsonLd(e,opts).offers,{'@type':'AggregateOffer',lowPrice:1500,highPrice:4000,priceCurrency:'INR',url:'https://example.test/e'});
+  assert.match(eventSummary(e),/₹1,500–4,000\./);
+});

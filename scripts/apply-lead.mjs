@@ -8,7 +8,7 @@
 import fs from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { readJson, writeJson, approve, reject, QUEUE_PATH, DECISIONS_PATH, CURATED_PATH } from '../ingest/lib/review.mjs';
-import { APPROVE_LABEL, leadKey, leadMarker, leadToEvent, parseLeadIssue, cleanLine } from '../ingest/lib/leads.mjs';
+import { APPROVE_LABEL, isQueuedKind, leadKey, leadMarker, leadSourceUrl, leadToEvent, parseLeadIssue, cleanLine } from '../ingest/lib/leads.mjs';
 import { mergeAndWrite } from '../ingest/merge.mjs';
 import { github } from '../ingest/lib/github.mjs';
 
@@ -40,12 +40,17 @@ if (!marker) {
 const decisions = await readJson(DECISIONS_PATH, {});
 
 if (mode === 'reject') {
-  // Only Reddit leads need remembering; a form entry that is closed simply never gets published.
-  const key = marker.kind === 'reddit' ? marker.id : null;
+  // Only queued leads (Reddit posts, held-back listings) need remembering; a closed form entry simply
+  // never gets published.
+  const key = isQueuedKind(marker.kind) ? marker.id : null;
   if (!key || decisions[key]) process.exit(0);
   const curated = await readJson(CURATED_PATH, []);
-  const next = reject({ decisions, curated }, { id: key, title: cleanLine(issue.title) }, `closed on GitHub (#${issue.number})`);
+  const queued = (await readJson(QUEUE_PATH, [])).find((c) => c.id === key);
+  const url = leadSourceUrl(parseLeadIssue(issue.body), queued);
+  const next = reject({ decisions, curated }, { id: key, title: cleanLine(issue.title), sources: url ? [{ url }] : [] }, `closed on GitHub (#${issue.number})`);
   await writeJson(DECISIONS_PATH, next.decisions);
+  // A rejected listing that is already on the site comes off it on this rebuild.
+  if (marker.kind === 'listing') await mergeAndWrite([]);
   await commitAndPush(`data: reject lead #${issue.number}`);
   console.log(`Recorded the rejection of ${key}.`);
   process.exit(0);
@@ -59,7 +64,7 @@ try {
   const key = leadKey(parsed, issue.number);
   if (decisions[key]) throw new Error(`this lead was already ${decisions[key].decision}`);
   const queue = await readJson(QUEUE_PATH, []);
-  const candidate = parsed.kind === 'reddit' ? queue.find((c) => c.id === parsed.id) : undefined;
+  const candidate = isQueuedKind(parsed.kind) ? queue.find((c) => c.id === parsed.id) : undefined;
   const event = leadToEvent(parsed, { issueUrl: issue.html_url, candidate });
 
   const curated = await readJson(CURATED_PATH, []);

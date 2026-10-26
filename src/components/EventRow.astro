@@ -1,13 +1,14 @@
 ---
 import type { EventRecord } from '../types/event';
 import { toInstant } from '../lib/dates.mjs';
+import { priceLabel } from '../lib/sources.mjs';
 const { event } = Astro.props as { event: EventRecord };
 const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(event.startAt);
 const start = toInstant(event.startAt);
 const time = dateOnly
   ? 'Time TBA'
   : new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }).format(start);
-const price = event.pricing.type === 'free' ? 'FREE' : event.pricing.minPrice ? `₹${event.pricing.minPrice}+` : '';
+const price = priceLabel(event.pricing, 'short');
 const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const showArea = event.venue.area && !event.venue.name.toLowerCase().includes(event.venue.area.toLowerCase());
 ---

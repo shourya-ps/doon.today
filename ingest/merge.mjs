@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { slugify, eventPassesGeo, areaFromText } from './lib/utils.mjs';
+import { slugify, eventPassesGeo, areaFromText, isPlaceholderVenue, isPlaceholderDescription } from './lib/utils.mjs';
 import { readJson, CURATED_PATH, DECISIONS_PATH, QUEUE_PATH, pendingCandidates } from './lib/review.mjs';
 import { istDay, compareEventStarts, isUnexpiredEvent } from '../src/lib/dates.mjs';
 export { istDay } from '../src/lib/dates.mjs';
@@ -57,7 +57,7 @@ export function sameEvent(a,b) {
   if (istDay(a.startAt) !== istDay(b.startAt)) return false;
   const titleScore=similarity(a.title,b.title);
   const venueScore=venueSimilarity(a.venue?.name,b.venue?.name);
-  return titleScore >= 0.72 && (venueScore >= 0.5 || /venue tba/i.test(a.venue?.name||'') || /venue tba/i.test(b.venue?.name||''));
+  return titleScore >= 0.72 && (venueScore >= 0.5 || isPlaceholderVenue(a.venue?.name) || isPlaceholderVenue(b.venue?.name));
 }
 function sourceKey(s){ return `${s.provider}|${s.url}`; }
 
@@ -107,7 +107,21 @@ function missedRunsAfter(e, returned) {
   if (providers.length === 0) return before;
   return providers.every(p => (returned.get(p)||0) > 0) ? before+1 : before;
 }
-function mergePair(a,b) {
+// Prices from two sources of one event. A known price beats an unknown one. With `combine` (two sources in
+// the same run), two paid prices make one range, so "From ₹..." is never above the real minimum. Without
+// it (this run against the stored copy), the preferred side's price stands, so a stale price can't stick.
+// A hand-checked price is never changed by another source, and free against paid goes to the preferred.
+function mergePricing(preferred={type:'unknown'}, secondary={type:'unknown'}, {combine=false, handChecked=false}={}) {
+  // "Paid" with no amount says less than another source's amount, so it is treated like unknown.
+  const known = (p) => p.type === 'free' || (p.type === 'paid' && p.minPrice > 0);
+  if (!known(preferred)) return known(secondary) ? secondary : preferred;
+  if (!combine || handChecked) return preferred;
+  if (preferred.type !== 'paid' || secondary.type !== 'paid' || !preferred.minPrice || !secondary.minPrice) return preferred;
+  const minPrice = Math.min(preferred.minPrice, secondary.minPrice);
+  const maxPrice = Math.max(preferred.maxPrice || preferred.minPrice, secondary.maxPrice || secondary.minPrice);
+  return { ...preferred, minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}) };
+}
+function mergePair(a,b,{combinePrices=false}={}) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
   const sources=[...(a.sources||[]),...(b.sources||[])];
@@ -123,7 +137,12 @@ function mergePair(a,b) {
     firstSeenAt: [a.firstSeenAt,b.firstSeenAt].filter(Boolean).sort()[0],
     lastSeenAt: [a.lastSeenAt,b.lastSeenAt].filter(Boolean).sort().at(-1),
     lastCheckedAt: [a.lastCheckedAt,b.lastCheckedAt].filter(Boolean).sort().at(-1),
-    curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation
+    curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation,
+    // The preferred source wins, except where it only has a stand-in and the other source knows better:
+    // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
+    venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
+    description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
+    pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') })
   };
 }
 
@@ -141,7 +160,7 @@ export async function mergeAndWrite(sourceResults) {
     for (const incoming of r.events || []) {
       if (!eventPassesGeo(incoming)) continue;
       const idx=current.findIndex(existing => sameEvent(existing,incoming));
-      if (idx >= 0) current[idx]=mergePair(current[idx],incoming);
+      if (idx >= 0) current[idx]=mergePair(current[idx],incoming,{combinePrices:true});
       else current.push({...incoming, verificationStatus: verificationStatus(incoming.sources)});
     }
   }
@@ -183,7 +202,17 @@ export async function mergeAndWrite(sourceResults) {
   }
   merged.push(...retained);
 
+  // A listing someone rejected in review (by closing its lead issue) comes off the site, matched by its link.
+  // A hand-checked event is never removed this way, and a link several events share (a listing site's city
+  // page used as a fallback) identifies none of them.
+  const linkCount=new Map();
+  for (const e of merged) for (const u of new Set((e.sources||[]).map(s=>normalizeUrl(s.url)))) linkCount.set(u,(linkCount.get(u)||0)+1);
+  const rejectedLinks=new Set(Object.values(await readJson(DECISIONS_PATH,{}))
+    .filter(d=>d?.decision==='rejected' && d.sourceUrl).map(d=>normalizeUrl(d.sourceUrl))
+    .filter(u=>(linkCount.get(u)||0)<=1));
+  const rejected=e=>!(e.sources||[]).some(s=>s.provider==='manual') && (e.sources||[]).some(s=>rejectedLinks.has(normalizeUrl(s.url)));
   const out=merged
+    .filter(e => !rejected(e))
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => isUnexpiredEvent(e,now))
@@ -193,12 +222,16 @@ export async function mergeAndWrite(sourceResults) {
   await fs.mkdir('data',{recursive:true});
   await fs.writeFile('data/events.json',JSON.stringify(out,null,2)+'\n');
 
-  // A partial run (e.g. a District-only run) must not wipe the Reddit review queue.
-  // Leads someone already approved or rejected stay out of the queue.
-  const redditRan=results.some(r=>r.source==='reddit');
+  // The review queue holds candidates from several sources (Reddit posts, thin AllEvents listings). Each
+  // source that ran replaces its own candidates; a source that didn't run (a District-only run, a failed
+  // adapter) keeps the ones it had. Leads someone already approved or rejected stay out of the queue.
+  const ran=new Set(results.map(r=>r.source));
   const decisions=await readJson(DECISIONS_PATH,{});
   await fs.mkdir('data/review',{recursive:true});
-  const review=pendingCandidates(redditRan ? results.flatMap(r=>r.reviewCandidates||[]) : await readJson(QUEUE_PATH,[]),decisions);
+  // Candidates queued before other sources could add any were all Reddit posts.
+  const kept=(await readJson(QUEUE_PATH,[])).filter(c=>!ran.has(c.sources?.[0]?.provider || 'reddit'));
+  const queued=[...new Map([...kept,...results.flatMap(r=>r.reviewCandidates||[])].map((c,i)=>[c.id ?? `#${i}`,c])).values()];
+  const review=pendingCandidates(queued,decisions);
   await fs.writeFile(QUEUE_PATH,JSON.stringify(review,null,2)+'\n');
   const reviewCount=review.length;
   return {published:out.length,review:reviewCount,dropped};
