@@ -151,5 +151,40 @@
     "firstSeenAt": "2026-10-25T15:26:38.238Z",
     "lastSeenAt": "2026-10-25T15:26:38.238Z",
     "lastCheckedAt": "2026-10-25T15:26:38.238Z"
+  },
+  {
+    "id": "3de7a089f410e60a",
+    "slug": "rajpur-nature-festival",
+    "title": "Rajpur Nature Festival",
+    "description": "Organized by Rajpur Community. How to join: It's a public event. No registration needed",
+    "startAt": "2026-10-31T09:00:00+05:30",
+    "endAt": "2026-10-31T21:00:00+05:30",
+    "venue": {
+      "name": "MDDA Park, Rajpur",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Community"
+    ],
+    "pricing": {
+      "type": "free",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://www.facebook.com/share/19hmJcNrWx/",
+        "checkedAt": "2026-10-26T19:01:07.332Z",
+        "confidence": 1
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-26T19:01:07.332Z",
+    "lastSeenAt": "2026-10-26T19:01:07.332Z",
+    "lastCheckedAt": "2026-10-26T19:01:07.332Z"
   }
 ]
