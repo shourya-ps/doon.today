@@ -3,12 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import EventRow from '../components/EventRow.astro';
 import { events } from '../data/events';
 import { ingestStatus, staleSources } from '../data/status';
-import { istDay, compareEventStarts } from '../lib/dates.mjs';
+import { istDay, compareEventStarts, eventDisplayDay } from '../lib/dates.mjs';
 
+const today = istDay(new Date().toISOString());
 const published = events
   .filter((event) => event.curation.status === 'published')
+  .filter((event) => eventDisplayDay(event, today) !== null)
   .sort(compareEventStarts);
-const grouped = Map.groupBy(published, (event) => istDay(event.startAt));
+const grouped = Map.groupBy(published, (event) => eventDisplayDay(event, today)!);
 const dateFmt = new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Asia/Kolkata' });
 const refreshedAt = Date.parse(ingestStatus.ranAt);
 const stale = staleSources();
@@ -89,7 +91,7 @@ const healthMessage = stale.length > 0
     {[...grouped.entries()].map(([day, dayEvents]) => (
       <section class="day-group" data-date={day}>
         <h3>{dateFmt.format(new Date(`${day}T12:00:00+05:30`))}</h3>
-        {dayEvents.map((event) => <EventRow event={event} />)}
+        {dayEvents.map((event) => <EventRow event={event} today={today} />)}
       </section>
     ))}
   </section>
@@ -102,7 +104,7 @@ const healthMessage = stale.length > 0
     const tomorrow=add(today,1);
     const weekday=new Date(`${today}T12:00:00+05:30`).getUTCDay();
     const untilSat=weekday===0?-1:(6-weekday+7)%7; const sat=add(today,untilSat); const sun=add(sat,1);
-    const groups=[...document.querySelectorAll('.day-group')]; const empty=document.querySelector('#empty-state');
+    const empty=document.querySelector('#empty-state');
     const count=document.querySelector('#event-count'); const areaSelect=document.querySelector('#area-filter');
     const whenValues=['all','today','tomorrow','weekend'];
     const categoryValues=[...document.querySelectorAll('[data-category]')].map(b=>b.dataset.category);
@@ -116,13 +118,40 @@ const healthMessage = stale.length > 0
       area: areaSelect && [...areaSelect.options].some(o=>o.value===params.get('area')) ? params.get('area') : ''
     };
 
-    const dayOk=(d)=>state.when==='all'||(state.when==='today'&&d===today)||(state.when==='tomorrow'&&d===tomorrow)||(state.when==='weekend'&&(d===sat||d===sun));
+    const dayOk=(row)=>{
+      const {startDate:start,endDate:end}=row.dataset;
+      if(end<today) return false;
+      return state.when==='all'
+        || (state.when==='today'&&start<=today&&end>=today)
+        || (state.when==='tomorrow'&&start<=tomorrow&&end>=tomorrow)
+        || (state.when==='weekend'&&start<=sun&&end>=sat);
+    };
     // A row matches every active filter except the one named in `ignore`, so each filter's counts reflect the others.
-    const matches=(row,ignore)=>dayOk(row.closest('.day-group').dataset.date)
+    const matches=(row,ignore)=>dayOk(row)
       && (ignore==='category' || !state.category || row.dataset.categories.split(' ').includes(state.category))
       && (ignore==='price' || !state.price || row.dataset.price===state.price)
       && (ignore==='area' || !state.area || row.dataset.area===state.area);
     const rows=[...document.querySelectorAll('.event-row')];
+    // A static build can be days old. Regroup using the reader's current IST day on every load.
+    const byDay=new Map();
+    const headingDate=new Intl.DateTimeFormat('en-IN',{weekday:'short',day:'numeric',month:'short',timeZone:'Asia/Kolkata'});
+    const untilDate=new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',timeZone:'Asia/Kolkata'});
+    rows.forEach(row=>{
+      const start=row.dataset.startDate, end=row.dataset.endDate;
+      if(end<today) {row.remove();return;}
+      const day=start<today?today:start;
+      if(!byDay.has(day)){
+        const group=document.createElement('section');group.className='day-group';group.dataset.date=day;
+        const heading=document.createElement('h3');heading.textContent=headingDate.format(new Date(`${day}T12:00:00+05:30`));
+        group.append(heading);byDay.set(day,group);
+      }
+      const time=row.querySelector('.event-time');
+      time.textContent=start<today?`Until ${untilDate.format(new Date(`${end}T12:00:00+05:30`))}`:time.dataset.startTime;
+      byDay.get(day).append(row);
+    });
+    document.querySelectorAll('.day-group').forEach(group=>group.remove());
+    const groups=[...byDay.values()].sort((a,b)=>a.dataset.date.localeCompare(b.dataset.date));
+    groups.forEach(group=>document.querySelector('.curated').append(group));
     // Event rows also carry data-price; only buttons should control the price filter.
     const priceButtons=[...document.querySelectorAll('button[data-price]')];
 

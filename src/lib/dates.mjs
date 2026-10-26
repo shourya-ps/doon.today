@@ -17,6 +17,25 @@ export function istDay(value = '') {
 
 export const compareEventStarts = (a, b) => toInstant(a.startAt).getTime() - toInstant(b.startAt).getTime();
 
+/** The inclusive IST days on which an event happens; timed ends are exclusive. */
+export function eventDayRange(event) {
+  const startTime = toInstant(event.startAt).getTime();
+  if (!Number.isFinite(startTime)) return { start: '', end: '' };
+  const start = istDay(event.startAt);
+  const endTime = event.endAt ? toInstant(event.endAt).getTime() : NaN;
+  if (!Number.isFinite(endTime)) return { start, end: start };
+  const end = DATE_ONLY.test(event.endAt)
+    ? event.endAt
+    : istDay(new Date(endTime - 1).toISOString());
+  return { start, end: end > start ? end : start };
+}
+
+/** Running events belong to today; events that finished on a past day are omitted. */
+export function eventDisplayDay(event, today) {
+  const { start, end } = eventDayRange(event);
+  return end < today ? null : start < today ? today : start;
+}
+
 /** Date-only end dates are inclusive, as in the calendar feeds. */
 export function isUnexpiredEvent(event, now = Date.now()) {
   const start = toInstant(event.startAt).getTime();
