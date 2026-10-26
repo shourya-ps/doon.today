@@ -24,6 +24,9 @@ test('Dehradun-relevant terms are recognised',()=>{
   assert.deepEqual(categoryFromText('Evening city tour'),['Other'],'a sightseeing tour is not a live show');
   assert.deepEqual(categoryFromText('Standup comedy show'),['Comedy']);
   assert.deepEqual(categoryFromText('Zumba Instructor Training'),['Workshop','Wellness']);
+  assert.deepEqual(categoryFromText('Framed In Crimson: Halloween Rock Night'),['Music']);
+  assert.ok(categoryFromText('Classic rock covers all evening').includes('Music'));
+  assert.ok(!categoryFromText('Rock climbing at the rock garden').includes('Music'),'a rock is not rock music');
 });
 
 test('geo terms match whole words',()=>{

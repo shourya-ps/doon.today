@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { eventPassesGeo, hasForeignAddress, hasForeignVenue, hasOutsidePin } from '../ingest/lib/utils.mjs';
-import { isThinListing, fetchAllEvents } from '../ingest/sources/allevents.mjs';
+import { LIST, isThinListing, fetchAllEvents } from '../ingest/sources/allevents.mjs';
 import { mergeAndWrite } from '../ingest/merge.mjs';
 import { reject } from '../ingest/lib/review.mjs';
 import { sourceLead, leadIssue, parseLeadIssue, leadKey, leadToEvent, leadSourceUrl } from '../ingest/lib/leads.mjs';
@@ -75,7 +75,7 @@ test('a thin listing stays published and is also flagged for review', async () =
   const listing = `<script type="application/ld+json">${JSON.stringify([
     { '@type': 'Event', name: 'Blessed bible verses', startDate: '2027-01-02', description: 'Thanks to lord Almighty', url: BIBLE, location: { name: 'Triple aar school campus', address: { addressLocality: 'Dehradun' } } }
   ])}</script>`;
-  const { events, reviewCandidates, diagnostics } = await fetchAllEvents({ fetchPage: async (url) => (url === 'https://allevents.in/dehradun' ? listing : ''), delayMs: 0 });
+  const { events, reviewCandidates, diagnostics } = await fetchAllEvents({ fetchPage: async (url) => (url === LIST ? listing : ''), delayMs: 0 });
   assert.equal(events.length, 1);
   assert.equal(events[0].curation.status, 'published');
   assert.equal(reviewCandidates.length, 1);

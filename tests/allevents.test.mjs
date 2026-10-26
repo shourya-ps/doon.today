@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { priceFromOffers, priceFromText } from '../ingest/lib/utils.mjs';
-import { addPricesFromEventPages, fetchAllEvents, priceFromEventPage } from '../ingest/sources/allevents.mjs';
+import { LIST, addDetailsFromEventPages, applyEventDetails, detailsFromEventPage, fetchAllEvents } from '../ingest/sources/allevents.mjs';
 import { mergeAndWrite } from '../ingest/merge.mjs';
 import { priceLabel } from '../src/lib/sources.mjs';
 
@@ -12,6 +12,14 @@ const fixture = (name) => fs.readFile(new URL(`./fixtures/${name}`, import.meta.
 const GHOSTED = 'https://allevents.in/dehradun/ghosted/4100030884279649';
 const DANDIYA = 'https://allevents.in/dehradun/dandiya-night-dehradun-by-hindustan/3900030829381530';
 const ZUMBA = 'https://allevents.in/dehradun/zumba-instructor-training-with-steve-frank-in-dehra-dun-uttarakhand-in/200030777510326';
+const CRIMSON = 'https://allevents.in/dehradun/framed-in-crimson-halloween-rock-night/3900030867000008';
+const CRIMSON_ABOUT = 'This Halloween, Framed In Crimson brings you a high-energy live rock experience packed with the anthems that defined the 2000s rock era.';
+const ldPage = (objects) => `<script type="application/ld+json">${JSON.stringify(objects)}</script>`;
+// The event as the listing gives it (a date, no description) and as its own page gives it.
+const crimsonListing = { '@type': 'Event', name: 'Framed In Crimson: Halloween Rock Night', startDate: '2026-10-31', url: CRIMSON,
+  location: { name: 'Hotel Vishranti: Dehradun', address: { streetAddress: 'Canal Road, Gangotri Vihar, Dehradun, Uttarakhand 248013, India', addressLocality: 'Dehradun' } } };
+const crimsonPage = ldPage([{ ...crimsonListing, '@type': 'MusicEvent', startDate: '2026-10-31T20:30:00+05:30', endDate: '2026-10-31T22:30:00+05:30',
+  description: CRIMSON_ABOUT, offers: [{ '@type': 'AggregateOffer', priceCurrency: 'USD', url: CRIMSON }] }]);
 const pages = async () => ({
   [GHOSTED]: await fixture('allevents-event-price-range.html'),
   [DANDIYA]: await fixture('allevents-event-offer-no-price.html'),
@@ -52,34 +60,79 @@ test('a price in the text counts only when it is stated, never guessed from a st
 test('event pages fill in missing prices: a range, an offer without a price, and no offers', async () => {
   const html = await pages();
   const fetchPage = async (url) => { if (!html[url]) throw new Error(`unexpected ${url}`); return html[url]; };
-  assert.deepEqual(await priceFromEventPage(GHOSTED, { title: 'Ghosted', fetchPage }), { type: 'paid', minPrice: 1500, maxPrice: 4000, currency: 'INR' });
-  assert.equal(await priceFromEventPage(DANDIYA, { fetchPage }), null, 'its only offer is in USD with no price');
-  assert.equal(await priceFromEventPage(ZUMBA, { fetchPage }), null);
-  await assert.rejects(priceFromEventPage('https://allevents.in/broken', { fetchPage: async () => { throw new Error('403'); } }));
+  const priceOf = async (url, title) => (await detailsFromEventPage(url, { title, fetchPage }))?.pricing ?? null;
+  assert.deepEqual(await priceOf(GHOSTED, 'Ghosted'), { type: 'paid', minPrice: 1500, maxPrice: 4000, currency: 'INR' });
+  assert.equal(await priceOf(DANDIYA), null, 'its only offer is in USD with no price');
+  assert.equal(await priceOf(ZUMBA), null);
+  await assert.rejects(detailsFromEventPage('https://allevents.in/broken', { fetchPage: async () => { throw new Error('403'); } }));
 });
 
 test("only this event's own structured data counts, not a similar event on the same page", async () => {
-  const page = (objects) => `<script type="application/ld+json">${JSON.stringify(objects)}</script>`;
+  const page = ldPage;
+  const priceOf = async (fetchPage) => (await detailsFromEventPage(GHOSTED, { title: 'Ghosted', fetchPage }))?.pricing ?? null;
   const other = { '@type': 'Event', name: 'Some Other Night', url: 'https://allevents.in/dehradun/other/1', offers: { price: '99', priceCurrency: 'INR' } };
   const own = { '@type': 'MusicEvent', name: 'Ghosted', url: GHOSTED, offers: { price: '1500', priceCurrency: 'INR' } };
-  assert.equal((await priceFromEventPage(GHOSTED, { title: 'Ghosted', fetchPage: async () => page([other, own]) })).minPrice, 1500, 'matched by link; Event subtypes count');
-  assert.equal(await priceFromEventPage(GHOSTED, { title: 'Ghosted', fetchPage: async () => page([other, { ...other, name: 'Third' }]) }), null, 'neither is this event');
-  assert.equal((await priceFromEventPage(GHOSTED, { title: 'Ghosted', fetchPage: async () => page([{ ...own, url: undefined }]) })).minPrice, 1500, 'a single event on the page is this one');
+  assert.equal((await priceOf(async () => page([other, own]))).minPrice, 1500, 'matched by link; Event subtypes count');
+  assert.equal(await priceOf(async () => page([other, { ...other, name: 'Third' }])), null, 'neither is this event');
+  assert.equal((await priceOf(async () => page([{ ...own, url: undefined }]))).minPrice, 1500, 'a single event on the page is this one');
 });
 
-test('only unknown prices on AllEvents pages are fetched, soonest first and capped', async () => {
+test('every AllEvents page is fetched, soonest first and capped, and a known price is kept', async () => {
   const html = await pages();
   const fetched = [];
   const fetchPage = async (url) => { fetched.push(url); return html[url] || ''; };
-  const ev = (url, startAt, pricing = { type: 'unknown', currency: 'INR' }) => ({ title: 'x', startAt, pricing, sources: [{ provider: 'allevents', url }] });
-  const events = [ev(DANDIYA, '2030-11-02'), ev(GHOSTED, '2030-10-31'), ev(ZUMBA, '2030-10-01', { type: 'paid', minPrice: 900, currency: 'INR' }), ev('https://example.com/elsewhere', '2030-10-01')];
-  const result = await addPricesFromEventPages(events, { fetchPage, delayMs: 0 });
-  assert.deepEqual(result, { pricePagesFetched: 2, pricesFound: 1, pricePagesFailed: 0 });
-  assert.deepEqual(fetched, [GHOSTED, DANDIYA], 'soonest first; priced events and non-AllEvents links are skipped');
-  assert.equal(events[1].pricing.maxPrice, 4000);
+  const ev = (url, startAt, pricing = { type: 'unknown', currency: 'INR' }) => ({ title: 'x', startAt, pricing, description: '', venue: { name: 'Venue' }, sources: [{ provider: 'allevents', url }] });
+  const events = [ev(DANDIYA, '2030-11-02'), ev(GHOSTED, '2030-10-31', { type: 'paid', minPrice: 900, currency: 'INR' }), ev(ZUMBA, '2030-10-01'), ev('https://example.com/elsewhere', '2030-10-01')];
+  const result = await addDetailsFromEventPages(events, { fetchPage, delayMs: 0 });
+  assert.deepEqual(result, { eventPagesFetched: 3, pricesFound: 0, timesFound: 0, eventPagesFailed: 0 });
+  assert.deepEqual(fetched, [ZUMBA, GHOSTED, DANDIYA], 'soonest first, priced or not; non-AllEvents links are skipped');
+  assert.deepEqual(events[1].pricing, { type: 'paid', minPrice: 900, currency: 'INR' }, 'the listing price stands');
   fetched.length = 0;
-  await addPricesFromEventPages([ev(GHOSTED, '2030-10-31'), ev(DANDIYA, '2030-11-02')], { fetchPage, delayMs: 0, max: 1 });
+  await addDetailsFromEventPages([ev(GHOSTED, '2030-10-31'), ev(DANDIYA, '2030-11-02')], { fetchPage, delayMs: 0, max: 1 });
   assert.equal(fetched.length, 1);
+});
+
+test("an event's own page adds its time, end and description, but never moves or overwrites the listing", () => {
+  const listed = (over) => ({ title: 'Framed In Crimson: Halloween Rock Night', startAt: '2026-10-31', description: '', categories: ['Other'],
+    venue: { name: 'Hotel Vishranti: Dehradun', address: 'Canal Road, Dehradun' }, pricing: { type: 'unknown', currency: 'INR' }, ...over });
+  const page = { pricing: null, startAt: '2026-10-31T20:30:00+05:30', endAt: '2026-10-31T22:30:00+05:30', description: CRIMSON_ABOUT };
+
+  const e = listed();
+  assert.deepEqual(applyEventDetails(e, page), { price: false, time: true });
+  assert.equal(e.startAt, '2026-10-31T20:30:00+05:30');
+  assert.equal(e.endAt, '2026-10-31T22:30:00+05:30');
+  assert.equal(e.description, CRIMSON_ABOUT);
+  assert.deepEqual(e.categories, ['Music'], 'categories are read again with the description');
+
+  const course = listed({ startAt: '2026-11-02', endAt: '2026-11-13' });
+  applyEventDetails(course, { ...page, startAt: '2026-11-02T07:00:00+05:30', endAt: '2026-11-13T20:00:00+05:30' });
+  assert.equal(course.endAt, '2026-11-13T20:00:00+05:30', "the page's end time replaces the listing's bare end date");
+  const otherEnd = listed({ startAt: '2026-11-02', endAt: '2026-11-13' });
+  applyEventDetails(otherEnd, { ...page, startAt: '2026-11-02T07:00:00+05:30', endAt: '2026-11-20T20:00:00+05:30' });
+  assert.equal(otherEnd.endAt, '2026-11-13', 'but not when it falls on another day');
+
+  const moved = listed();
+  applyEventDetails(moved, { ...page, startAt: '2026-11-01T20:30:00+05:30', endAt: '2026-11-01T22:30:00+05:30' });
+  assert.equal(moved.startAt, '2026-10-31', 'a time on another day is ignored');
+  assert.equal(moved.endAt, undefined, 'and a timed end does not go with a date-only start');
+  const utc = listed();
+  applyEventDetails(utc, { ...page, startAt: '2026-10-30T19:00:00Z', endAt: undefined });
+  assert.equal(utc.startAt, '2026-10-30T19:00:00Z', '00:30 IST on the 31st, written in UTC, is on the listing day');
+
+  const timed = listed({ startAt: '2026-10-31T21:00:00+05:30' });
+  applyEventDetails(timed, { ...page, endAt: '2026-10-31T20:00:00+05:30' });
+  assert.equal(timed.startAt, '2026-10-31T21:00:00+05:30', "the listing's own time stands");
+  assert.equal(timed.endAt, undefined, 'an end before the start is ignored');
+
+  const described = listed({ description: 'A long description the listing already had, longer than the page gives.'.repeat(3), categories: ['Comedy'] });
+  applyEventDetails(described, page);
+  assert.notEqual(described.description, CRIMSON_ABOUT, 'a shorter description does not replace a longer one');
+  assert.deepEqual(described.categories, ['Comedy']);
+
+  const free = listed();
+  applyEventDetails(free, { ...page, pricing: null, description: `${CRIMSON_ABOUT} Free entry for all.` });
+  assert.equal(free.pricing.type, 'free', 'a price stated in the new description counts');
+  assert.deepEqual(applyEventDetails(listed(), null), { price: false, time: false });
 });
 
 test('fetching stops after two blocked pages in a row, and failures keep prices unknown', async () => {
@@ -87,9 +140,9 @@ test('fetching stops after two blocked pages in a row, and failures keep prices 
   let calls = 0;
   const fetchPage = async () => { calls++; throw blocked; };
   const events = [1, 2, 3, 4].map((n) => ({ title: `e${n}`, startAt: `2030-10-0${n}`, pricing: { type: 'unknown', currency: 'INR' }, sources: [{ provider: 'allevents', url: `https://allevents.in/dehradun/e${n}/1` }] }));
-  const result = await addPricesFromEventPages(events, { fetchPage, delayMs: 0 });
+  const result = await addDetailsFromEventPages(events, { fetchPage, delayMs: 0 });
   assert.equal(calls, 2);
-  assert.deepEqual(result, { pricePagesFetched: 2, pricesFound: 0, pricePagesFailed: 2, pricePagesStoppedEarly: true });
+  assert.deepEqual(result, { eventPagesFetched: 2, pricesFound: 0, timesFound: 0, eventPagesFailed: 2, eventPagesStoppedEarly: true });
   assert.ok(events.every((e) => e.pricing.type === 'unknown'));
 });
 
@@ -98,25 +151,39 @@ test('fetching also stops after three failures of any kind, and skips events tha
   const flaky = async () => { calls++; throw (calls % 2 ? Object.assign(new Error('403'), { diagnostics: { status: 403 } }) : new Error('timeout')); };
   const ev = (n, startAt) => ({ title: `e${n}`, startAt, pricing: { type: 'unknown', currency: 'INR' }, sources: [{ provider: 'allevents', url: `https://allevents.in/dehradun/e${n}/1` }] });
   const now = Date.parse('2030-10-10T12:00:00+05:30');
-  const result = await addPricesFromEventPages([1, 2, 3, 4, 5].map((n) => ev(n, `2030-10-2${n}`)), { fetchPage: flaky, delayMs: 0, now });
+  const result = await addDetailsFromEventPages([1, 2, 3, 4, 5].map((n) => ev(n, `2030-10-2${n}`)), { fetchPage: flaky, delayMs: 0, now });
   assert.equal(calls, 3, 'a 403, a timeout and a 403 in a row');
-  assert.equal(result.pricePagesStoppedEarly, true);
+  assert.equal(result.eventPagesStoppedEarly, true);
   const fetched = [];
-  await addPricesFromEventPages([ev(1, '2030-10-09'), ev(2, '2030-10-10T05:00:00+05:30'), ev(3, '2030-10-10'), ev(4, '2030-10-12')], { fetchPage: async (u) => { fetched.push(u); return ''; }, delayMs: 0, now });
+  await addDetailsFromEventPages([ev(1, '2030-10-09'), ev(2, '2030-10-10T05:00:00+05:30'), ev(3, '2030-10-10'), ev(4, '2030-10-12')], { fetchPage: async (u) => { fetched.push(u); return ''; }, delayMs: 0, now });
   assert.deepEqual(fetched.map((u) => u.split('/')[4]), ['e3', 'e4'], 'yesterday and this morning are skipped; today (date only) and later are fetched');
 });
 
-test('fetchAllEvents reads the listing, then prices from event pages', async () => {
+test('fetchAllEvents reads the listing, then details from event pages', async () => {
   const html = await pages();
   const listing = `<script type="application/ld+json">${JSON.stringify([
     { '@type': 'Event', name: 'Ghosted', startDate: '2026-10-31', url: GHOSTED, location: { name: 'BLAAZE - Mall of Dehradun', address: { addressLocality: 'Dehradun' } } },
     { '@type': 'Event', name: 'Dandiya Night Dehradun', startDate: '2026-10-25', url: DANDIYA, location: { name: 'Dehradun', address: { addressLocality: 'Dehradun' } } }
   ])}</script>`;
-  const fetchPage = async (url) => (url === 'https://allevents.in/dehradun' ? listing : html[url] || '');
+  const fetchPage = async (url) => (url === LIST ? listing : html[url] || '');
   const { events, diagnostics } = await fetchAllEvents({ fetchPage, delayMs: 0 });
   assert.equal(events.find((e) => e.title === 'Ghosted').pricing.minPrice, 1500);
   assert.equal(events.find((e) => e.title === 'Dandiya Night Dehradun').pricing.type, 'unknown');
   assert.equal(diagnostics.pricesFound, 1);
+});
+
+test('the full upcoming list is read, and a bare listing becomes a full event from its own page', async () => {
+  assert.equal(LIST, 'https://allevents.in/dehradun/all', 'the plain city page shows only about half the events');
+  const fetchPage = async (url) => ({ [LIST]: ldPage([crimsonListing]), [CRIMSON]: crimsonPage })[url] ?? '';
+  const { events, reviewCandidates, diagnostics } = await fetchAllEvents({ fetchPage, delayMs: 0 });
+  assert.equal(events.length, 1);
+  assert.equal(events[0].startAt, '2026-10-31T20:30:00+05:30');
+  assert.equal(events[0].endAt, '2026-10-31T22:30:00+05:30');
+  assert.equal(events[0].description, CRIMSON_ABOUT);
+  assert.deepEqual(events[0].categories, ['Music']);
+  assert.equal(events[0].pricing.type, 'unknown', 'a USD offer with no price is not a price');
+  assert.equal(reviewCandidates.length, 0, 'with a time and a description it is no longer a thin listing');
+  assert.deepEqual(diagnostics, { candidates: 1, flaggedForReview: 0, eventPagesFetched: 1, pricesFound: 0, timesFound: 1, eventPagesFailed: 0 });
 });
 
 test('merged sources use the lowest price and the widest range; a known price beats unknown', async (t) => {

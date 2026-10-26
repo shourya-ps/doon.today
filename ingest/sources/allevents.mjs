@@ -1,12 +1,15 @@
 import { fetchText } from '../lib/http.mjs';
 import { eventLikeObjects, extractJsonLd, flattenObjects } from '../lib/jsonld.mjs';
 import { stableId, slugify, priceFromOffers, priceFromText, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, sleep } from '../lib/utils.mjs';
+import { istDay, toInstant } from '../../src/lib/dates.mjs';
 
-const LIST = 'https://allevents.in/dehradun';
-// The city listing rarely carries prices; each event's own page does. Fetched one at a time, and capped.
-const MAX_PRICE_PAGES = 25;
-const PRICE_PAGE_DELAY_MS = 700;
-const PRICE_PAGE_TIMEOUT_MS = 10000;
+// The full upcoming list. The plain city page (allevents.in/dehradun) shows only about half of it.
+export const LIST = 'https://allevents.in/dehradun/all';
+// The city listing gives a date but rarely a time, price or description; each event's own page has them.
+// Fetched one at a time, and capped.
+const MAX_EVENT_PAGES = 30;
+const EVENT_PAGE_DELAY_MS = 700;
+const EVENT_PAGE_TIMEOUT_MS = 10000;
 // After this many blocked or rate-limited answers in a row, stop asking for more pages this run.
 const MAX_BLOCKED_IN_A_ROW = 2;
 // ...or after this many failures of any kind in a row (timeouts, errors).
@@ -21,7 +24,9 @@ export function isThinListing(e) {
     && /^\d{4}-\d{2}-\d{2}$/.test(String(e.startAt || ''))
     && (e.categories || []).length === 1 && e.categories[0] === 'Other';
 }
-const startTime = (v = '') => Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(v) ? `${v}T23:59:59+05:30` : v);
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+const startTime = (v = '') => Date.parse(DATE_ONLY.test(v) ? `${v}T23:59:59+05:30` : v);
+const validTime = (v) => typeof v === 'string' && Number.isFinite(toInstant(v).getTime());
 
 function toEvent(o, url = LIST) {
   const loc = o.location || o.venue || {};
@@ -67,45 +72,76 @@ const pagePath = (value = '') => { try { return new URL(value).pathname.replace(
 const isEventType = (t) => [].concat(t || []).some((x) => /Event$/.test(String(x)));
 
 /**
- * The price on an event's own AllEvents page, or null when the page gives none. Only this event's own
- * structured data counts, matched by its link or title, so a "similar events" block can't lend its price.
- * Throws when the page can't be fetched, so the caller can tell a missing price from a blocked page.
+ * What an event's own AllEvents page says about it: price (null when none), start, end and description.
+ * Null when the page has no structured data for this event. Only this event's own structured data counts,
+ * matched by its link or title, so a "similar events" block can't lend its details.
+ * Throws when the page can't be fetched, so the caller can tell missing details from a blocked page.
  */
-export async function priceFromEventPage(url, { title = '', fetchPage = fetchText } = {}) {
-  const html = await fetchPage(url, { timeoutMs: PRICE_PAGE_TIMEOUT_MS });
+export async function detailsFromEventPage(url, { title = '', fetchPage = fetchText } = {}) {
+  const html = await fetchPage(url, { timeoutMs: EVENT_PAGE_TIMEOUT_MS });
   const events = flattenObjects(extractJsonLd(html)).filter((o) => isEventType(o?.['@type']));
   const own = events.find((o) => pagePath(o.url) && pagePath(o.url) === pagePath(url))
     || events.find((o) => title && stripHtml(o.name || '').toLowerCase() === title.toLowerCase())
     || (events.length === 1 ? events[0] : null);
-  return own ? priceFromOffers(own.offers) : null;
+  if (!own) return null;
+  return { pricing: priceFromOffers(own.offers), startAt: own.startDate, endAt: own.endDate, description: stripHtml(own.description || '') };
 }
 
 /**
- * Fills in prices the listing didn't give, from each event's own page: soonest events first, one page at a
- * time, capped per run, and stopping early if AllEvents starts refusing. A failed page keeps "unknown".
+ * Fills in what the listing left out from the event's own page, never overriding what the listing said.
+ * A start time only counts on the listing's own IST day, so a page can't move an event to another date.
+ * Returns which details were added.
  */
-export async function addPricesFromEventPages(events, { fetchPage = fetchText, delayMs = PRICE_PAGE_DELAY_MS, max = MAX_PRICE_PAGES, now = Date.now() } = {}) {
-  const missing = events
-    .filter((e) => e.pricing.type === 'unknown' && /^https:\/\/allevents\.in\//.test(e.sources[0]?.url || ''))
+export function applyEventDetails(e, details) {
+  const added = { price: false, time: false };
+  if (!details) return added;
+  if (details.pricing && e.pricing.type === 'unknown') { e.pricing = details.pricing; added.price = true; }
+  if (DATE_ONLY.test(e.startAt) && validTime(details.startAt) && !DATE_ONLY.test(details.startAt) && istDay(details.startAt) === e.startAt) {
+    e.startAt = details.startAt;
+    added.time = true;
+  }
+  // An end is kept only in the same form as the start (both dates or both times) and not before it. Once the
+  // start has a time, the page's end time replaces the listing's bare end date, on that same day.
+  const endFits = validTime(details.endAt) && DATE_ONLY.test(details.endAt) === DATE_ONLY.test(e.startAt)
+    && toInstant(details.endAt) >= toInstant(e.startAt);
+  const bareEnd = DATE_ONLY.test(e.endAt || '') && !DATE_ONLY.test(e.startAt);
+  if (endFits && (!e.endAt || (bareEnd && istDay(details.endAt) === e.endAt))) e.endAt = details.endAt;
+  if (details.description.length > (e.description || '').length) {
+    e.description = details.description;
+    e.categories = categoryFromText([e.title, e.description, e.venue.name, e.venue.address].filter(Boolean).join(' '));
+    if (e.pricing.type === 'unknown') e.pricing = priceFromText(`${e.title} ${e.description}`);
+  }
+  return added;
+}
+
+/**
+ * Fills in prices, times and descriptions the listing didn't give, from each event's own page: soonest
+ * events first, one page at a time, capped per run, and stopping early if AllEvents starts refusing.
+ * A failed page leaves the event as the listing described it.
+ */
+export async function addDetailsFromEventPages(events, { fetchPage = fetchText, delayMs = EVENT_PAGE_DELAY_MS, max = MAX_EVENT_PAGES, now = Date.now() } = {}) {
+  const queue = events
+    .filter((e) => /^https:\/\/allevents\.in\//.test(e.sources[0]?.url || ''))
     .filter((e) => !(startTime(e.startAt) < now - STARTED_GRACE_MS))
     .sort((a, b) => String(a.startAt).localeCompare(String(b.startAt)))
     .slice(0, max);
-  let fetched = 0, found = 0, failed = 0, blockedInARow = 0, failedInARow = 0;
+  let fetched = 0, prices = 0, times = 0, failed = 0, blockedInARow = 0, failedInARow = 0;
   const stop = () => blockedInARow >= MAX_BLOCKED_IN_A_ROW || failedInARow >= MAX_FAILED_IN_A_ROW;
-  for (const e of missing) {
+  for (const e of queue) {
     if (stop()) break;
     if (fetched > 0 && delayMs) await sleep(delayMs);
     fetched++;
     try {
-      const price = await priceFromEventPage(e.sources[0].url, { title: e.title, fetchPage });
+      const added = applyEventDetails(e, await detailsFromEventPage(e.sources[0].url, { title: e.title, fetchPage }));
       blockedInARow = 0; failedInARow = 0;
-      if (price) { e.pricing = price; found++; }
+      if (added.price) prices++;
+      if (added.time) times++;
     } catch (error) {
       failed++; failedInARow++;
       if ([403, 429].includes(error?.diagnostics?.status)) blockedInARow++;
     }
   }
-  return { pricePagesFetched: fetched, pricesFound: found, pricePagesFailed: failed, ...(stop() ? { pricePagesStoppedEarly: true } : {}) };
+  return { eventPagesFetched: fetched, pricesFound: prices, timesFound: times, eventPagesFailed: failed, ...(stop() ? { eventPagesStoppedEarly: true } : {}) };
 }
 
 export async function fetchAllEvents({ fetchPage = fetchText, delayMs } = {}) {
@@ -121,7 +157,7 @@ export async function fetchAllEvents({ fetchPage = fetchText, delayMs } = {}) {
     const e = toEvent(o);
     if (e && !seen.has(e.id)) { seen.add(e.id); events.push(e); }
   }
-  const prices = await addPricesFromEventPages(events, { fetchPage, delayMs });
+  const details = await addDetailsFromEventPages(events, { fetchPage, delayMs });
   const reviewCandidates = events.filter(isThinListing).map((e) => ({ ...e, curation: { status: 'review', score: 2 } }));
-  return { source: 'allevents', events, reviewCandidates, diagnostics: { candidates: candidates.length, flaggedForReview: reviewCandidates.length, ...prices } };
+  return { source: 'allevents', events, reviewCandidates, diagnostics: { candidates: candidates.length, flaggedForReview: reviewCandidates.length, ...details } };
 }
