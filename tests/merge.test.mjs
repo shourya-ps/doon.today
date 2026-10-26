@@ -207,6 +207,20 @@ test('started timed events use the same expiry rules on successful and partial r
   assert.equal((await read()).length,0);
 });
 
+test('a run that only knows the date keeps the stored time, and does not bump the calendar sequence',async t=>{
+  await inTempDir(t);
+  t.mock.timers.enable({apis:['Date'],now:new Date('2030-01-01T12:00:00+05:30')});
+  const timed=ev({startAt:'2030-01-10T20:30:00+05:30',endAt:'2030-01-10T22:30:00+05:30',sources:[src('allevents','https://allevents.in/dehradun/x/1')]});
+  await mergeAndWrite([{source:'allevents',events:[timed]}]);
+  await mergeAndWrite([{source:'allevents',events:[{...timed,startAt:'2030-01-10',endAt:'2030-01-10'}]}]);
+  const [e]=await read();
+  assert.equal(e.startAt,'2030-01-10T20:30:00+05:30');
+  assert.equal(e.endAt,'2030-01-10T22:30:00+05:30');
+  assert.equal(e.sequence,undefined);
+  await mergeAndWrite([{source:'allevents',events:[{...timed,startAt:'2030-01-10T21:00:00+05:30',endAt:undefined}]}]);
+  assert.equal((await read())[0].startAt,'2030-01-10T21:00:00+05:30','a new time still replaces the old one');
+});
+
 test('mixed UTC and IST timestamps are sorted by actual start time',async t=>{
   await inTempDir(t);
   const times=['2030-01-10T12:30:00.000Z','2030-01-10T14:30:00.000Z','2030-01-10T16:00:00+05:30'];

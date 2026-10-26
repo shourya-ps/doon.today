@@ -185,7 +185,7 @@ export function eventPassesGeo(e) {
 // sightseeing tour. "Live shows" is a fallback for acts that give no other signal.
 const CATEGORY_RULES = [
   ['Comedy', ['comedy','stand up','standup','stand-up','open mic']],
-  ['Music', ['music','musical','concert','gig','live band','band','dj','unplugged','sufi','qawwali','karaoke']],
+  ['Music', ['music','musical','concert','gig','live band','band','rock night','rock band','rock show','rock music','rock concert','classic rock','live rock','dj','unplugged','sufi','qawwali','karaoke']],
   ['Books', ['book','literature','poetry','reading','author']],
   ['Outdoors', ['run','running','walking','marathon','walk','hike','hiking','trek','trekking','bird','birding','cycling','cyclothon']],
   ['Art', ['art','paint','painting','exhibition','gallery']],

@@ -121,6 +121,15 @@ function mergePricing(preferred={type:'unknown'}, secondary={type:'unknown'}, {c
   const maxPrice = Math.max(preferred.maxPrice || preferred.minPrice, secondary.maxPrice || secondary.minPrice);
   return { ...preferred, minPrice, ...(maxPrice > minPrice ? { maxPrice } : {}) };
 }
+// A start time beats a bare date on the same IST day, so a run where a source could only give the date (its
+// event page was blocked, say) doesn't take a known time, and the end that goes with it, off the event.
+function timing(preferred, secondary) {
+  const bare = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v || '');
+  if (bare(preferred.startAt) && secondary.startAt && !bare(secondary.startAt) && istDay(secondary.startAt) === preferred.startAt) {
+    return { startAt: secondary.startAt, endAt: secondary.endAt };
+  }
+  return { startAt: preferred.startAt, endAt: preferred.endAt };
+}
 function mergePair(a,b,{combinePrices=false}={}) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
@@ -142,7 +151,8 @@ function mergePair(a,b,{combinePrices=false}={}) {
     // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
     venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
     description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
-    pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') })
+    pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') }),
+    ...timing(preferred, secondary)
   };
 }
 

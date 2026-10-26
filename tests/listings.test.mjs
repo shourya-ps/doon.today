@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { eventPassesGeo, hasForeignAddress, hasForeignVenue, hasOutsidePin } from '../ingest/lib/utils.mjs';
-import { isThinListing, fetchAllEvents } from '../ingest/sources/allevents.mjs';
+import { LIST, isThinListing, fetchAllEvents } from '../ingest/sources/allevents.mjs';
 import { mergeAndWrite } from '../ingest/merge.mjs';
 import { reject } from '../ingest/lib/review.mjs';
 import { sourceLead, leadIssue, parseLeadIssue, leadKey, leadToEvent, leadSourceUrl } from '../ingest/lib/leads.mjs';
@@ -61,11 +61,11 @@ test('a venue address with only a PIN code outside Dehradun is rejected', () => 
   assert.equal(eventPassesGeo(event({ venue: { name: 'Hall', address: 'Sector 18, Noida 201301', city: 'Dehradun' } })), false);
 });
 
-test('a thin listing is a few words, a date with no time, and no category', () => {
+test('a thin listing is a few words and no category, with or without a time', () => {
   const thin = (over) => isThinListing(event({ description: 'Thanks to lord Almighty', startAt: '2027-01-02', categories: ['Other'], ...over }));
   assert.equal(thin({}), true, 'Blessed bible verses');
   assert.equal(thin({ description: '' }), true, 'an empty description is thin too');
-  assert.equal(thin({ startAt: '2027-01-02T18:00:00+05:30' }), false, 'a start time is a real detail');
+  assert.equal(thin({ startAt: '2027-01-02T13:30:00+05:30' }), true, 'a start time from its page is not enough detail');
   assert.equal(thin({ categories: ['Comedy'] }), false);
   assert.equal(thin({ description: 'A full evening of stand-up comedy with three comics, doors open at seven.' }), false);
 });
@@ -75,7 +75,7 @@ test('a thin listing stays published and is also flagged for review', async () =
   const listing = `<script type="application/ld+json">${JSON.stringify([
     { '@type': 'Event', name: 'Blessed bible verses', startDate: '2027-01-02', description: 'Thanks to lord Almighty', url: BIBLE, location: { name: 'Triple aar school campus', address: { addressLocality: 'Dehradun' } } }
   ])}</script>`;
-  const { events, reviewCandidates, diagnostics } = await fetchAllEvents({ fetchPage: async (url) => (url === 'https://allevents.in/dehradun' ? listing : ''), delayMs: 0 });
+  const { events, reviewCandidates, diagnostics } = await fetchAllEvents({ fetchPage: async (url) => (url === LIST ? listing : ''), delayMs: 0 });
   assert.equal(events.length, 1);
   assert.equal(events[0].curation.status, 'published');
   assert.equal(reviewCandidates.length, 1);
