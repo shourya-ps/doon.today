@@ -16,12 +16,12 @@ const MAX_BLOCKED_IN_A_ROW = 2;
 const MAX_FAILED_IN_A_ROW = 3;
 // An event that started this long ago is dropped by the merge anyway, so its page isn't worth a fetch.
 const STARTED_GRACE_MS = 6 * 3600_000;
-// A listing that says almost nothing about itself (a few words, a date but no time, no category) stays on
-// the site, but also goes to the review queue, so a person can check it and remove it if it isn't an event.
+// A listing that says almost nothing about itself (a few words and no category) stays on the site, but also
+// goes to the review queue, so a person can check it and remove it if it isn't an event. A start time doesn't
+// count as detail: nearly every event page gives one.
 const THIN_DESCRIPTION_CHARS = 60;
 export function isThinListing(e) {
   return stripHtml(e.description || '').length < THIN_DESCRIPTION_CHARS
-    && /^\d{4}-\d{2}-\d{2}$/.test(String(e.startAt || ''))
     && (e.categories || []).length === 1 && e.categories[0] === 'Other';
 }
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
@@ -96,16 +96,22 @@ export function applyEventDetails(e, details) {
   const added = { price: false, time: false };
   if (!details) return added;
   if (details.pricing && e.pricing.type === 'unknown') { e.pricing = details.pricing; added.price = true; }
-  if (DATE_ONLY.test(e.startAt) && validTime(details.startAt) && !DATE_ONLY.test(details.startAt) && istDay(details.startAt) === e.startAt) {
-    e.startAt = details.startAt;
+  // Start and end stay in one form, both dates or both times, with the end not before the start.
+  const timedStart = DATE_ONLY.test(e.startAt) && validTime(details.startAt) && !DATE_ONLY.test(details.startAt)
+    && istDay(details.startAt) === e.startAt ? details.startAt : null;
+  const start = timedStart || e.startAt;
+  const pageEnd = validTime(details.endAt) && DATE_ONLY.test(details.endAt) === DATE_ONLY.test(start)
+    && toInstant(details.endAt) >= toInstant(start) ? details.endAt : null;
+  // With a time, the listing's bare end date must become the page's end time on that day. If the page
+  // can't give one, the event keeps its dates rather than mixing a time with a date.
+  const bareEnd = timedStart && DATE_ONLY.test(e.endAt || '');
+  const endOnDay = pageEnd && istDay(pageEnd) === e.endAt;
+  if (timedStart && (!bareEnd || endOnDay)) {
+    e.startAt = timedStart;
     added.time = true;
+    if (bareEnd) e.endAt = pageEnd;
   }
-  // An end is kept only in the same form as the start (both dates or both times) and not before it. Once the
-  // start has a time, the page's end time replaces the listing's bare end date, on that same day.
-  const endFits = validTime(details.endAt) && DATE_ONLY.test(details.endAt) === DATE_ONLY.test(e.startAt)
-    && toInstant(details.endAt) >= toInstant(e.startAt);
-  const bareEnd = DATE_ONLY.test(e.endAt || '') && !DATE_ONLY.test(e.startAt);
-  if (endFits && (!e.endAt || (bareEnd && istDay(details.endAt) === e.endAt))) e.endAt = details.endAt;
+  if (!e.endAt && pageEnd) e.endAt = pageEnd;
   if (details.description.length > (e.description || '').length) {
     e.description = details.description;
     e.categories = categoryFromText([e.title, e.description, e.venue.name, e.venue.address].filter(Boolean).join(' '));

@@ -109,7 +109,10 @@ test("an event's own page adds its time, end and description, but never moves or
   assert.equal(course.endAt, '2026-11-13T20:00:00+05:30', "the page's end time replaces the listing's bare end date");
   const otherEnd = listed({ startAt: '2026-11-02', endAt: '2026-11-13' });
   applyEventDetails(otherEnd, { ...page, startAt: '2026-11-02T07:00:00+05:30', endAt: '2026-11-20T20:00:00+05:30' });
-  assert.equal(otherEnd.endAt, '2026-11-13', 'but not when it falls on another day');
+  assert.deepEqual([otherEnd.startAt, otherEnd.endAt], ['2026-11-02', '2026-11-13'], 'an end time on another day leaves both as dates');
+  const sameDay = listed({ endAt: '2026-10-31' });
+  applyEventDetails(sameDay, { ...page, endAt: undefined });
+  assert.deepEqual([sameDay.startAt, sameDay.endAt], ['2026-10-31', '2026-10-31'], 'never a time with a bare end date');
 
   const moved = listed();
   applyEventDetails(moved, { ...page, startAt: '2026-11-01T20:30:00+05:30', endAt: '2026-11-01T22:30:00+05:30' });

@@ -61,11 +61,11 @@ test('a venue address with only a PIN code outside Dehradun is rejected', () => 
   assert.equal(eventPassesGeo(event({ venue: { name: 'Hall', address: 'Sector 18, Noida 201301', city: 'Dehradun' } })), false);
 });
 
-test('a thin listing is a few words, a date with no time, and no category', () => {
+test('a thin listing is a few words and no category, with or without a time', () => {
   const thin = (over) => isThinListing(event({ description: 'Thanks to lord Almighty', startAt: '2027-01-02', categories: ['Other'], ...over }));
   assert.equal(thin({}), true, 'Blessed bible verses');
   assert.equal(thin({ description: '' }), true, 'an empty description is thin too');
-  assert.equal(thin({ startAt: '2027-01-02T18:00:00+05:30' }), false, 'a start time is a real detail');
+  assert.equal(thin({ startAt: '2027-01-02T13:30:00+05:30' }), true, 'a start time from its page is not enough detail');
   assert.equal(thin({ categories: ['Comedy'] }), false);
   assert.equal(thin({ description: 'A full evening of stand-up comedy with three comics, doors open at seven.' }), false);
 });
