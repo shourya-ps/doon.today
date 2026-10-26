@@ -1,7 +1,7 @@
 :root {
   --paper: #f6f1e8;
   --ink: #13231c;
-  --muted: #68736d;
+  --muted: #626d67; /* 4.8:1 on --paper; #68736d was 4.38:1, under WCAG AA */
   --green: #0b5b3f;
   --green-soft: #dce9df;
   --line: #d7d3c8;
