@@ -29,7 +29,9 @@ export function eventJsonLd(e, { pageUrl, imageUrl }) {
         addressLocality: 'Dehradun',
         addressRegion: 'Uttarakhand',
         addressCountry: 'IN'
-      }
+      },
+      // Only coordinates the ingest kept (inside the Dehradun box); an event without them simply has none.
+      ...(e.venue.geo ? { geo: { '@type': 'GeoCoordinates', latitude: e.venue.geo.lat, longitude: e.venue.geo.lng } } : {})
     },
     image: [imageUrl],
     url: pageUrl
