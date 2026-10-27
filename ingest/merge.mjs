@@ -13,6 +13,7 @@ const SOURCE_RANK = {
   thrillzone: 90,
   literaturefestival: 90,
   meetup: 85,
+  gdg: 85,
   allevents: 75,
   reddit: 50
 };
@@ -48,7 +49,7 @@ function eventTimestamp(e) {
 }
 function verificationStatus(sources=[]) {
   const providers=new Set(sources.map(source => source.provider));
-  if (['manual','district','townscript','virasat','thrillzone','literaturefestival','meetup'].some(provider => providers.has(provider))) return 'verified';
+  if (['manual','district','townscript','virasat','thrillzone','literaturefestival','meetup','gdg'].some(provider => providers.has(provider))) return 'verified';
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }
@@ -64,6 +65,27 @@ function sourceKey(s){ return `${s.provider}|${s.url}`; }
 // The fields a calendar subscriber would notice changing.
 function fingerprint(e) {
   return JSON.stringify([e.title, e.startAt, e.endAt||null, e.venue?.name, e.venue?.address||'']);
+}
+
+// Hand-checked venues (data/venues.json): a venue whose name contains one of a known venue's phrases, as whole
+// words, gets that venue's coordinates and area when its source gave none. Virasat's programme page, for one,
+// names its venue but gives no coordinates. Coordinates from the table are marked `geoFrom: 'table'` and worked
+// out again on every run, so a corrected or removed entry takes effect instead of sticking to stored events.
+export const VENUES_PATH = 'data/venues.json';
+export function knownVenueFor(venue, venues = []) {
+  const name = ` ${norm(venue?.name)} `;
+  return venues.find(v => v && (v.match || []).some(phrase => name.includes(` ${norm(phrase)} `)));
+}
+function withKnownVenue(e, venues) {
+  const fromTable = e.venue?.geoFrom === 'table';
+  if (e.venue?.geo && !fromTable && e.venue?.area) return e;
+  const known = knownVenueFor(e.venue, venues);
+  if (!known && !fromTable) return e;
+  const venue = { ...e.venue };
+  if (fromTable) { delete venue.geo; delete venue.geoFrom; }
+  if (!venue.geo && known?.geo) { venue.geo = known.geo; venue.geoFrom = 'table'; }
+  if (!venue.area && known?.area) venue.area = known.area;
+  return { ...e, venue };
 }
 
 // Fill in venue.area from the address or venue name when a source did not provide one.
@@ -99,13 +121,14 @@ function sharesSource(a,b,ambiguous) {
   const ids=new Set(sourceIdentities(a));
   return sourceIdentities(b).some(id => ids.has(id) && !ambiguous.has(id));
 }
-// Misses only count when every source of the event ran successfully and returned events this run;
-// otherwise the count is left alone. A source that answered with nothing proves nothing.
-function missedRunsAfter(e, returned) {
+// Misses only count when every source of the event answered this run; otherwise the count is left alone.
+// A source that returned nothing proves nothing, unless it says its answer was complete (`complete: true`):
+// a small source whose one upcoming event was cancelled really does have nothing.
+function missedRunsAfter(e, answered) {
   const before=e.missedRuns||0;
   const providers=[...new Set((e.sources||[]).map(s=>s.provider))];
   if (providers.length === 0) return before;
-  return providers.every(p => (returned.get(p)||0) > 0) ? before+1 : before;
+  return providers.every(p => answered.has(p)) ? before+1 : before;
 }
 // Prices from two sources of one event. A known price beats an unknown one. With `combine` (two sources in
 // the same run), two paid prices make one range, so "From ₹..." is never above the real minimum. Without
@@ -130,6 +153,15 @@ function timing(preferred, secondary) {
   }
   return { startAt: preferred.startAt, endAt: preferred.endAt };
 }
+// Coordinates come from whichever copy has them, so a run or a source without them doesn't drop a known
+// location; but only from a copy at the same venue, so an event that moved never keeps the old pin. Coordinates
+// the venue table filled in are never carried over: the table step works them out again.
+function venueOf(preferred, secondary) {
+  const venue = isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue;
+  const sameVenue = (other) => other === venue || venueSimilarity(other?.name, venue?.name) >= 0.5;
+  const geo = venue?.geo || [preferred.venue, secondary.venue].find((other) => other?.geo && other.geoFrom !== 'table' && sameVenue(other))?.geo;
+  return geo && venue ? { ...venue, geo } : venue;
+}
 function mergePair(a,b,{combinePrices=false}={}) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
@@ -149,7 +181,7 @@ function mergePair(a,b,{combinePrices=false}={}) {
     curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation,
     // The preferred source wins, except where it only has a stand-in and the other source knows better:
     // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
-    venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
+    venue: venueOf(preferred, secondary),
     description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
     pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') }),
     ...timing(preferred, secondary)
@@ -159,6 +191,8 @@ function mergePair(a,b,{combinePrices=false}={}) {
 export async function mergeAndWrite(sourceResults) {
   // Events a person checked by hand always take part, like another source that returned them.
   const curated=await readJson(CURATED_PATH,[]);
+  const table=await readJson(VENUES_PATH,[]);
+  const venues=Array.isArray(table) ? table : [];
   const results=curated.length ? [...sourceResults,{source:'manual',events:curated}] : sourceResults;
   let previous=[];
   try { previous=JSON.parse(await fs.readFile('data/events.json','utf8')); } catch {}
@@ -177,8 +211,9 @@ export async function mergeAndWrite(sourceResults) {
 
   const ambiguous=new Set([...ambiguousIdentities(current),...ambiguousIdentities(previous)]);
   const same=(a,b)=>sameEvent(a,b) || sharesSource(a,b,ambiguous);
-  // Sources that ran successfully this run (failed adapters are not in `results`), and how many events each returned.
-  const returned=new Map(results.map(r => [r.source,(r.events||[]).length]));
+  // Sources that ran successfully this run (failed adapters are not in `results`) and returned events, or said
+  // their empty answer was complete.
+  const answered=new Set(results.filter(r => (r.events||[]).length > 0 || r.complete === true).map(r => r.source));
 
   const merged=[];
   for (const incoming of current) {
@@ -204,7 +239,7 @@ export async function mergeAndWrite(sourceResults) {
     const dup=retained.findIndex(x => same(x,e));
     if (dup >= 0) { retained[dup]=mergePair(retained[dup],e); continue; }
     // Stored events their sources no longer list (removed or moved) go after a few successful runs.
-    const missed=missedRunsAfter(e,returned);
+    const missed=missedRunsAfter(e,answered);
     if (missed >= MISSED_RUNS_LIMIT) { dropped++; continue; }
     const kept={...e, verificationStatus: verificationStatus(e.sources)};
     if (missed > 0) kept.missedRuns=missed; else delete kept.missedRuns;
@@ -226,6 +261,7 @@ export async function mergeAndWrite(sourceResults) {
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => isUnexpiredEvent(e,now))
+    .map(e => withKnownVenue(e, venues))
     .map(withArea)
     .sort(compareEventStarts);
 

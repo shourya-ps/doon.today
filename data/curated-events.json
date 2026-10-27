@@ -151,5 +151,81 @@
     "firstSeenAt": "2026-10-25T15:26:38.238Z",
     "lastSeenAt": "2026-10-25T15:26:38.238Z",
     "lastCheckedAt": "2026-10-25T15:26:38.238Z"
+  },
+  {
+    "id": "3de7a089f410e60a",
+    "slug": "rajpur-nature-festival",
+    "title": "Rajpur Nature Festival",
+    "description": "Organized by Rajpur Community. How to join: It's a public event. No registration needed",
+    "startAt": "2026-10-31T09:00:00+05:30",
+    "endAt": "2026-10-31T21:00:00+05:30",
+    "venue": {
+      "name": "MDDA Park, Rajpur",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Community"
+    ],
+    "pricing": {
+      "type": "free",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://www.facebook.com/share/19hmJcNrWx/",
+        "checkedAt": "2026-10-26T19:01:07.332Z",
+        "confidence": 1
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-26T19:01:07.332Z",
+    "lastSeenAt": "2026-10-26T19:01:07.332Z",
+    "lastCheckedAt": "2026-10-26T19:01:07.332Z"
+  },
+  {
+    "id": "87ff41a1f335584d",
+    "slug": "dharak-dehradun-trails",
+    "title": "DHARAK: Dehradun Trails",
+    "description": "A trail running race on the forested ridges and foothill trails around Dehradun, organised by the Sarmang Society. Three distances: Initiation 5 km, Threshold 12 km and Traverse 33 km. Registration is on the DHARAK site.",
+    "startAt": "2027-02-28T06:00:00+05:30",
+    "venue": {
+      "name": "Raipur, Dehradun",
+      "address": "Upper Garhwali Colony, Nehrugram, Dehradun 248005",
+      "city": "Dehradun"
+    },
+    "categories": [
+      "Outdoors"
+    ],
+    "pricing": {
+      "type": "unknown",
+      "currency": "INR"
+    },
+    "sources": [
+      {
+        "provider": "manual",
+        "url": "https://dharak.sarmang.com",
+        "checkedAt": "2026-10-27T03:30:37.590Z",
+        "confidence": 1
+      },
+      {
+        "provider": "allevents",
+        "url": "https://allevents.in/dehradun/dharak-dehradun-trails/200030882896950",
+        "checkedAt": "2026-10-27T03:30:37.586Z",
+        "confidence": 0.75
+      }
+    ],
+    "verificationStatus": "verified",
+    "curation": {
+      "status": "published",
+      "score": 5
+    },
+    "firstSeenAt": "2026-10-27T03:30:37.590Z",
+    "lastSeenAt": "2026-10-27T03:30:37.590Z",
+    "lastCheckedAt": "2026-10-27T03:30:37.590Z"
   }
 ]
