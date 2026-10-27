@@ -7,6 +7,7 @@ export type EventSourceProvider =
   | 'thrillzone'
   | 'literaturefestival'
   | 'meetup'
+  | 'gdg'
   | 'reddit'
   | 'manual';
 

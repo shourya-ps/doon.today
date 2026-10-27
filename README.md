@@ -56,6 +56,7 @@ Every event carries its sources, a verification status and when it was first see
 | --- | --- | --- |
 | District | Main source, verified | Works from a home connection; blocks GitHub-hosted runners |
 | Townscript, Virasat, Thrill Zone, Dehradun Literature Festival, Meetup | Ticketing and organizer pages, verified | Fetched by the hosted refresh |
+| Google Developer Groups | GDG Dehradun and the UPES and Graphic Era campus chapters, from the platform's public JSON API; verified | Fetched by the hosted refresh |
 | AllEvents | Aggregator, labelled "Source reported" | Fetched by the hosted refresh |
 | r/Dehradun | Community leads for review | Fetched by the hosted refresh; never published directly |
 | BookMyShow | Demoted | Cloudflare blocks it from every connection tried; off unless named in `INGEST_ONLY` |
