@@ -28,7 +28,8 @@ export function toEvent(e, chapterName = 'GDG Dehradun') {
   if (!e?.title || !e.start_date || Number.isNaN(Date.parse(e.start_date))) return null;
   if (e.is_virtual_event || e.audience_type === 'VIRTUAL' || /cancel/i.test(e.status || '')) return null;
   const title = stripHtml(e.title);
-  const description = stripHtml(e.description_short || e.description || '');
+  // The short description is cut off mid-word by the platform (about 120 characters), so the full one comes first.
+  const description = stripHtml(e.description || e.description_short || '');
   const venueName = stripHtml(e.venue_name || '');
   const address = stripHtml([e.venue_address, e.venue_city, e.venue_zip_code].filter(Boolean).join(', '));
   const city = e.venue_city || e.chapter?.city || '';
@@ -81,5 +82,8 @@ export async function fetchGdg({ fetchPage = fetchText } = {}) {
     error.diagnostics = { errors };
     throw error;
   }
-  return { source: 'gdg', events, diagnostics: { chapters: chaptersRead, listed, eventsParsed: events.length, ...(errors.length ? { errors } : {}) } };
+  // When every listing and record was read, an empty answer is real (an event was cancelled or moved online), so
+  // the merge may count it as a miss for events stored from this source.
+  const complete = errors.length === 0;
+  return { source: 'gdg', events, complete, diagnostics: { chapters: chaptersRead, listed, eventsParsed: events.length, ...(errors.length ? { errors } : {}) } };
 }

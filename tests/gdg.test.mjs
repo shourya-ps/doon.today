@@ -7,7 +7,8 @@ import { detailsLinkLabel } from '../src/lib/sources.mjs';
 const record = (over = {}) => ({
   id: 128384, title: 'Build with AI', status: 'Published', audience_type: 'IN_PERSON', is_virtual_event: false,
   start_date: '2030-08-22T04:00:00Z', end_date: '2030-08-22T10:30:00Z', event_timezone: 'Asia/Calcutta',
-  description_short: 'Build with AI is a global event series aimed at enabling developers across the world.',
+  description: '<p>Build with AI is a global event series aimed at enabling developers across the world to build with Google\'s latest models.</p>',
+  description_short: 'Build with AI is a global event series aimed at enabling developers across the world to build using Google\'s l...',
   url: 'https://gdg.community.dev/events/details/google-gdg-dehradun-presents-build-with-ai-1/',
   venue_name: 'Graphic Era Hill University', venue_address: 'Road Society Area', venue_city: 'Dehradun', venue_zip_code: '248002',
   chapter: { title: 'GDG Dehradun', city: 'Dehradun' },
@@ -20,6 +21,8 @@ test('an in-person Dehradun event becomes a verified, free community event', () 
   assert.equal(e.title, 'Build with AI');
   assert.equal(e.startAt, '2030-08-22T04:00:00Z');
   assert.equal(e.endAt, '2030-08-22T10:30:00Z');
+  assert.equal(e.description, "Build with AI is a global event series aimed at enabling developers across the world to build with Google's latest models.", 'the full description, not the cut-off short one');
+  assert.equal(toEvent(record({ description: '' })).description.endsWith('...'), true, 'the short one only when there is no other');
   assert.deepEqual(e.venue, { name: 'Graphic Era Hill University', address: 'Road Society Area, Dehradun, 248002', city: 'Dehradun' });
   assert.deepEqual(e.pricing, { type: 'free', currency: 'INR' });
   assert.deepEqual(e.categories, ['Community'], 'a developer meetup that names no other category');
@@ -63,15 +66,40 @@ test('every chapter is read, co-hosted events appear once, and one failing chapt
     if (url in records) return JSON.stringify(records[url]);
     throw new Error(`unexpected ${url}`);
   };
-  const { source, events, diagnostics } = await fetchGdg({ fetchPage });
+  const { source, events, complete, diagnostics } = await fetchGdg({ fetchPage });
   assert.equal(source, 'gdg');
   assert.deepEqual(events.map((e) => e.title), ['Build with AI', 'DevFest Dehradun']);
   assert.equal(diagnostics.chapters, 2);
   assert.equal(diagnostics.listed, 3);
   assert.equal(diagnostics.eventsParsed, 2);
   assert.equal(diagnostics.errors.length, 1);
+  assert.equal(complete, false, 'a chapter failed, so an empty answer would prove nothing');
   assert.deepEqual(requested.filter((u) => u.includes('for_chapter')), CHAPTERS.map((c) => listUrl(c.id)), 'only upcoming ("Live") events are asked for');
   assert.ok(listUrl(1312).includes('status=Live'));
+});
+
+test('an empty answer from every chapter is complete, so a cancelled event is eventually dropped', async (t) => {
+  const { default: fs } = await import('node:fs/promises');
+  const { default: os } = await import('node:os');
+  const { default: path } = await import('node:path');
+  const { mergeAndWrite, MISSED_RUNS_LIMIT } = await import('../ingest/merge.mjs');
+  const empty = await fetchGdg({ fetchPage: async () => JSON.stringify({ results: [] }) });
+  assert.deepEqual([empty.events.length, empty.complete], [0, true]);
+
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'doon-gdg-'));
+  const cwd = process.cwd();
+  process.chdir(dir);
+  t.after(async () => { process.chdir(cwd); await fs.rm(dir, { recursive: true, force: true }); });
+  await fs.mkdir('data/review', { recursive: true });
+  const stored = { ...toEvent(record()), curation: { status: 'published', score: 6 } };
+  await fs.writeFile('data/events.json', JSON.stringify([stored]));
+  const read = async () => JSON.parse(await fs.readFile('data/events.json', 'utf8'));
+  await mergeAndWrite([{ ...empty, complete: false }]);
+  assert.equal((await read())[0].missedRuns, undefined, 'an incomplete empty answer proves nothing');
+  for (let i = 1; i < MISSED_RUNS_LIMIT; i++) await mergeAndWrite([empty]);
+  assert.equal((await read())[0].missedRuns, MISSED_RUNS_LIMIT - 1);
+  await mergeAndWrite([empty]);
+  assert.equal((await read()).length, 0, 'gone after the usual number of missed runs');
 });
 
 test('a run where no chapter answers is a failure, not an empty success', async () => {

@@ -100,13 +100,14 @@ function sharesSource(a,b,ambiguous) {
   const ids=new Set(sourceIdentities(a));
   return sourceIdentities(b).some(id => ids.has(id) && !ambiguous.has(id));
 }
-// Misses only count when every source of the event ran successfully and returned events this run;
-// otherwise the count is left alone. A source that answered with nothing proves nothing.
-function missedRunsAfter(e, returned) {
+// Misses only count when every source of the event answered this run; otherwise the count is left alone.
+// A source that returned nothing proves nothing, unless it says its answer was complete (`complete: true`):
+// a small source whose one upcoming event was cancelled really does have nothing.
+function missedRunsAfter(e, answered) {
   const before=e.missedRuns||0;
   const providers=[...new Set((e.sources||[]).map(s=>s.provider))];
   if (providers.length === 0) return before;
-  return providers.every(p => (returned.get(p)||0) > 0) ? before+1 : before;
+  return providers.every(p => answered.has(p)) ? before+1 : before;
 }
 // Prices from two sources of one event. A known price beats an unknown one. With `combine` (two sources in
 // the same run), two paid prices make one range, so "From ₹..." is never above the real minimum. Without
@@ -178,8 +179,9 @@ export async function mergeAndWrite(sourceResults) {
 
   const ambiguous=new Set([...ambiguousIdentities(current),...ambiguousIdentities(previous)]);
   const same=(a,b)=>sameEvent(a,b) || sharesSource(a,b,ambiguous);
-  // Sources that ran successfully this run (failed adapters are not in `results`), and how many events each returned.
-  const returned=new Map(results.map(r => [r.source,(r.events||[]).length]));
+  // Sources that ran successfully this run (failed adapters are not in `results`) and returned events, or said
+  // their empty answer was complete.
+  const answered=new Set(results.filter(r => (r.events||[]).length > 0 || r.complete === true).map(r => r.source));
 
   const merged=[];
   for (const incoming of current) {
@@ -205,7 +207,7 @@ export async function mergeAndWrite(sourceResults) {
     const dup=retained.findIndex(x => same(x,e));
     if (dup >= 0) { retained[dup]=mergePair(retained[dup],e); continue; }
     // Stored events their sources no longer list (removed or moved) go after a few successful runs.
-    const missed=missedRunsAfter(e,returned);
+    const missed=missedRunsAfter(e,answered);
     if (missed >= MISSED_RUNS_LIMIT) { dropped++; continue; }
     const kept={...e, verificationStatus: verificationStatus(e.sources)};
     if (missed > 0) kept.missedRuns=missed; else delete kept.missedRuns;
