@@ -48,6 +48,12 @@ test('source names are readable',()=>{
   assert.equal(sourceLabel('unknown-source'),'unknown-source');
 });
 
+test('the place carries the venue coordinates when the event has them',()=>{
+  const ld=eventJsonLd(ev({venue:{name:'Rajpur Road Hall',city:'Dehradun',geo:{lat:30.3431,lng:78.0482}}}),opts);
+  assert.deepEqual(ld.location.geo,{'@type':'GeoCoordinates',latitude:30.3431,longitude:78.0482});
+  assert.equal('geo' in eventJsonLd(ev(),opts).location,false,'none without coordinates');
+});
+
 test('an address that is only the city is not a street address',()=>{
   assert.equal(eventJsonLd(ev({venue:{name:'Hall',address:'Dehradun',city:'Dehradun'}}),opts).location.address.streetAddress,undefined);
 });
