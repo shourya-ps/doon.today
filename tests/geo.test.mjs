@@ -74,7 +74,38 @@ test('known venues fill in coordinates and area only where a source gave none', 
   ] }]);
   const out = Object.fromEntries(JSON.parse(await fs.readFile('data/events.json', 'utf8')).map((e) => [e.id, e.venue]));
   assert.deepEqual(out.a.geo, { lat: 30.35473, lng: 78.01122 });
+  assert.equal(out.a.geoFrom, 'table');
+  assert.equal(out.b.geoFrom, undefined, "a source's own coordinates are not marked");
   assert.equal(out.a.area, 'Garhi Cantt');
   assert.deepEqual(out.b.geo, { lat: 30.355, lng: 78.012 }, "a source's own coordinates stand");
   assert.equal(out.c.geo, undefined, 'unknown venues stay without');
+});
+
+test('a corrected or removed venue-table entry takes effect on events already stored', async (t) => {
+  const { default: fs } = await import('node:fs/promises');
+  const { default: os } = await import('node:os');
+  const { default: path } = await import('node:path');
+  const { mergeAndWrite } = await import('../ingest/merge.mjs');
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'doon-venues-'));
+  const cwd = process.cwd();
+  process.chdir(dir);
+  t.after(async () => { process.chdir(cwd); await fs.rm(dir, { recursive: true, force: true }); });
+  await fs.mkdir('data/review', { recursive: true });
+  const entry = (geo) => [{ name: 'Himalayan Cultural Centre', match: ['himalayan cultural centre'], geo, source: 'https://example.test/' }];
+  const event = { id: 'v', slug: 'v', title: 'Virasat evening', startAt: '2030-11-01T19:00:00+05:30', venue: { name: 'Himalayan Cultural Centre — Auditorium', city: 'Dehradun' },
+    categories: ['Culture'], pricing: { type: 'unknown', currency: 'INR' }, sources: [{ provider: 'virasat', url: 'https://example.test/v' }],
+    curation: { status: 'published', score: 8 }, firstSeenAt: '2030-01-01T00:00:00Z', lastSeenAt: '2030-01-01T00:00:00Z', lastCheckedAt: '2030-01-01T00:00:00Z' };
+  const run = async (table) => {
+    await fs.writeFile('data/venues.json', JSON.stringify(table));
+    await mergeAndWrite([{ source: 'virasat', events: [structuredClone(event)] }]);
+    return JSON.parse(await fs.readFile('data/events.json', 'utf8'))[0].venue;
+  };
+  assert.deepEqual((await run(entry({ lat: 30.1, lng: 78.1 }))).geo, { lat: 30.1, lng: 78.1 });
+  assert.deepEqual((await run(entry({ lat: 30.35473, lng: 78.01122 }))).geo, { lat: 30.35473, lng: 78.01122 }, 'a corrected pin replaces the old one');
+  const gone = await run([]);
+  assert.equal(gone.geo, undefined, 'a removed entry takes its pin with it');
+  assert.equal(gone.geoFrom, undefined);
+  await fs.writeFile('data/venues.json', '{}');
+  await mergeAndWrite([{ source: 'virasat', events: [structuredClone(event)] }]);
+  assert.equal(JSON.parse(await fs.readFile('data/events.json', 'utf8')).length, 1, 'a table that is not a list is ignored, not a crash');
 });

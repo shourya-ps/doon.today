@@ -67,22 +67,28 @@ function fingerprint(e) {
   return JSON.stringify([e.title, e.startAt, e.endAt||null, e.venue?.name, e.venue?.address||'']);
 }
 
-// Fill in venue.area from the address or venue name when a source did not provide one.
 // Hand-checked venues (data/venues.json): a venue whose name contains one of a known venue's phrases, as whole
 // words, gets that venue's coordinates and area when its source gave none. Virasat's programme page, for one,
-// names its venue but gives no coordinates.
+// names its venue but gives no coordinates. Coordinates from the table are marked `geoFrom: 'table'` and worked
+// out again on every run, so a corrected or removed entry takes effect instead of sticking to stored events.
 export const VENUES_PATH = 'data/venues.json';
 export function knownVenueFor(venue, venues = []) {
   const name = ` ${norm(venue?.name)} `;
-  return venues.find(v => (v.match || []).some(phrase => name.includes(` ${norm(phrase)} `)));
+  return venues.find(v => v && (v.match || []).some(phrase => name.includes(` ${norm(phrase)} `)));
 }
 function withKnownVenue(e, venues) {
-  if (e.venue?.geo && e.venue?.area) return e;
+  const fromTable = e.venue?.geoFrom === 'table';
+  if (e.venue?.geo && !fromTable && e.venue?.area) return e;
   const known = knownVenueFor(e.venue, venues);
-  if (!known) return e;
-  return { ...e, venue: { ...e.venue, ...(!e.venue.geo && known.geo ? { geo: known.geo } : {}), ...(!e.venue.area && known.area ? { area: known.area } : {}) } };
+  if (!known && !fromTable) return e;
+  const venue = { ...e.venue };
+  if (fromTable) { delete venue.geo; delete venue.geoFrom; }
+  if (!venue.geo && known?.geo) { venue.geo = known.geo; venue.geoFrom = 'table'; }
+  if (!venue.area && known?.area) venue.area = known.area;
+  return { ...e, venue };
 }
 
+// Fill in venue.area from the address or venue name when a source did not provide one.
 function withArea(e) {
   if (e.venue?.area) return e;
   const area=areaFromText(`${e.venue?.address||''} ${e.venue?.name||''}`);
@@ -148,11 +154,12 @@ function timing(preferred, secondary) {
   return { startAt: preferred.startAt, endAt: preferred.endAt };
 }
 // Coordinates come from whichever copy has them, so a run or a source without them doesn't drop a known
-// location; but only from a copy at the same venue, so an event that moved never keeps the old pin.
+// location; but only from a copy at the same venue, so an event that moved never keeps the old pin. Coordinates
+// the venue table filled in are never carried over: the table step works them out again.
 function venueOf(preferred, secondary) {
   const venue = isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue;
   const sameVenue = (other) => other === venue || venueSimilarity(other?.name, venue?.name) >= 0.5;
-  const geo = venue?.geo || [preferred.venue, secondary.venue].find((other) => other?.geo && sameVenue(other))?.geo;
+  const geo = venue?.geo || [preferred.venue, secondary.venue].find((other) => other?.geo && other.geoFrom !== 'table' && sameVenue(other))?.geo;
   return geo && venue ? { ...venue, geo } : venue;
 }
 function mergePair(a,b,{combinePrices=false}={}) {
@@ -184,7 +191,8 @@ function mergePair(a,b,{combinePrices=false}={}) {
 export async function mergeAndWrite(sourceResults) {
   // Events a person checked by hand always take part, like another source that returned them.
   const curated=await readJson(CURATED_PATH,[]);
-  const venues=await readJson(VENUES_PATH,[]);
+  const table=await readJson(VENUES_PATH,[]);
+  const venues=Array.isArray(table) ? table : [];
   const results=curated.length ? [...sourceResults,{source:'manual',events:curated}] : sourceResults;
   let previous=[];
   try { previous=JSON.parse(await fs.readFile('data/events.json','utf8')); } catch {}

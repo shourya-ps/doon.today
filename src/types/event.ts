@@ -33,6 +33,8 @@ export interface EventRecord {
     city: 'Dehradun';
     // From the source's structured data; only kept inside a rough box around Dehradun (geoFrom in ingest/lib/utils.mjs).
     geo?: { lat: number; lng: number };
+    // 'table' when the coordinates came from data/venues.json rather than the source; re-derived on every run.
+    geoFrom?: 'table';
   };
   categories: string[];
   pricing: {
