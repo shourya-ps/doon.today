@@ -17,7 +17,7 @@ export function istDay(value = '') {
 
 export const compareEventStarts = (a, b) => toInstant(a.startAt).getTime() - toInstant(b.startAt).getTime();
 
-/** The inclusive IST days on which an event happens; timed ends are exclusive. */
+/** Inclusive IST listing days; timed ends before 6am belong to the previous night. */
 export function eventDayRange(event) {
   const startTime = toInstant(event.startAt).getTime();
   if (!Number.isFinite(startTime)) return { start: '', end: '' };
@@ -26,7 +26,7 @@ export function eventDayRange(event) {
   if (!Number.isFinite(endTime)) return { start, end: start };
   const end = DATE_ONLY.test(event.endAt)
     ? event.endAt
-    : istDay(new Date(endTime - 1).toISOString());
+    : istDay(new Date(endTime - 6 * 3600_000).toISOString());
   return { start, end: end > start ? end : start };
 }
 

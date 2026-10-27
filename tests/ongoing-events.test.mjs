@@ -28,6 +28,28 @@ test('timed ranges use IST and exclude a midnight end, while date-only ends are 
   assert.equal(eventDisplayDay({startAt:'invalid'},'2026-11-20'),null);
 });
 
+test('timed ends before 6am IST belong to the previous night',()=>{
+  const startAt='2026-10-30T20:00:00+05:30';
+  for(const endAt of [
+    '2026-10-31T00:00:00+05:30',
+    '2026-10-31T01:00:00+05:30',
+    '2026-10-31T05:59:59.999+05:30',
+    '2026-10-30T19:30:00Z',
+    '2026-10-30T15:30:00-04:00',
+    '2026-10-31T01:00:00'
+  ]) {
+    const event={startAt,endAt};
+    assert.deepEqual(eventDayRange(event),{start:'2026-10-30',end:'2026-10-30'},endAt);
+    assert.equal(eventDisplayDay(event,'2026-10-31'),null,`${endAt}: no ongoing listing the next day`);
+    assert.equal(eventDisplayDay(event,'2026-10-30'),'2026-10-30',`${endAt}: keep the original night`);
+  }
+  for(const endAt of ['2026-10-31T06:00:00+05:30','2026-10-31T00:30:00Z','2026-10-31T10:00:00+05:30','2026-10-31']) {
+    assert.deepEqual(eventDayRange({startAt,endAt}),{start:'2026-10-30',end:'2026-10-31'},`${endAt}: keep the next day`);
+  }
+  assert.deepEqual(eventDayRange({startAt:'2026-10-31T02:00:00+05:30',endAt:'2026-10-31T03:00:00+05:30'}),
+    {start:'2026-10-31',end:'2026-10-31'},'the final listing day never precedes the start day');
+});
+
 test('production Today, Tomorrow and Weekend filters match the whole date range in every timezone',async t=>{
   const page=await readFile(new URL('../src/pages/index.astro',import.meta.url),'utf8');
   const script=[...page.matchAll(/<script is:inline>([\s\S]*?)<\/script>/g)].at(-1)[1];
@@ -48,7 +70,8 @@ test('production Today, Tomorrow and Weekend filters match the whole date range 
     }
     for(const event of [
       {startAt:'2026-10-31',endAt:'2026-11-19'},
-      {startAt:'2026-11-23',endAt:'2026-11-25'}
+      {startAt:'2026-11-23',endAt:'2026-11-25'},
+      {startAt:'2026-11-19T20:00:00+05:30',endAt:'2026-11-20T01:00:00+05:30'}
     ]) {
       const {start,end}=eventDayRange(event);context.row={dataset:{startDate:start,endDate:end}};
       for(const when of ['today','tomorrow','weekend']) {
