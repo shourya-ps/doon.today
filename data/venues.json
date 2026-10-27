@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Himalayan Cultural Centre",
+    "match": ["himalayan cultural centre", "himalayan cultural center"],
+    "area": "Garhi Cantt",
+    "geo": { "lat": 30.35473, "lng": 78.01122 },
+    "source": "https://reachvirasat.org/contact"
+  },
+  {
+    "name": "Graphic Era (Deemed to be) University",
+    "match": ["graphic era deemed to be university", "graphic era university"],
+    "area": "Clement Town",
+    "geo": { "lat": 30.26802, "lng": 77.99612 },
+    "source": "https://www.openstreetmap.org/relation/20302011"
+  },
+  {
+    "name": "Mall of Dehradun",
+    "match": ["mall of dehradun"],
+    "geo": { "lat": 30.26686, "lng": 78.0821 },
+    "source": "https://www.openstreetmap.org/way/1443674663"
+  },
+  {
+    "name": "MDDA Park, Rajpur",
+    "match": ["mdda park rajpur"],
+    "area": "Rajpur",
+    "geo": { "lat": 30.39054, "lng": 78.0946 },
+    "source": "https://www.openstreetmap.org/way/105876550"
+  }
+]

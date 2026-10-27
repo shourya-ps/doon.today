@@ -29,6 +29,18 @@ for(const [i,e] of events.entries()){
   }
 }
 
+// The hand-checked venue table: every entry needs a name, at least one phrase to match, coordinates near
+// Dehradun and the page they were checked against.
+let venues=[];
+try { venues=JSON.parse(await fs.readFile('data/venues.json','utf8')); } catch(err) { if(err.code!=='ENOENT') errors.push(`data/venues.json: ${err.message}`); }
+if(!Array.isArray(venues)) { errors.push('data/venues.json must be a list of venues'); venues=[]; }
+for(const [i,v] of venues.entries()){
+  if(!v || typeof v!=='object') { errors.push(`venues[${i}] is not a venue`); continue; }
+  if(!v.name || !Array.isArray(v.match) || v.match.length===0) errors.push(`venues[${i}] needs a name and at least one match phrase`);
+  if(!isInDehradun(v.geo)) errors.push(`venues[${i}] ${v.name}: coordinates missing or far from Dehradun`);
+  if(!/^https:\/\//.test(v.source||'')) errors.push(`venues[${i}] ${v.name}: needs the https source the coordinates came from`);
+}
+
 if(warnings.length) console.warn(warnings.map(w=>`warning ${w}`).join('\n'));
 if(errors.length){console.error(errors.join('\n'));process.exit(1)}
 console.log(`validated ${events.length} events`);

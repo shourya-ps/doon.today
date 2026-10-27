@@ -1,5 +1,5 @@
 import { fetchText } from '../lib/http.mjs';
-import { stableId, slugify, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso } from '../lib/utils.mjs';
+import { stableId, slugify, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, geoFrom } from '../lib/utils.mjs';
 
 // Google Developer Groups in Dehradun, on Google's community platform. Its public JSON API is what the chapter
 // pages themselves read: each chapter's upcoming ("Live") events, then each event's own record for the venue and
@@ -36,6 +36,7 @@ export function toEvent(e, chapterName = 'GDG Dehradun') {
   if (!isLikelyDehradunEvent({ title, description, venueName, address, city })) return null;
   const url = e.url || `${BASE}${e.relative_url || ''}`;
   const categories = categoryFromText(`${title} ${description}`);
+  const geo = geoFrom({ geo: { latitude: e.venue_latitude, longitude: e.venue_longitude } });
   const checkedAt = nowIso();
   return {
     id: stableId('gdg', url, e.start_date),
@@ -44,7 +45,7 @@ export function toEvent(e, chapterName = 'GDG Dehradun') {
     description,
     startAt: e.start_date,
     ...(e.end_date && !Number.isNaN(Date.parse(e.end_date)) ? { endAt: e.end_date } : {}),
-    venue: { name: venueName || chapterName, address, city: 'Dehradun' },
+    venue: { name: venueName || chapterName, address, city: 'Dehradun', ...(geo && { geo }) },
     // A developer meetup that names no other category is a community event.
     categories: categories.length === 1 && categories[0] === 'Other' ? ['Community'] : categories,
     pricing: priceFromTickets(e.tickets),
