@@ -8,6 +8,7 @@ export const SOURCE_LABELS = {
   thrillzone: 'Thrill Zone',
   literaturefestival: 'Dehradun Literature Festival',
   meetup: 'Meetup',
+  gdg: 'Google Developer Groups',
   reddit: 'r/Dehradun',
   manual: 'doon.today'
 };

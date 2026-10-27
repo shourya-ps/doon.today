@@ -13,6 +13,7 @@ const SOURCE_RANK = {
   thrillzone: 90,
   literaturefestival: 90,
   meetup: 85,
+  gdg: 85,
   allevents: 75,
   reddit: 50
 };
@@ -48,7 +49,7 @@ function eventTimestamp(e) {
 }
 function verificationStatus(sources=[]) {
   const providers=new Set(sources.map(source => source.provider));
-  if (['manual','district','townscript','virasat','thrillzone','literaturefestival','meetup'].some(provider => providers.has(provider))) return 'verified';
+  if (['manual','district','townscript','virasat','thrillzone','literaturefestival','meetup','gdg'].some(provider => providers.has(provider))) return 'verified';
   if (providers.size === 1 && providers.has('reddit')) return 'community-reported';
   return 'review';
 }

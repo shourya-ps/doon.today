@@ -8,10 +8,11 @@ import {fetchVirasat} from './sources/virasat.mjs';
 import {fetchThrillZone} from './sources/thrillzone.mjs';
 import {fetchLiteratureFestival} from './sources/literaturefestival.mjs';
 import {fetchMeetup} from './sources/meetup.mjs';
+import {fetchGdg} from './sources/gdg.mjs';
 import {mergeAndWrite} from './merge.mjs';
 import {adapterName,selectAdapters,recordAttempt,computeHealth,DEFAULT_MAX_AGE_HOURS,OPT_IN_SOURCES} from './lib/status.mjs';
 
-const allAdapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchVirasat,fetchThrillZone,fetchLiteratureFestival,fetchMeetup,fetchReddit];
+const allAdapters=[fetchDistrict,fetchBookMyShow,fetchAllEvents,fetchTownscript,fetchVirasat,fetchThrillZone,fetchLiteratureFestival,fetchMeetup,fetchGdg,fetchReddit];
 
 // INGEST_ONLY / INGEST_SKIP take comma-separated source names (e.g. INGEST_ONLY=district).
 // District rejects GitHub-hosted runners, so it runs from a separate job; every run only updates the
