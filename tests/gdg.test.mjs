@@ -11,6 +11,7 @@ const record = (over = {}) => ({
   description_short: 'Build with AI is a global event series aimed at enabling developers across the world to build using Google\'s l...',
   url: 'https://gdg.community.dev/events/details/google-gdg-dehradun-presents-build-with-ai-1/',
   venue_name: 'Graphic Era Hill University', venue_address: 'Road Society Area', venue_city: 'Dehradun', venue_zip_code: '248002',
+  venue_latitude: 30.2723733, venue_longitude: 78.0010035,
   chapter: { title: 'GDG Dehradun', city: 'Dehradun' },
   tickets: [{ price: 0, currency: 'USD', title: 'General Admission' }],
   ...over
@@ -23,7 +24,8 @@ test('an in-person Dehradun event becomes a verified, free community event', () 
   assert.equal(e.endAt, '2030-08-22T10:30:00Z');
   assert.equal(e.description, "Build with AI is a global event series aimed at enabling developers across the world to build with Google's latest models.", 'the full description, not the cut-off short one');
   assert.equal(toEvent(record({ description: '' })).description.endsWith('...'), true, 'the short one only when there is no other');
-  assert.deepEqual(e.venue, { name: 'Graphic Era Hill University', address: 'Road Society Area, Dehradun, 248002', city: 'Dehradun' });
+  assert.deepEqual(e.venue, { name: 'Graphic Era Hill University', address: 'Road Society Area, Dehradun, 248002', city: 'Dehradun', geo: { lat: 30.27237, lng: 78.001 } });
+  assert.equal('geo' in toEvent(record({ venue_latitude: null, venue_longitude: null })).venue, false, 'no coordinates, no key');
   assert.deepEqual(e.pricing, { type: 'free', currency: 'INR' });
   assert.deepEqual(e.categories, ['Community'], 'a developer meetup that names no other category');
   assert.equal(e.verificationStatus, 'verified');
