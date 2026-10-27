@@ -130,6 +130,12 @@ function timing(preferred, secondary) {
   }
   return { startAt: preferred.startAt, endAt: preferred.endAt };
 }
+// Coordinates come from whichever copy has them, so a run or a source without them doesn't drop a known location.
+function venueOf(preferred, secondary) {
+  const venue = isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue;
+  const geo = venue?.geo || preferred.venue?.geo || secondary.venue?.geo;
+  return geo && venue ? { ...venue, geo } : venue;
+}
 function mergePair(a,b,{combinePrices=false}={}) {
   const preferred = sourceRank(b) > sourceRank(a) || (sourceRank(b) === sourceRank(a) && eventTimestamp(b) >= eventTimestamp(a)) ? b : a;
   const secondary = preferred === a ? b : a;
@@ -149,7 +155,7 @@ function mergePair(a,b,{combinePrices=false}={}) {
     curation: preferred.curation?.status === 'published' ? preferred.curation : secondary.curation,
     // The preferred source wins, except where it only has a stand-in and the other source knows better:
     // Thrill Zone's listing has no venue, but AllEvents gives the same run's venue and address.
-    venue: isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue,
+    venue: venueOf(preferred, secondary),
     description: isPlaceholderDescription(preferred.description) && !isPlaceholderDescription(secondary.description) ? secondary.description : preferred.description,
     pricing: mergePricing(preferred.pricing, secondary.pricing, { combine: combinePrices, handChecked: (preferred.sources||[]).some(s=>s.provider==='manual') }),
     ...timing(preferred, secondary)

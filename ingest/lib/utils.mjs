@@ -236,3 +236,23 @@ export const AREA_NAMES = AREAS.map(([name]) => name);
 export function areaFromText(text = '') {
   return AREAS.find(([, re]) => re.test(text))?.[0];
 }
+
+// Dehradun district with a margin (Mussoorie, Vikasnagar, Doiwala). Coordinates outside it are another
+// city or a source's mistake, and 0,0 is a placeholder, so neither is kept.
+const DEHRADUN_BOUNDS = { minLat: 29.9, maxLat: 31.1, minLng: 77.5, maxLng: 78.4 };
+
+export function isInDehradun(geo) {
+  return Number.isFinite(geo?.lat) && Number.isFinite(geo?.lng)
+    && geo.lat >= DEHRADUN_BOUNDS.minLat && geo.lat <= DEHRADUN_BOUNDS.maxLat
+    && geo.lng >= DEHRADUN_BOUNDS.minLng && geo.lng <= DEHRADUN_BOUNDS.maxLng;
+}
+
+/** A place's schema.org `geo` as { lat, lng } (numbers, to about a metre), or undefined when missing or outside Dehradun. */
+export function geoFrom(place) {
+  const geo = place?.geo;
+  if (!geo || typeof geo !== 'object') return undefined;
+  const number = (v) => (v === '' || v == null ? NaN : Number(v));
+  const round = (n) => Math.round(n * 1e5) / 1e5;
+  const point = { lat: round(number(geo.latitude ?? geo.lat)), lng: round(number(geo.longitude ?? geo.lng ?? geo.lon)) };
+  return isInDehradun(point) ? point : undefined;
+}

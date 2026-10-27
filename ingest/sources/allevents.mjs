@@ -1,6 +1,6 @@
 import { fetchText } from '../lib/http.mjs';
 import { eventLikeObjects, extractJsonLd, flattenObjects } from '../lib/jsonld.mjs';
-import { stableId, slugify, priceFromOffers, priceFromText, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, sleep } from '../lib/utils.mjs';
+import { stableId, slugify, priceFromOffers, priceFromText, categoryFromText, isLikelyDehradunEvent, stripHtml, nowIso, sleep, geoFrom } from '../lib/utils.mjs';
 import { istDay, toInstant } from '../../src/lib/dates.mjs';
 
 // The full upcoming list. The plain city page (allevents.in/dehradun) shows only about half of it.
@@ -48,6 +48,7 @@ function toEvent(o, url = LIST) {
 
   const checkedAt = nowIso();
   const text = [title, description, venueName, addr, o.city].filter(Boolean).join(' ');
+  const geo = geoFrom(loc);
 
   return {
     id: stableId('allevents', o.url || o.id || title, start),
@@ -56,7 +57,7 @@ function toEvent(o, url = LIST) {
     description,
     startAt: start,
     endAt: o.endDate || o.end_at,
-    venue: { name: venueName, address: stripHtml(addr || ''), city: 'Dehradun' },
+    venue: { name: venueName, address: stripHtml(addr || ''), city: 'Dehradun', ...(geo && { geo }) },
     categories: categoryFromText(text),
     pricing: priceFromOffers(o.offers) || priceFromText(`${title} ${description}`),
     sources: [{ provider: 'allevents', url: o.url || url, externalId: String(o.id || '') || undefined, checkedAt, confidence: 0.75 }],

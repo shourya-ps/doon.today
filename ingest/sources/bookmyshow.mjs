@@ -1,6 +1,6 @@
 import {fetchText} from '../lib/http.mjs';
 import {eventLikeObjects} from '../lib/jsonld.mjs';
-import {stableId,slugify,parseMoney,categoryFromText,isDehradunText,stripHtml,nowIso,sleep} from '../lib/utils.mjs';
+import {stableId,slugify,parseMoney,categoryFromText,isDehradunText,stripHtml,nowIso,sleep,geoFrom} from '../lib/utils.mjs';
 
 const LIST='https://in.bookmyshow.com/explore/events-dehradun';
 const MAX_CONSECUTIVE_BLOCKS=2;
@@ -16,8 +16,8 @@ function fromLd(o,url){
   if(!o.name || !o.startDate || !isDehradunText(text)) return null;
   const offers=Array.isArray(o.offers)?o.offers[0]:o.offers;
   const pricing=offers?.price ? {type:Number(offers.price)===0?'free':'paid',minPrice:Number(offers.price)||undefined,currency:'INR'} : parseMoney(JSON.stringify(offers||{}));
-  const checkedAt=nowIso();
-  return {id:stableId('bookmyshow',o.url||url,o.startDate),slug:slugify(o.name),title:stripHtml(o.name),description:stripHtml(o.description||''),startAt:o.startDate,endAt:o.endDate,venue:{name:loc.name||'Venue TBA',address:stripHtml(addr),city:'Dehradun'},categories:categoryFromText(text),pricing,sources:[{provider:'bookmyshow',url:o.url||url,externalId:(url.match(/ET\d+/)||[])[0],checkedAt,confidence:.95}],verificationStatus:'verified',curation:{status:'published',score:8},firstSeenAt:checkedAt,lastSeenAt:checkedAt,lastCheckedAt:checkedAt};
+  const checkedAt=nowIso(); const geo=geoFrom(loc);
+  return {id:stableId('bookmyshow',o.url||url,o.startDate),slug:slugify(o.name),title:stripHtml(o.name),description:stripHtml(o.description||''),startAt:o.startDate,endAt:o.endDate,venue:{name:loc.name||'Venue TBA',address:stripHtml(addr),city:'Dehradun',...(geo&&{geo})},categories:categoryFromText(text),pricing,sources:[{provider:'bookmyshow',url:o.url||url,externalId:(url.match(/ET\d+/)||[])[0],checkedAt,confidence:.95}],verificationStatus:'verified',curation:{status:'published',score:8},firstSeenAt:checkedAt,lastSeenAt:checkedAt,lastCheckedAt:checkedAt};
 }
 export async function fetchBookMyShow(){
   const listing=await fetchText(LIST); const urls=links(listing); const events=[]; const errors=[];

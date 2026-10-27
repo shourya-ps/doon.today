@@ -221,6 +221,27 @@ test('a run that only knows the date keeps the stored time, and does not bump th
   assert.equal((await read())[0].startAt,'2030-01-10T21:00:00+05:30','a new time still replaces the old one');
 });
 
+test('venue coordinates survive a run or a source without them',async t=>{
+  await inTempDir(t);
+  const geo={lat:30.3431,lng:78.0482};
+  const withGeo=ev({venue:{name:'Rajpur Road Hall',address:'Rajpur Road',city:'Dehradun',geo}});
+  await mergeAndWrite([{source:'district',events:[withGeo]}]);
+  await mergeAndWrite([{source:'district',events:[ev()]}]);
+  assert.deepEqual((await read())[0].venue.geo,geo,'a later run without coordinates keeps the stored ones');
+  await mergeAndWrite([{source:'district',events:[ev({venue:{...withGeo.venue,geo:{lat:30.3432,lng:78.0483}}})]}]);
+  assert.deepEqual((await read())[0].venue.geo,{lat:30.3432,lng:78.0483},'new coordinates replace old ones');
+
+  await fs.rm('data/events.json');
+  await mergeAndWrite([
+    {source:'district',events:[ev()]},
+    {source:'allevents',events:[ev({id:'ae',sources:[src('allevents','https://allevents.in/dehradun/x/1')],venue:{name:'Rajpur Road Hall',city:'Dehradun',geo}})]}
+  ]);
+  const [e]=await read();
+  assert.equal(e.sources[0].provider,'district','District still leads');
+  assert.deepEqual(e.venue.geo,geo,'and takes the coordinates AllEvents gave for the same event');
+  assert.equal(e.venue.address,'Rajpur Road',"District's own venue details stand");
+});
+
 test('mixed UTC and IST timestamps are sorted by actual start time',async t=>{
   await inTempDir(t);
   const times=['2030-01-10T12:30:00.000Z','2030-01-10T14:30:00.000Z','2030-01-10T16:00:00+05:30'];

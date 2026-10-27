@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import { eventPassesGeo } from '../ingest/lib/utils.mjs';
+import { eventPassesGeo, isInDehradun } from '../ingest/lib/utils.mjs';
 
 const events=JSON.parse(await fs.readFile('data/events.json','utf8'));
 const errors=[];
@@ -13,6 +13,7 @@ for(const [i,e] of events.entries()){
   if(e.venue?.city!=='Dehradun') errors.push(`[${i}] invalid city ${e.venue?.city}`);
   if(ids.has(e.id)) errors.push(`[${i}] duplicate id ${e.id}`); ids.add(e.id);
   if(Number.isNaN(new Date(e.startAt).getTime())) errors.push(`[${i}] invalid startAt`);
+  if(e.venue?.geo!==undefined && !isInDehradun(e.venue.geo)) errors.push(`[${i}] venue coordinates missing or outside Dehradun: ${JSON.stringify(e.venue.geo)}`);
 
   const semantic=`${e.title||''} ${e.description||''}`;
   if(outside.test(semantic) && !doon.test(semantic)) {
