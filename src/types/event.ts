@@ -30,7 +30,7 @@ export interface EventRecord {
     address?: string;
     area?: string;
     city: 'Dehradun';
-    // From the source's structured data; only kept inside Dehradun (see geoFrom in ingest/lib/utils.mjs).
+    // From the source's structured data; only kept inside a rough box around Dehradun (geoFrom in ingest/lib/utils.mjs).
     geo?: { lat: number; lng: number };
   };
   categories: string[];

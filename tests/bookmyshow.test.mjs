@@ -32,6 +32,21 @@ test('a listing and event page produce a Dehradun event',async t=>{
   assert.equal(result.events[0].venue.city,'Dehradun');
 });
 
+test('the venue coordinates on an event page are kept',async t=>{
+  const original=globalThis.fetch;
+  t.after(()=>{globalThis.fetch=original;});
+  const listing=await fixture('bookmyshow-listing.html');
+  const ld={'@context':'https://schema.org','@type':'Event',name:'Framed In Crimson',startDate:'2030-10-31T20:30',url:detailUrl,
+    location:{'@type':'Place',name:'Hotel Vishranti: Dehradun',address:{addressLocality:'Dehradun'},geo:{'@type':'GeoCoordinates',latitude:'30.3603',longitude:'78.0720'}}};
+  globalThis.fetch=async url=>{
+    if(url===listingUrl) return response(listing,200,url);
+    if(url===detailUrl) return response(`<script type="application/ld+json">${JSON.stringify(ld)}</script>`,200,url);
+    throw new Error(`Unexpected URL: ${url}`);
+  };
+  const result=await fetchBookMyShow();
+  assert.deepEqual(result.events[0].venue.geo,{lat:30.3603,lng:78.072});
+});
+
 test('a 403 captures safe diagnostics before parsing',async t=>{
   const original=globalThis.fetch;
   t.after(()=>{globalThis.fetch=original;});

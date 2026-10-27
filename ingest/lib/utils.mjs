@@ -237,8 +237,9 @@ export function areaFromText(text = '') {
   return AREAS.find(([, re]) => re.test(text))?.[0];
 }
 
-// Dehradun district with a margin (Mussoorie, Vikasnagar, Doiwala). Coordinates outside it are another
-// city or a source's mistake, and 0,0 is a placeholder, so neither is kept.
+// A box around Dehradun district (Mussoorie, Chakrata, Vikasnagar, Doiwala, Rishikesh). It is a rough check:
+// its corners also take in Haridwar, Saharanpur and Paonta Sahib. Coordinates outside it are another city or a
+// source's mistake, and 0,0 is a placeholder, so neither is kept.
 const DEHRADUN_BOUNDS = { minLat: 29.9, maxLat: 31.1, minLng: 77.5, maxLng: 78.4 };
 
 export function isInDehradun(geo) {

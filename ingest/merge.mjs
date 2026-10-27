@@ -130,10 +130,12 @@ function timing(preferred, secondary) {
   }
   return { startAt: preferred.startAt, endAt: preferred.endAt };
 }
-// Coordinates come from whichever copy has them, so a run or a source without them doesn't drop a known location.
+// Coordinates come from whichever copy has them, so a run or a source without them doesn't drop a known
+// location; but only from a copy at the same venue, so an event that moved never keeps the old pin.
 function venueOf(preferred, secondary) {
   const venue = isPlaceholderVenue(preferred.venue?.name) && !isPlaceholderVenue(secondary.venue?.name) ? secondary.venue : preferred.venue;
-  const geo = venue?.geo || preferred.venue?.geo || secondary.venue?.geo;
+  const sameVenue = (other) => other === venue || venueSimilarity(other?.name, venue?.name) >= 0.5;
+  const geo = venue?.geo || [preferred.venue, secondary.venue].find((other) => other?.geo && sameVenue(other))?.geo;
   return geo && venue ? { ...venue, geo } : venue;
 }
 function mergePair(a,b,{combinePrices=false}={}) {

@@ -240,6 +240,13 @@ test('venue coordinates survive a run or a source without them',async t=>{
   assert.equal(e.sources[0].provider,'district','District still leads');
   assert.deepEqual(e.venue.geo,geo,'and takes the coordinates AllEvents gave for the same event');
   assert.equal(e.venue.address,'Rajpur Road',"District's own venue details stand");
+
+  await fs.rm('data/events.json');
+  await mergeAndWrite([{source:'district',events:[withGeo]}]);
+  await mergeAndWrite([{source:'district',events:[ev({venue:{name:'Parade Ground',city:'Dehradun'}})]}]);
+  const [moved]=await read();
+  assert.equal(moved.venue.name,'Parade Ground','the same District listing moved venue');
+  assert.equal(moved.venue.geo,undefined,"and doesn't keep the old venue's pin");
 });
 
 test('mixed UTC and IST timestamps are sorted by actual start time',async t=>{
