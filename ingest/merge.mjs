@@ -68,6 +68,21 @@ function fingerprint(e) {
 }
 
 // Fill in venue.area from the address or venue name when a source did not provide one.
+// Hand-checked venues (data/venues.json): a venue whose name contains one of a known venue's phrases, as whole
+// words, gets that venue's coordinates and area when its source gave none. Virasat's programme page, for one,
+// names its venue but gives no coordinates.
+export const VENUES_PATH = 'data/venues.json';
+export function knownVenueFor(venue, venues = []) {
+  const name = ` ${norm(venue?.name)} `;
+  return venues.find(v => (v.match || []).some(phrase => name.includes(` ${norm(phrase)} `)));
+}
+function withKnownVenue(e, venues) {
+  if (e.venue?.geo && e.venue?.area) return e;
+  const known = knownVenueFor(e.venue, venues);
+  if (!known) return e;
+  return { ...e, venue: { ...e.venue, ...(!e.venue.geo && known.geo ? { geo: known.geo } : {}), ...(!e.venue.area && known.area ? { area: known.area } : {}) } };
+}
+
 function withArea(e) {
   if (e.venue?.area) return e;
   const area=areaFromText(`${e.venue?.address||''} ${e.venue?.name||''}`);
@@ -169,6 +184,7 @@ function mergePair(a,b,{combinePrices=false}={}) {
 export async function mergeAndWrite(sourceResults) {
   // Events a person checked by hand always take part, like another source that returned them.
   const curated=await readJson(CURATED_PATH,[]);
+  const venues=await readJson(VENUES_PATH,[]);
   const results=curated.length ? [...sourceResults,{source:'manual',events:curated}] : sourceResults;
   let previous=[];
   try { previous=JSON.parse(await fs.readFile('data/events.json','utf8')); } catch {}
@@ -237,6 +253,7 @@ export async function mergeAndWrite(sourceResults) {
     .filter(eventPassesGeo)
     .filter(e => e.curation?.status === 'published')
     .filter(e => isUnexpiredEvent(e,now))
+    .map(e => withKnownVenue(e, venues))
     .map(withArea)
     .sort(compareEventStarts);
 
